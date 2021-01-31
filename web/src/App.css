@@ -10,6 +10,11 @@
   p {
     margin: 0.4rem;
   }
+
+  label {
+    font-size: 1rem;
+    display: block;
+  }
 }
 
 .App-logo {
