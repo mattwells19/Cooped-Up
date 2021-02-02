@@ -1,14 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import Layout from "./Layout/Layout";
+import "./index.css";
 
-ReactDOM.render(
+const App: React.FC = () => (
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root'),
+    <Layout />
+  </React.StrictMode>
 );
+
+ReactDOM.render(<App />, document.getElementById("root"));
 
 // Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
 // Learn more: https://snowpack.dev/concepts/hot-module-replacement
