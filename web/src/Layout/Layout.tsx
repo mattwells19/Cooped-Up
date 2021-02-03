@@ -6,7 +6,7 @@ import {
 import Lobby from "../Lobby/Lobby";
 import Home from "../Home/Home";
 
-const Layout: React.FC = (props) => (
+const Layout: React.FC = () => (
   <BrowserRouter>
     <Switch>
       <Route path="/room/:roomCode" component={Lobby} />
