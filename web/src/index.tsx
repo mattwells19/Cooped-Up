@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Layout from "./Layout/Layout";
-import "./index.css";
+import { ChakraProvider } from "@chakra-ui/react";
+import theme from "./utils/theme";
+import Layout from "./Layout";
 
 const App: React.FC = () => (
   <React.StrictMode>
-    <Layout />
+    <ChakraProvider theme={theme}>
+      <Layout />
+    </ChakraProvider>
   </React.StrictMode>
 );
 

@@ -1,10 +1,9 @@
 import * as React from "react";
-import "./Layout.css";
 import {
   Redirect, Route, Switch, BrowserRouter,
 } from "react-router-dom";
-import Lobby from "../Lobby/Lobby";
-import Home from "../Home/Home";
+import Lobby from "./pages/Lobby";
+import Home from "./pages/Home";
 
 const Layout: React.FC = () => (
   <BrowserRouter>
