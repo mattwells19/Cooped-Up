@@ -1,0 +1,36 @@
+:root {
+  --primary-color: #2fc2ca;
+  --secondary-color: #0b56b1;
+  --light-white: #ffffff0d;
+}
+
+button {
+  padding: 8px 15px;
+  border-radius: 4px;
+  border: none;
+  text-transform: uppercase;
+  transition: background-color linear 100ms;
+
+  &.primary {
+    background-color: var(--primary-color);
+    &:hover {
+      background-color: #26a2a9;
+    }
+  }
+  &.secondary {
+    color: white;
+    background-color: var(--secondary-color);
+    &:hover {
+      background-color: #1b4c86;
+    }
+  }
+}
+
+header {
+  background-color: #1a1b25;
+  color: white;
+  position: relative;
+  top: 0;
+  text-align: center;
+  padding: 8px;
+}

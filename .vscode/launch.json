@@ -1,0 +1,35 @@
+{
+  "configurations": [
+    {
+      "console": "integratedTerminal",
+      "name": "Start Socket Server",
+      "program": "${workspaceFolder}/server/src/index.js",
+      "request": "launch",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
+      "console": "integratedTerminal",
+      "name": "Start Web Client",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "restart": true,
+      "runtimeExecutable": "npm",
+      "args": ["start"],
+      "type": "node",
+      "cwd": "${workspaceFolder}/web"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Start Socket Server & WebClient",
+      "configurations": ["Start Socket Server", "Start Web Client"]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 400px;
+  margin: auto;
+  margin-top: 4rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  input {
+    font-size: 4rem;
+    width: 4ch;
+    padding: 5px 8px;
+    background-color: #222433;
+    border: none;
+    border: 2px solid var(--light-white);
+    outline: none;
+    transition: box-shadow linear 100ms;
+    box-shadow: 0px 0px 0px 3px transparent;
+    color: white;
+    margin: 0;
+    margin-top: 6px;
+
+    &:focus {
+      box-shadow: 0px 0px 0px 3px var(--primary-color);
+    }
+  }
+
+  hr {
+    width: 400px;
+    margin: 24px 0px;
+    border: 1px solid var(--light-white);
+  }
+}

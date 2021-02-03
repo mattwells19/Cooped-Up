@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "react-router-dom": "^5.2.0",
+    "socket.io-client": "^3.1.0"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.0.5",
@@ -21,10 +23,19 @@
     "@types/mocha": "^8.2.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.7",
     "@types/snowpack-env": "^2.3.2",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
     "@web/test-runner": "^0.12.0",
     "autoprefixer": "^10.2.4",
     "chai": "^4.2.0",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "postcss": "^8.2.4",
     "postcss-cli": "^8.3.1",
     "postcss-extend": "^1.0.5",
