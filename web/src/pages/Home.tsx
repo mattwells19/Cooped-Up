@@ -21,9 +21,17 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Header>Coup</Header>
-      <Center marginTop="10">
+      <Header>Cooped Up</Header>
+      <Center margin="auto" marginTop="10" maxWidth="lg">
         <VStack spacing={10}>
+          <Text paddingX="4" fontSize="large">
+            So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,
+            but you can&apos;t because the virus is still at large. What better way to connect with your friends
+            than with a little bit of deception!&nbsp;
+            <Text fontWeight="bold" as="span">Cooped Up</Text>
+            &nbsp;is based on the popular card game Coup.
+          </Text>
+          <Divider />
           <VStack spacing={4}>
             <Text>Already have a room code? Type it here.</Text>
             <HStack>
@@ -40,7 +48,7 @@ const Home: React.FC = () => {
             <Text>or</Text>
             <Divider />
           </HStack>
-          <Button colorScheme="teal" onClick={handleNewRoom} className="secondary">
+          <Button onClick={handleNewRoom}>
             Start a New Room
           </Button>
         </VStack>

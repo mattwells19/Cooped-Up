@@ -8,13 +8,21 @@ import Header from "../components/Header";
 
 const Lobby: React.FC = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
-  const socket = io("http://localhost:4000", { auth: { roomCode } });
+  const socket = React.useMemo(() => (
+    io("http://localhost:4000", {
+      auth: { roomCode },
+      autoConnect: false,
+      reconnectionAttempts: 5,
+    })
+  ), [roomCode]);
 
   const [messages, setMessages] = React.useState<string[]>([]);
   const [draft, setDraft] = React.useState<string>("");
 
   // put socket listeners in useEffect so it only registers on render
   React.useEffect(() => {
+    socket.connect();
+
     socket.on("new_message", (data: string) => {
       setMessages((prev) => [...prev, data]);
     });
@@ -25,7 +33,7 @@ const Lobby: React.FC = () => {
 
   function handleSend(e: React.FormEvent<HTMLDivElement>): void {
     e.preventDefault();
-    socket.emit("message", draft);
+    socket.emit("message", draft.trim());
     setDraft("");
   }
 
@@ -45,7 +53,7 @@ const Lobby: React.FC = () => {
           </VStack>
           <HStack as="form" onSubmit={handleSend}>
             <Input autoFocus onChange={(e) => setDraft(e.target.value)} value={draft} />
-            <Button colorScheme="teal" type="submit">Send</Button>
+            <Button disabled={draft.trim().length === 0} type="submit">Send</Button>
           </HStack>
         </VStack>
       </Center>
