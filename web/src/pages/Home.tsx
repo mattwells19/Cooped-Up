@@ -4,9 +4,11 @@ import {
   Button, Center, Divider, HStack, PinInput, PinInputField, Text, VStack,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
+import useDocTitle from "../hooks/useDocTitle";
 
 const Home: React.FC = () => {
   const history = useHistory();
+  useDocTitle("Home");
 
   function handleJoinRoom(roomCode: string) {
     // TODO validate room already exists before joining
@@ -33,9 +35,9 @@ const Home: React.FC = () => {
           </Text>
           <Divider />
           <VStack spacing={4}>
-            <Text>Already have a room code? Type it here.</Text>
+            <Text>Already have a room code? Type/paste it here.</Text>
             <HStack>
-              <PinInput autoFocus onComplete={handleJoinRoom} type="alphanumeric">
+              <PinInput autoFocus onComplete={handleJoinRoom} size="lg" type="alphanumeric">
                 <PinInputField />
                 <PinInputField />
                 <PinInputField />
@@ -48,7 +50,7 @@ const Home: React.FC = () => {
             <Text>or</Text>
             <Divider />
           </HStack>
-          <Button onClick={handleNewRoom}>
+          <Button onClick={handleNewRoom} size="lg">
             Start a New Room
           </Button>
         </VStack>

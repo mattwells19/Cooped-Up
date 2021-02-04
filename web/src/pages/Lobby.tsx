@@ -5,9 +5,11 @@ import {
   Button, Center, Divider, Heading, HStack, Input, Text, VStack,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
+import useDocTitle from "../hooks/useDocTitle";
 
 const Lobby: React.FC = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
+  useDocTitle(`Lobby - ${roomCode}`);
   const socket = React.useMemo(() => (
     io("http://localhost:4000", {
       auth: { roomCode },
