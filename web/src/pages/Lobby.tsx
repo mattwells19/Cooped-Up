@@ -11,7 +11,7 @@ const Lobby: React.FC = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
   useDocTitle(`Lobby - ${roomCode}`);
   const socket = React.useMemo(() => (
-    io("http://localhost:4000", {
+    io("/", {
       auth: { roomCode },
       autoConnect: false,
       reconnectionAttempts: 5,

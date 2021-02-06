@@ -1,7 +1,9 @@
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import {
-  Button, Center, Divider, HStack, PinInput, PinInputField, Text, VStack,
+  Alert,
+  AlertIcon,
+  Button, Center, Collapse, Divider, HStack, PinInput, PinInputField, Text, VStack,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
@@ -9,10 +11,20 @@ import useDocTitle from "../hooks/useDocTitle";
 const Home: React.FC = () => {
   const history = useHistory();
   useDocTitle("Home");
+  const [error, setError] = React.useState<boolean>(false);
 
-  function handleJoinRoom(roomCode: string) {
-    // TODO validate room already exists before joining
-    history.push(`/room/${roomCode.toUpperCase()}`);
+  async function handleJoinRoom(roomCode: string) {
+    const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
+      .then((data) => data.json())
+      .catch((err) => { throw Error(err); });
+
+    if (validRoom) history.push(`/room/${roomCode.toUpperCase()}`);
+    else setError(true);
+  }
+
+  function handleRoomCodeChange(code: string) {
+    if (error && code.length !== 4) setError(false);
+    else if (code.length === 4) handleJoinRoom(code);
   }
 
   function handleNewRoom() {
@@ -37,13 +49,25 @@ const Home: React.FC = () => {
           <VStack spacing={4}>
             <Text>Already have a room code? Type/paste it here.</Text>
             <HStack>
-              <PinInput autoFocus onComplete={handleJoinRoom} size="lg" type="alphanumeric">
+              <PinInput
+                autoFocus
+                onChange={handleRoomCodeChange}
+                isInvalid={error}
+                size="lg"
+                type="alphanumeric"
+              >
                 <PinInputField />
                 <PinInputField />
                 <PinInputField />
                 <PinInputField />
               </PinInput>
             </HStack>
+            <Collapse in={error} animateOpacity>
+              <Alert status="warning" width="sm">
+                <AlertIcon />
+                There is no room with that room code. Try a different code or start a new room.
+              </Alert>
+            </Collapse>
           </VStack>
           <HStack width="100%">
             <Divider />
