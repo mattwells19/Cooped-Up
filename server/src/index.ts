@@ -7,10 +7,6 @@ const app = express();
 const httpServer = createServer(app);
 const io: Server = require("socket.io")(httpServer);
 
-// const io: Server = require("socket.io")(httpServer, {
-//   cors: { origin: "http://localhost:8080" },
-// });
-
 /* Socket Implementation */
 io.on("connection", async (socket: Socket) => {
   // can't specify auth object structure so using type assertion to make typescript happy
