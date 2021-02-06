@@ -15,11 +15,19 @@ module.exports = {
     "@snowpack/plugin-postcss",
   ],
   routes: [
-    /* Enable an SPA Fallback in development: */
-    { match: "routes", src: ".*", dest: "/index.html" },
     {
       src: "/socket.io/.*",
       dest: (req, res) => proxy.web(req, res),
+    },
+    {
+      src: "/api/.*",
+      dest: (req, res) => proxy.web(req, res),
+    },
+    /* Enable an SPA Fallback in development: */
+    {
+      match: "routes",
+      src: ".*",
+      dest: "/index.html",
     },
   ],
   optimize: {

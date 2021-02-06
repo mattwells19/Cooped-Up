@@ -28,6 +28,12 @@ io.on("connection", async (socket: Socket) => {
   });
 });
 
+app.get("/api/checkRoom", (req, res) => {
+  const { roomCode } = req.query as { roomCode: string };
+  const roomExists = io.sockets.adapter.rooms.has(roomCode.toUpperCase());
+  res.send(JSON.stringify(roomExists));
+});
+
 /* Ignore for now */
 app.use(express.static(__dirname + "/build"));
 app.get("/", (_, res) => {
