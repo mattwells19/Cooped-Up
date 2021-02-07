@@ -14,41 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: bahmutov/npm-install@v1.4.5
-        with:
-          working-directory: server/
-      - name: Run install
-        run: npm install
-        working-directory: server/
-
-      - name: Run linter for server
-        uses: wearerequired/lint-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          eslint: true
-          eslint_dir: server/
-          eslint_extensions: ts
-
-  lint-web:
-    runs-on: ubuntu-latest
-
-    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - uses: bahmutov/npm-install@v1.4.5
+      - name: Run lint with pnpm
+        uses: creepinson/pnpm-action@master
         with:
-          working-directory: web/
-      - name: Run install
-        run: npm install
-        working-directory: web/
-
-      - name: Run linter for web
-        uses: wearerequired/lint-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          eslint: true
-          eslint_dir: web/
-          eslint_extensions: ts,tsx
+          # Arguments to pass to pnpm as a JSON array
+          arguments: '["-r lint"]'
 
   build:
     runs-on: ubuntu-latest
