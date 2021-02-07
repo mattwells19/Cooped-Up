@@ -17,7 +17,7 @@ jobs:
       - name: Run install with pnpm
         uses: creepinson/pnpm-action@master
         with:
-          arguments: "[-r install]"
+          arguments: '["-r install"]'
 
       - name: Run linter for server
         uses: wearerequired/lint-action@v1
