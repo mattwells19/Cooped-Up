@@ -1,0 +1,1 @@
+web: pnpm -r run start
