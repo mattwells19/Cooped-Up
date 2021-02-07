@@ -18,19 +18,19 @@ jobs:
         uses: wearerequired/lint-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Enable linters
           eslint: true
           eslint_dir: server/
           eslint_extensions: ts
+          eslint_command_prefix: npm install
 
       - name: Run linter for web
         uses: wearerequired/lint-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Enable linters
           eslint: true
           eslint_dir: web/
           eslint_extensions: ts,tsx
+          eslint_command_prefix: npm install
 
   build:
     runs-on: ubuntu-latest
