@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "postbuild": "copyfiles -f src/server.js ../build && rimraf src/server.js",
     "prod": "node server.js",
     "start": "ts-node-dev src/server.ts"
   },

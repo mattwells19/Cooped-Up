@@ -23,9 +23,13 @@ COPY ./web ./web
 # Run the build command for each project
 RUN pnpm -r run build
 
+# Remove project folders after build
+RUN rm -r ./server
+RUN rm -r ./web
+
 # Install dependencies for final build
 WORKDIR /usr/app/build
-RUN npm i
+RUN npm install --only=prod
 
 # Run prod command when running container
 CMD npm run prod

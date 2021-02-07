@@ -1,0 +1,31 @@
+name: Build project
+
+on:
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Run build with pnpm
+        uses: creepinson/pnpm-action@master
+        with:
+          # Arguments to pass to pnpm as a JSON array
+          arguments: '["-r", "build"]'
+
+      - name: Mobe package files from server to build folder
+        run: cp ./server/package*.json ./build/
+
+      - name: Upload build folder as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ./build
