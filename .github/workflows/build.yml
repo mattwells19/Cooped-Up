@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run build with pnpm
+      - name: Run lint with pnpm
         uses: creepinson/pnpm-action@master
         with:
           # Arguments to pass to pnpm as a JSON array
-          arguments: '["install", "-r lint"]'
+          arguments: '["-r lint"]'
 
   build:
     runs-on: ubuntu-latest
