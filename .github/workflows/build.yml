@@ -19,7 +19,7 @@ jobs:
         uses: creepinson/pnpm-action@master
         with:
           # Arguments to pass to pnpm as a JSON array
-          arguments: '["-r", "build"]'
+          arguments: '["-r build"]'
 
       - name: Mobe package files from server to build folder
         run: cp ./server/package*.json ./build/
