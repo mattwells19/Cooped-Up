@@ -8,11 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  lint-server:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
+      - uses: bahmutov/npm-install@v1.4.5
+        with:
+          working-directory: server/
+      - name: Run install
+        run: npm install
+        working-directory: server/
 
       - name: Run linter for server
         uses: wearerequired/lint-action@v1
@@ -23,14 +30,25 @@ jobs:
           eslint_extensions: ts
           eslint_command_prefix: npm install
 
-      - name: Run linter for web
-        uses: wearerequired/lint-action@v1
+  lint-web:
+    runs-on: ubuntu-latest
+
+      - uses: bahmutov/npm-install@v1.4.5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          eslint: true
-          eslint_dir: web/
-          eslint_extensions: ts,tsx
-          eslint_command_prefix: npm install
+          working-directory: web/
+      - name: Run install
+        run: npm install
+        working-directory: web/
+  
+      steps:
+        - name: Run linter for web
+          uses: wearerequired/lint-action@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            eslint: true
+            eslint_dir: web/
+            eslint_extensions: ts,tsx
+            eslint_command_prefix: npm install
 
   build:
     runs-on: ubuntu-latest
