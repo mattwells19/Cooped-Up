@@ -26,14 +26,14 @@ jobs:
         with:
           files: "lint_results"
 
-      - name: Upload lint output folder as artifact
+      - name: Upload lint output folder as artifact if exists
         if: steps.check_files.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: lint_results
           path: ./lint_results
 
-      - name: File exists
+      - name: Validate no linting errors
         if: steps.check_files.outputs.files_exists == 'true'
         run: exit 1
 

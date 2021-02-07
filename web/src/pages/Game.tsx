@@ -5,7 +5,7 @@ interface IGameProps {
   socket: Socket;
 }
 
-const Game: React.FC<IGameProps> = ({ socket }) => (
+const Game: React.FC<IGameProps> = () => (
   <></>
 );
 
