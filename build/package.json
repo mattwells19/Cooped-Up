@@ -4,10 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "postbuild": "copyfiles package.json ../build && copyfiles -f src/server.js ../build",
-    "prod": "node server.js",
-    "start": "ts-node-dev src/server.ts"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
