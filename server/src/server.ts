@@ -1,9 +1,9 @@
-import express from "express";
+import * as express from "express";
 import { createServer } from "http";
 import { Socket, Server } from "socket.io";
 
 /* Server Setup */
-const app = express();
+const app: express.Application = require("express")();
 const httpServer = createServer(app);
 const io: Server = require("socket.io")(httpServer);
 
@@ -31,10 +31,9 @@ app.get("/api/checkRoom", (req, res) => {
 });
 
 /* Ignore for now */
-app.use(express.static(__dirname + "/build"));
-app.get("/", (_, res) => {
-  console.log(__dirname + "/build/index.html");
-  res.sendFile(__dirname + "/build/index.html");
-});
+app.use(express.static(__dirname + "/"));
+app.get(["/", "/room/*"], (_, res) => res.sendFile(__dirname + "/index.html"));
 
-httpServer.listen(4000, () => console.log("Listening on port 4000"));
+httpServer.listen(process.env.PORT || 4000, () =>
+  console.log("Listening on port 4000")
+);
