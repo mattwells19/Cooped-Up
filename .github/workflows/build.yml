@@ -1,0 +1,57 @@
+name: Build project
+
+on:
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run lint with pnpm
+        uses: creepinson/pnpm-action@master
+        with:
+          # Arguments to pass to pnpm as a JSON array
+          arguments: '["-r lint"]'
+
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "lint_results"
+
+      - name: Upload lint output folder as artifact if exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        uses: actions/upload-artifact@v2
+        with:
+          name: lint_results
+          path: ./lint_results
+
+      - name: Validate no linting errors
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: exit 1
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Run build with pnpm
+        uses: creepinson/pnpm-action@master
+        with:
+          # Arguments to pass to pnpm as a JSON array
+          arguments: '["-r build"]'
+
+      - name: Upload build folder as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ./build

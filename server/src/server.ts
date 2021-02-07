@@ -1,9 +1,11 @@
-import express from "express";
+import { Application, static as staticFiles } from "express";
 import { createServer } from "http";
 import { Socket, Server } from "socket.io";
+import path from "path";
 
 /* Server Setup */
-const app = express();
+const app: Application = require("express")();
+
 const httpServer = createServer(app);
 const io: Server = require("socket.io")(httpServer);
 
@@ -30,11 +32,9 @@ app.get("/api/checkRoom", (req, res) => {
   res.send(JSON.stringify(roomExists));
 });
 
-/* Ignore for now */
-app.use(express.static(__dirname + "/build"));
-app.get("/", (_, res) => {
-  console.log(__dirname + "/build/index.html");
-  res.sendFile(__dirname + "/build/index.html");
-});
+/* Used in prod to serve files */
+app.use(staticFiles(path.join(__dirname, "/")));
+app.get(["/", "/room/*"], (_, res) => res.sendFile(path.join(__dirname, "/index.html")));
 
-httpServer.listen(4000, () => console.log("Listening on port 4000"));
+// eslint-disable-next-line no-console
+httpServer.listen(process.env.PORT || 4000, () => console.log(`Listening on port ${process.env.PORT || 4000}`));

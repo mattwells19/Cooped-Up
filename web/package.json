@@ -2,9 +2,7 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "web-test-runner \"src/**/*.test.tsx\"",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "eslint -f compact -o ../lint_results/web_lint_output.txt \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@chakra-ui/react": "^1.2.1",

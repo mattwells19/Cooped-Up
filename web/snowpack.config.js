@@ -41,6 +41,7 @@ module.exports = {
     /* ... */
   },
   buildOptions: {
-    /* ... */
+    clean: false, // prevents the build directory from being deleted between builds
+    out: "../build",
   },
 };
