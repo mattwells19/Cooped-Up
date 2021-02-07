@@ -14,11 +14,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run lint with pnpm
+      - name: Run install with pnpm
         uses: creepinson/pnpm-action@master
+
+      - name: Run linter for server
+        uses: wearerequired/lint-action@v1
         with:
-          # Arguments to pass to pnpm as a JSON array
-          arguments: '["-r lint"]'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable linters
+          eslint: true
+          eslint_dir: server/
+          eslint_extensions: ts
+
+      - name: Run linter for web
+        uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable linters
+          eslint: true
+          eslint_dir: web/
+          eslint_extensions: ts,tsx
 
   build:
     runs-on: ubuntu-latest
