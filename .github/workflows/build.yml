@@ -21,11 +21,8 @@ jobs:
           # Arguments to pass to pnpm as a JSON array
           arguments: '["-r build"]'
 
-      - name: Mobe package files from server to build folder
-        run: cp ./server/package*.json ./build/
-
       - name: Upload build folder as artifact
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ./build
+          path: */build

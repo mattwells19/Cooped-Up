@@ -11,7 +11,6 @@ COPY pnpm-workspace.yaml ./
 # Copy over package and package-lock files for each project
 COPY ./server/package*.json ./server/
 COPY ./web/package*.json ./web/
-COPY ./server/package*.json ./build/
 
 # Install packages for all projects
 RUN pnpm i
