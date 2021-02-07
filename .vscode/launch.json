@@ -25,6 +25,19 @@
       "args": ["start"],
       "type": "node",
       "cwd": "${workspaceFolder}/web"
+    },
+    {
+      "console": "integratedTerminal",
+      "name": "Start Project",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "restart": true,
+      "runtimeExecutable": "pnpm",
+      "args": ["-r", "start"],
+      "type": "node",
+      "cwd": "${workspaceFolder}"
     }
   ],
   "compounds": [
