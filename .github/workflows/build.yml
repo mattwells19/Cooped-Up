@@ -8,6 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run build with pnpm
+        uses: creepinson/pnpm-action@master
+        with:
+          # Arguments to pass to pnpm as a JSON array
+          arguments: '["install", "-r lint"]'
+
   build:
     runs-on: ubuntu-latest
 
