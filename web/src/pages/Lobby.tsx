@@ -1,6 +1,6 @@
 import React from "react";
 import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
   Button, Center, Divider, Heading, HStack, Input, Text, VStack,
 } from "@chakra-ui/react";
@@ -8,6 +8,21 @@ import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 
 const Lobby: React.FC = () => {
+  const history = useHistory();
+
+  async function doesRoomExist() {    
+
+    const location = useLocation();
+    const roomCode = location.pathname.slice(-4).toUpperCase();
+
+    const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
+      .then((data) => data.json())
+      .catch((err) => { throw Error(err); });
+  
+     if (validRoom) history.push(`/room/${roomCode}`);
+    else history.push(`/`);
+  }
+
   const { roomCode } = useParams<{ roomCode: string }>();
   useDocTitle(`Lobby - ${roomCode}`);
   const socket = React.useMemo(() => (
@@ -38,6 +53,9 @@ const Lobby: React.FC = () => {
     socket.emit("message", draft.trim());
     setDraft("");
   }
+
+    doesRoomExist();
+  
 
   return (
     <>

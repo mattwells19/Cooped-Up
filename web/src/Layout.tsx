@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  Redirect, Route, Switch, BrowserRouter,
+  Redirect, Route, Switch, BrowserRouter, useParams
 } from "react-router-dom";
 import Lobby from "./pages/Lobby";
 import Home from "./pages/Home";
