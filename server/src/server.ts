@@ -17,12 +17,19 @@ io.on("connection", async (socket: Socket) => {
 
   try {
     await socket.join(roomCode);
+    const playersInRoom = Array.from(io.sockets.adapter.rooms.get(roomCode) || new Set());
+    io.to(roomCode).emit("players_changed", playersInRoom);
   } catch (e) {
     throw Error(`Cannot join room with code ${roomCode}`);
   }
 
-  socket.on("message", (data: string) => {
-    io.to(roomCode).emit("new_message", data);
+  socket.on("updateGameState", (newGameState: string) => {
+    io.to(roomCode).emit("gameStateUpdate", newGameState);
+  });
+
+  socket.on("disconnect", () => {
+    const playersInRoom = Array.from(io.sockets.adapter.rooms.get(roomCode) || new Set());
+    io.to(roomCode).emit("players_changed", playersInRoom);
   });
 });
 

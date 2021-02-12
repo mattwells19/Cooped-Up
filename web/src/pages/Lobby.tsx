@@ -2,10 +2,11 @@ import React from "react";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import {
-  Button, Center, Divider, Heading, HStack, Input, Text, VStack,
+  Button, Center, Divider, Heading, Text, VStack, HStack,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
+import useGameState from "../hooks/useGameState";
 
 const Lobby: React.FC = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
@@ -18,47 +19,65 @@ const Lobby: React.FC = () => {
     })
   ), [roomCode]);
 
-  const [messages, setMessages] = React.useState<string[]>([]);
-  const [draft, setDraft] = React.useState<string>("");
+  const {
+    players, gameStarted, setPlayers, handleStartGame, handleGameStateUpdate,
+  } = useGameState(socket);
 
   // put socket listeners in useEffect so it only registers on render
   React.useEffect(() => {
     socket.connect();
 
-    socket.on("new_message", (data: string) => {
-      setMessages((prev) => [...prev, data]);
+    socket.on("players_changed", (playersInRoom: string[]) => {
+      if (!gameStarted) {
+        setPlayers(playersInRoom.map((player) => ({
+          coins: 2,
+          influences: [],
+          name: player,
+        })));
+      }
     });
+
+    socket.on("gameStateUpdate", handleGameStateUpdate);
 
     // perform cleanup of socket when component is removed from the DOM
     return () => { socket.off(); };
   }, []);
 
-  function handleSend(e: React.FormEvent<HTMLDivElement>): void {
-    e.preventDefault();
-    socket.emit("message", draft.trim());
-    setDraft("");
-  }
-
   return (
     <>
-      <Header>{roomCode}</Header>
-      <Center marginTop="10">
-        <VStack alignItems="flex-start">
-          <Heading as="h2">Chat</Heading>
-          <Divider />
-          <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
-            {messages.map((message, i) => (
-              // disabling only bc this is temporary
-              // eslint-disable-next-line react/no-array-index-key
-              <Text key={`${message}${i}`}>{message}</Text>
+      {!gameStarted
+      && (
+      <>
+        <Header>{roomCode}</Header>
+        <Center marginTop="10">
+          <VStack alignItems="flex-start">
+            <Heading as="h2">Players</Heading>
+            <Divider />
+            <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
+              {players.map((player) => (
+                <Text key={player.name}>{player.name}</Text>
+              ))}
+            </VStack>
+            <Button onClick={() => handleStartGame()} alignSelf="center">Start Game</Button>
+          </VStack>
+        </Center>
+      </>
+      )}
+      {gameStarted
+      && (
+        <>
+          <VStack>
+            {players.map((player) => (
+              <HStack key={player.name}>
+                <Text>{player.name}</Text>
+                <Text>{player.coins}</Text>
+                <Text>{player.influences[0].type}</Text>
+                <Text>{player.influences[1].type}</Text>
+              </HStack>
             ))}
           </VStack>
-          <HStack as="form" onSubmit={handleSend}>
-            <Input autoFocus onChange={(e) => setDraft(e.target.value)} value={draft} />
-            <Button disabled={draft.trim().length === 0} type="submit">Send</Button>
-          </HStack>
-        </VStack>
-      </Center>
+        </>
+      )}
     </>
   );
 };
