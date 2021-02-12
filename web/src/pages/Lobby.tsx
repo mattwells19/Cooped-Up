@@ -8,17 +8,26 @@ import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 
 const Lobby: React.FC = () => {
+
+  //use history module to push URLs
   const history = useHistory();
 
   async function doesRoomExist() {    
 
+    //Assigne the current url to location
     const location = useLocation();
+
+    //Get the last 4 letters of location (might need to change for error handling)
     const roomCode = location.pathname.slice(-4).toUpperCase();
 
+    //Check if a room exists 
     const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
       .then((data) => data.json())
       .catch((err) => { throw Error(err); });
   
+      //If the room exists then take me to the room
+      //If the room does not exist then take me back home
+      //Can implement an error message whenever this is working properly
      if (validRoom) history.push(`/room/${roomCode}`);
     else history.push(`/`);
   }
