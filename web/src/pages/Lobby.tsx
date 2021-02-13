@@ -12,13 +12,9 @@ const Lobby: React.FC = () => {
   //use history module to push URLs
   const history = useHistory();
 
+  const { roomCode } = useParams<{ roomCode: string }>();
+
   async function doesRoomExist() {    
-
-    //Assigne the current url to location
-    const location = useLocation();
-
-    //Get the last 4 letters of location (might need to change for error handling)
-    const roomCode = location.pathname.slice(-4).toUpperCase();
 
     //Check if a room exists 
     const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
@@ -28,11 +24,11 @@ const Lobby: React.FC = () => {
       //If the room exists then take me to the room
       //If the room does not exist then take me back home
       //Can implement an error message whenever this is working properly
-     if (validRoom) history.push(`/room/${roomCode}`);
-    else history.push(`/`);
-  }
+     if (!validRoom) history.push(`/`);
 
-  const { roomCode } = useParams<{ roomCode: string }>();
+    console.log(roomCode);
+  }
+  
   useDocTitle(`Lobby - ${roomCode}`);
   const socket = React.useMemo(() => (
     io("/", {
