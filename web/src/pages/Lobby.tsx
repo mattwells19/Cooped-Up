@@ -28,7 +28,7 @@ const Lobby: React.FC = () => {
           <FormControl display="flex" flexDirection="column">
             <Button
               alignSelf="center"
-              disabled={players.length < 1 || players.length > 8}
+              disabled={players.length < 3 || players.length > 8}
               onClick={() => handleStartGame()}
               size="lg"
             >

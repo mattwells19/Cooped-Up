@@ -31,7 +31,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   ), [roomCode]);
 
   function handleGameStateUpdate(newGameState: IGameState) {
-    if (!gameStarted) setGameStarted(true);
+    setGameStarted(newGameState.gameStarted);
     setPlayers(newGameState.players);
     setTurn(newGameState.turn);
   }
@@ -53,6 +53,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     setTurn(players[0].name);
 
     const newGameState: IGameState = {
+      gameStarted: true,
       players: playerHands,
       turn: players[0].name,
     };

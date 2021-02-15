@@ -1,6 +1,7 @@
 type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin" | "Inquisitor";
 
 interface IGameState {
+  gameStarted: boolean;
   players: Array<IPlayer>;
   turn: string;
 }
