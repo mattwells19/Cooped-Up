@@ -1,27 +1,36 @@
 import * as React from "react";
-import type { Socket } from "socket.io-client";
-import { Text, VStack, HStack } from "@chakra-ui/react";
-import type { IPlayer } from "../hooks/useGameState";
-import useGameState from "../hooks/useGameState";
+import { Text, Table, Th, Thead, Tr, Td, Tbody } from "@chakra-ui/react";
+import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 
 interface IGameProps {}
 
 const Game: React.FC<IGameProps> = () => {
   const { players } = useGameState();
-  console.log(players.map(player => player.influences))
 
   return (
-    <VStack>
-      {players.map((player) => (
-        <HStack key={player.name}>
-          <Text>{player.name}</Text>
-          <Text>{player.coins}</Text>
-          <Text>{player.influences[0].type}</Text>
-          <Text>{player.influences[1].type}</Text>
-        </HStack>
-      ))}
-    </VStack>
-  )
+    <Table variant="simple">
+      <Thead>
+        <Tr>
+          <Th>Name</Th>
+          <Th isNumeric>Coins</Th>
+          <Th>Influences</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {players.map((player) => (
+          <Tr key={player.name}>
+            <Td>{player.name}</Td>
+            <Td isNumeric>{player.coins}</Td>
+            <Td>
+              {player.influences.map((influence) => (
+                <Text key={`${player.name}-${influence.type}-${Math.random()}`}>{influence.type}</Text>
+              ))}
+            </Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
+  );
 };
 
 export default Game;

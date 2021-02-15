@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import type { IPlayerInfluence } from "../hooks/useGameState";
+import type { IPlayerInfluence } from "../contexts/GameStateContext/types";
 
 const startingDeck: Array<IPlayerInfluence> = [
   {

@@ -1,42 +1,44 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import {
-  Button, Center, Divider, Heading, Text, VStack,
-} from "@chakra-ui/react";
+import { Button, Center, Divider, FormControl, FormHelperText, Heading, Text, VStack } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
-import useGameState from "../hooks/useGameState";
+import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 import Game from "./Game";
 
 const Lobby: React.FC = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
   useDocTitle(`Lobby - ${roomCode}`);
 
-  const {
-    players, gameStarted, handleStartGame,
-  } = useGameState();
+  const { players, gameStarted, handleStartGame } = useGameState();
 
+  if (gameStarted) return <Game />;
   return (
     <>
-      {!gameStarted
-      && (
-      <>
-        <Header>{roomCode}</Header>
-        <Center marginTop="10">
-          <VStack alignItems="flex-start">
-            <Heading as="h2">Players</Heading>
-            <Divider />
-            <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
-              {players.map((player) => (
-                <Text key={player.name}>{player.name}</Text>
-              ))}
-            </VStack>
-            <Button onClick={() => handleStartGame()} alignSelf="center">Start Game</Button>
+      <Header>{roomCode}</Header>
+      <Center marginTop="10">
+        <VStack alignItems="flex-start">
+          <Heading as="h2">Players</Heading>
+          <Divider />
+          <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
+            {players.map((player) => (
+              <Text key={player.name}>{player.name}</Text>
+            ))}
           </VStack>
-        </Center>
-      </>
-      )}
-      {gameStarted && <Game />}
+          <FormControl display="flex" flexDirection="column">
+            <Button
+              alignSelf="center"
+              disabled={players.length < 1 || players.length > 8}
+              onClick={() => handleStartGame()}
+              size="lg"
+            >
+              Start Game
+            </Button>
+            {players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
+            {players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
+          </FormControl>
+        </VStack>
+      </Center>
     </>
   );
 };

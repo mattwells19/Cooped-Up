@@ -23,7 +23,7 @@ io.on("connection", async (socket: Socket) => {
     throw Error(`Cannot join room with code ${roomCode}`);
   }
 
-  socket.on("updateGameState", (newGameState: string) => {
+  socket.on("updateGameState", (newGameState: any) => {
     io.to(roomCode).emit("gameStateUpdate", newGameState);
   });
 
