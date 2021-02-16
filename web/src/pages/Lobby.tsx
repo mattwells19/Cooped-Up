@@ -14,8 +14,10 @@ const Lobby: React.FC = () => {
 
   const { roomCode } = useParams<{ roomCode: string }>();
 
-  async function doesRoomExist() {    
+  function doesRoomExist() {    
 
+    //Timeout function to give a chance to check api
+setTimeout(async function(){
     //Check if a room exists 
     const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
       .then((data) => data.json())
@@ -24,9 +26,11 @@ const Lobby: React.FC = () => {
       //If the room exists then take me to the room
       //If the room does not exist then take me back home
       //Can implement an error message whenever this is working properly
-     if (!validRoom) history.push(`/`);
+     if (!validRoom) history.push(`/`);}, 1);
 
-    console.log(roomCode);
+
+
+    console.log('test');
   }
   
   useDocTitle(`Lobby - ${roomCode}`);
