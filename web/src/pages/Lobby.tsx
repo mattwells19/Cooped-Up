@@ -26,7 +26,7 @@ setTimeout(async function(){
       //If the room exists then take me to the room
       //If the room does not exist then take me back home
       //Can implement an error message whenever this is working properly
-     if (!validRoom) history.push(`/`);}, 1);
+     if (!validRoom) history.push(`/`);}, 50);
 
 
 
