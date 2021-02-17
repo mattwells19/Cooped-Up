@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  Box, BoxProps, Heading, HeadingProps,
-} from "@chakra-ui/react";
+import { Box, BoxProps, Heading, HeadingProps } from "@chakra-ui/react";
 
 interface IHeaderProps {
   boxProps?: BoxProps;
