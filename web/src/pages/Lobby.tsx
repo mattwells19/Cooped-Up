@@ -14,24 +14,22 @@ const Lobby: React.FC = () => {
 
   const { roomCode } = useParams<{ roomCode: string }>();
 
-  function doesRoomExist() {    
-
-    //Timeout function to give a chance to check api
-setTimeout(async function(){
-    //Check if a room exists 
-    const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
+  React.useEffect(() => {
+    async function doesRoomExist () {
+      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
       .then((data) => data.json())
       .catch((err) => { throw Error(err); });
   
       //If the room exists then take me to the room
       //If the room does not exist then take me back home
       //Can implement an error message whenever this is working properly
-     if (!validRoom) history.push(`/`);}, 50);
+     if (!validRoom) history.push(`/`);
+    }
 
+    doesRoomExist();
 
-
-    console.log('test');
-  }
+    return () => { };
+  }, [])
   
   useDocTitle(`Lobby - ${roomCode}`);
   const socket = React.useMemo(() => (
@@ -61,10 +59,7 @@ setTimeout(async function(){
     e.preventDefault();
     socket.emit("message", draft.trim());
     setDraft("");
-  }
-
-    doesRoomExist();
-  
+  }  
 
   return (
     <>
