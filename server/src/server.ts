@@ -2,6 +2,8 @@ import { Application, static as staticFiles } from "express";
 import { createServer } from "http";
 import { Socket, Server } from "socket.io";
 import path from "path";
+import { sample as _sample } from "lodash";
+import { alphabet } from "./constants";
 
 /* Server Setup */
 const app: Application = require("express")();
@@ -37,6 +39,19 @@ app.get("/api/checkRoom", (req, res) => {
   const { roomCode } = req.query as { roomCode: string };
   const roomExists = io.sockets.adapter.rooms.has(roomCode.toUpperCase());
   res.send(JSON.stringify(roomExists));
+});
+
+app.get("/api/newRoom", (req, res) => {
+  let roomCode: string = "";
+  do {
+    roomCode = _sample(alphabet)! + _sample(alphabet) + _sample(alphabet) + _sample(alphabet);
+  } while (io.sockets.adapter.rooms.has(roomCode));
+
+  res.send(
+    JSON.stringify({
+      roomCode,
+    }),
+  );
 });
 
 /* Used in prod to serve files */

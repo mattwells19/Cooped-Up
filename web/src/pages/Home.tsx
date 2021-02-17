@@ -32,14 +32,22 @@ const Home: React.FC = () => {
     else setError(true);
   }
 
+  async function getNewRoomCode(): Promise<string> {
+    return fetch("/api/newRoom", {
+      method: "GET",
+    })
+      .then((data) => data.json())
+      .then((data) => data.roomCode)
+      .catch((err) => { throw Error(err); });
+  }
+
   function handleRoomCodeChange(code: string) {
     if (error && code.length !== 4) setError(false);
     else if (code.length === 4) handleJoinRoom(code);
   }
 
-  function handleNewRoom() {
-    // TODO: generate new room code
-    const roomCode = "NEW";
+  async function handleNewRoom() {
+    const roomCode = await getNewRoomCode();
     history.push(`/room/${roomCode}`);
   }
 
