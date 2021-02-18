@@ -12,30 +12,24 @@ const Lobby: React.FC = () => {
 
   const { roomCode } = useParams<{ roomCode: string }>();
 
-  function doesRoomExist() {
-    // Timeout function to give a chance to check api
-    setTimeout(async () => {
-    // Check if a room exists
-      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, {
-        method: "GET",
-      })
-        .then((data) => data.json())
-        .catch((err) => { throw Error(err); });
+  React.useEffect(() => {
+    async function doesRoomExist () {
+      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
+      .then((data) => data.json())
+      .catch((err) => { throw Error(err); });
+  
+      //If the room exists then take me to the room
+      //If the room does not exist then take me back home
+      //Can implement an error message whenever this is working properly
+     if (!validRoom) history.push(`/`);
+    }
 
-      // If the room exists then take me to the room
-      // If the room does not exist then take me back home
-      // Can implement an error message whenever this is working properly
-      if (!validRoom) history.push(`/`);
-    }, 50);
-
-    console.log("test");
-  }
+    doesRoomExist();
+  }, [])
 
   useDocTitle(`Lobby - ${roomCode}`);
 
   const { players, gameStarted, handleStartGame } = useGameState();
-
-  doesRoomExist();
 
   if (gameStarted) return <Game />;
   return (
