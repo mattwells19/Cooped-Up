@@ -13,10 +13,13 @@ const Lobby: React.FC = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
 
   React.useEffect(() => {
-    async function doesRoomExist () {
-      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
+    async function doesRoomExist() {
+      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
+        {
+          method: "GET",
+        })
         .then((data) => data.json())
-        .catch((err) => { throw Error(err); }); 
+        .catch((err) => { throw Error(err); });
       if (!validRoom) history.push(`/`);
     }
 
