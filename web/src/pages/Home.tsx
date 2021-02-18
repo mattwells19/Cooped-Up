@@ -39,8 +39,13 @@ const Home: React.FC = () => {
 
   function handleNewRoom() {
     // TODO: generate new room code
-    const roomCode = "NEW";
-    history.push(`/room/${roomCode}`);
+    const roomCode = "NEWW";
+    history.push({
+      pathname: `/room/${roomCode}`,
+      state: {
+        newRoom: true,
+      },
+    });
   }
 
   return (

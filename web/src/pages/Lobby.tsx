@@ -1,13 +1,37 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { Button, Center, Divider, FormControl, FormHelperText, Heading, Text, VStack } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 import Game from "./Game";
 
-const Lobby: React.FC = () => {
+interface ILobbyProps {
+  newRoom: boolean | undefined;
+}
+
+const Lobby: React.FC<ILobbyProps> = ({ newRoom }) => {
+  // use history module to push URLs
+  const history = useHistory();
+
   const { roomCode } = useParams<{ roomCode: string }>();
+
+  React.useEffect(() => {
+    async function doesRoomExist() {
+      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
+        {
+          method: "GET",
+        })
+        .then((data) => data.json())
+        .catch((err) => { throw Error(err); });
+
+      if (!validRoom) history.push(`/`);
+    }
+    if (!newRoom) {
+      doesRoomExist();
+    }
+  }, []);
+
   useDocTitle(`Lobby - ${roomCode}`);
 
   const { players, gameStarted, handleStartGame } = useGameState();
