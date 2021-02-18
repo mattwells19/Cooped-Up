@@ -1,15 +1,13 @@
 import React from "react";
-import { io } from "socket.io-client";
-import { useParams, useHistory, useLocation } from "react-router-dom";
-import {
-  Button, Center, Divider, Heading, HStack, Input, Text, VStack,
-} from "@chakra-ui/react";
+import { useParams, useHistory } from "react-router-dom";
+import { Button, Center, Divider, FormControl, FormHelperText, Heading, Text, VStack } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
+import { useGameState } from "../contexts/GameStateContext/GameStateContext";
+import Game from "./Game";
 
 const Lobby: React.FC = () => {
-
-  //use history module to push URLs
+  // use history module to push URLs
   const history = useHistory();
 
   const { roomCode } = useParams<{ roomCode: string }>();
@@ -40,45 +38,35 @@ const Lobby: React.FC = () => {
     })
   ), [roomCode]);
 
-  const [messages, setMessages] = React.useState<string[]>([]);
-  const [draft, setDraft] = React.useState<string>("");
+  useDocTitle(`Lobby - ${roomCode}`);
 
-  // put socket listeners in useEffect so it only registers on render
-  React.useEffect(() => {
-    socket.connect();
+  const { players, gameStarted, handleStartGame } = useGameState();
 
-    socket.on("new_message", (data: string) => {
-      setMessages((prev) => [...prev, data]);
-    });
-
-    // perform cleanup of socket when component is removed from the DOM
-    return () => { socket.off(); };
-  }, []);
-
-  function handleSend(e: React.FormEvent<HTMLDivElement>): void {
-    e.preventDefault();
-    socket.emit("message", draft.trim());
-    setDraft("");
-  }  
-
+  if (gameStarted) return <Game />;
   return (
     <>
       <Header>{roomCode}</Header>
       <Center marginTop="10">
         <VStack alignItems="flex-start">
-          <Heading as="h2">Chat</Heading>
+          <Heading as="h2">Players</Heading>
           <Divider />
           <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
-            {messages.map((message, i) => (
-              // disabling only bc this is temporary
-              // eslint-disable-next-line react/no-array-index-key
-              <Text key={`${message}${i}`}>{message}</Text>
+            {players.map((player) => (
+              <Text key={player.name}>{player.name}</Text>
             ))}
           </VStack>
-          <HStack as="form" onSubmit={handleSend}>
-            <Input autoFocus onChange={(e) => setDraft(e.target.value)} value={draft} />
-            <Button disabled={draft.trim().length === 0} type="submit">Send</Button>
-          </HStack>
+          <FormControl display="flex" flexDirection="column">
+            <Button
+              alignSelf="center"
+              disabled={players.length < 3 || players.length > 8}
+              onClick={() => handleStartGame()}
+              size="lg"
+            >
+              Start Game
+            </Button>
+            {players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
+            {players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
+          </FormControl>
         </VStack>
       </Center>
     </>

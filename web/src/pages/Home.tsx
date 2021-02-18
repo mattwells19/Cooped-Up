@@ -3,7 +3,15 @@ import { useHistory } from "react-router-dom";
 import {
   Alert,
   AlertIcon,
-  Button, Center, Collapse, Divider, HStack, PinInput, PinInputField, Text, VStack,
+  Button,
+  Center,
+  Collapse,
+  Divider,
+  HStack,
+  PinInput,
+  PinInputField,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
@@ -14,7 +22,9 @@ const Home: React.FC = () => {
   const [error, setError] = React.useState<boolean>(false);
 
   async function handleJoinRoom(roomCode: string) {
-    const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, { method: "GET" })
+    const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, {
+      method: "GET",
+    })
       .then((data) => data.json())
       .catch((err) => { throw Error(err); });
 
