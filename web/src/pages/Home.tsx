@@ -48,7 +48,12 @@ const Home: React.FC = () => {
 
   async function handleNewRoom() {
     const roomCode = await getNewRoomCode();
-    history.push(`/room/${roomCode}`);
+    history.push({
+      pathname: `/room/${roomCode}`,
+      state: {
+        newRoom: true,
+      },
+    });
   }
 
   return (
