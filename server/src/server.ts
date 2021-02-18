@@ -47,11 +47,7 @@ app.get("/api/newRoom", (req, res) => {
     roomCode = _sample(alphabet)! + _sample(alphabet) + _sample(alphabet) + _sample(alphabet);
   } while (io.sockets.adapter.rooms.has(roomCode));
 
-  res.send(
-    JSON.stringify({
-      roomCode,
-    }),
-  );
+  res.send(JSON.stringify(roomCode));
 });
 
 /* Used in prod to serve files */

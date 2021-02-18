@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 import Game from "./Game";
+import get from "../utils/get";
 
 interface ILobbyProps {
   newRoom: boolean | undefined;
@@ -17,12 +18,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
   React.useEffect(() => {
     async function doesRoomExist() {
-      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
-        {
-          method: "GET",
-        })
-        .then((data) => data.json())
-        .catch((err) => { throw Error(err); });
+      const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
       if (!validRoom) history.push(`/`);
     }

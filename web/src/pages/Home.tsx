@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
+import get from "../utils/get";
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -22,23 +23,10 @@ const Home: React.FC = () => {
   const [error, setError] = React.useState<boolean>(false);
 
   async function handleJoinRoom(roomCode: string) {
-    const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`, {
-      method: "GET",
-    })
-      .then((data) => data.json())
-      .catch((err) => { throw Error(err); });
+    const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
     if (validRoom) history.push(`/room/${roomCode.toUpperCase()}`);
     else setError(true);
-  }
-
-  async function getNewRoomCode(): Promise<string> {
-    return fetch("/api/newRoom", {
-      method: "GET",
-    })
-      .then((data) => data.json())
-      .then((data) => data.roomCode)
-      .catch((err) => { throw Error(err); });
   }
 
   function handleRoomCodeChange(code: string) {
@@ -47,7 +35,8 @@ const Home: React.FC = () => {
   }
 
   async function handleNewRoom() {
-    const roomCode = await getNewRoomCode();
+    const roomCode = await get<string>("newRoom");
+
     history.push({
       pathname: `/room/${roomCode}`,
       state: {
