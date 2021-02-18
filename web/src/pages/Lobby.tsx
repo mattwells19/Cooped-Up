@@ -18,18 +18,18 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom }) => {
 
   React.useEffect(() => {
     async function doesRoomExist() {
-      if (!newRoom) {
-        const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
-          {
-            method: "GET",
-          })
-          .then((data) => data.json())
-          .catch((err) => { throw Error(err); });
+      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
+        {
+          method: "GET",
+        })
+        .then((data) => data.json())
+        .catch((err) => { throw Error(err); });
 
-        if (!validRoom) history.push(`/`);
-      }
+      if (!validRoom) history.push(`/`);
     }
-    doesRoomExist();
+    if (!newRoom) {
+      doesRoomExist();
+    }
   }, []);
 
   useDocTitle(`Lobby - ${roomCode}`);
