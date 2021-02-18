@@ -30,13 +30,6 @@ const Lobby: React.FC = () => {
   }, [])
   
   useDocTitle(`Lobby - ${roomCode}`);
-  const socket = React.useMemo(() => (
-    io("/", {
-      auth: { roomCode },
-      autoConnect: false,
-      reconnectionAttempts: 5,
-    })
-  ), [roomCode]);
 
   const [messages, setMessages] = React.useState<string[]>([]);
   const [draft, setDraft] = React.useState<string>("");
