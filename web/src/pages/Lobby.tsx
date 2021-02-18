@@ -6,7 +6,11 @@ import useDocTitle from "../hooks/useDocTitle";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 import Game from "./Game";
 
-const Lobby: React.FC = () => {
+interface ILobbyProps {
+  newRoom: boolean | undefined;
+}
+
+const Lobby: React.FC<ILobbyProps> = ({ newRoom }) => {
   // use history module to push URLs
   const history = useHistory();
 
@@ -14,15 +18,17 @@ const Lobby: React.FC = () => {
 
   React.useEffect(() => {
     async function doesRoomExist() {
-      const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
-        {
-          method: "GET",
-        })
-        .then((data) => data.json())
-        .catch((err) => { throw Error(err); });
-      if (!validRoom) history.push(`/`);
-    }
+      if (!newRoom) {
+        const validRoom = await fetch(`/api/checkRoom?roomCode=${roomCode}`,
+          {
+            method: "GET",
+          })
+          .then((data) => data.json())
+          .catch((err) => { throw Error(err); });
 
+        if (!validRoom) history.push(`/`);
+      }
+    }
     doesRoomExist();
   }, []);
 
