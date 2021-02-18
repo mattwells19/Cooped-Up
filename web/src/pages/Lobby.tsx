@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Button, Center, Divider, FormControl, FormHelperText, Heading, Text, VStack } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
@@ -8,13 +8,12 @@ import Game from "./Game";
 
 interface ILobbyProps {
   newRoom: boolean | undefined;
+  roomCode: string;
 }
 
-const Lobby: React.FC<ILobbyProps> = ({ newRoom }) => {
+const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
   // use history module to push URLs
   const history = useHistory();
-
-  const { roomCode } = useParams<{ roomCode: string }>();
 
   React.useEffect(() => {
     async function doesRoomExist() {
@@ -27,9 +26,8 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom }) => {
 
       if (!validRoom) history.push(`/`);
     }
-    if (!newRoom) {
-      doesRoomExist();
-    }
+
+    if (!newRoom) doesRoomExist();
   }, []);
 
   useDocTitle(`Lobby - ${roomCode}`);

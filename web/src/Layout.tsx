@@ -4,8 +4,12 @@ import Lobby from "./pages/Lobby";
 import Home from "./pages/Home";
 import GameStateContextProvider from "./contexts/GameStateContext/GameStateContext";
 
-interface LobbyRouteState {
+interface ILobbyRouteState {
   newRoom: boolean | undefined
+}
+
+interface ILobbyRouteParams {
+  roomCode: string;
 }
 
 const Layout: React.FC = () => (
@@ -15,7 +19,10 @@ const Layout: React.FC = () => (
         path="/room/:roomCode"
         render={(props) => (
           <GameStateContextProvider>
-            <Lobby newRoom={(props.location.state as LobbyRouteState)?.newRoom} />
+            <Lobby
+              newRoom={(props.location.state as ILobbyRouteState)?.newRoom}
+              roomCode={(props.match.params as ILobbyRouteParams).roomCode}
+            />
           </GameStateContextProvider>
         )}
       />
