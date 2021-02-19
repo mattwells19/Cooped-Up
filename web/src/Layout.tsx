@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Redirect, Route, Switch, BrowserRouter } from "react-router-dom";
+import { Redirect, Route, Switch, BrowserRouter, RouteComponentProps } from "react-router-dom";
 import Lobby from "./pages/Lobby";
 import Home from "./pages/Home";
 import GameStateContextProvider from "./contexts/GameStateContext/GameStateContext";
 
-interface ILobbyRouteState {
+type ILobbyRouteState = {
   newRoom: boolean | undefined
 }
 
-interface ILobbyRouteParams {
+type ILobbyRouteParams = {
   roomCode: string;
 }
 
@@ -17,11 +17,11 @@ const Layout: React.FC = () => (
     <Switch>
       <Route
         path="/room/:roomCode"
-        render={(props) => (
+        render={({ location, match }: RouteComponentProps<ILobbyRouteParams>) => (
           <GameStateContextProvider>
             <Lobby
-              newRoom={(props.location.state as ILobbyRouteState)?.newRoom}
-              roomCode={(props.match.params as ILobbyRouteParams).roomCode}
+              newRoom={(location.state as ILobbyRouteState)?.newRoom}
+              roomCode={match.params.roomCode}
             />
           </GameStateContextProvider>
         )}
