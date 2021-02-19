@@ -1,6 +1,5 @@
 /**
- * This function is a wrapper for fetch calls to the API that
- * handles the json conversion and error catching fro you.
+ * This function is a wrapper that handles the json conversion and error catching for you for API calls.
  * @param endpoint The API endpoint to contact
  */
 export default async function get<T>(endpoint: string): Promise<T> {
