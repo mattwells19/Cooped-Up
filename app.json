@@ -7,5 +7,5 @@
       "size": "free"
     }
   },
-  "image": "heroku/nodejs"
+  "stack": "container"
 }
