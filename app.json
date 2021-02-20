@@ -7,5 +7,5 @@
       "size": "free"
     }
   },
-  "image": "Dockerfile"
+  "image": "heroku/nodejs"
 }
