@@ -6,5 +6,6 @@
       "quantity": 1,
       "size": "free"
     }
-  }
+  },
+  "image": "Dockerfile"
 }
