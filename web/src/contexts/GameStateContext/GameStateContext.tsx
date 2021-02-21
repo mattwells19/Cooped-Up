@@ -5,6 +5,7 @@ import deck from "../../utils/Deck";
 import type { IGameState, IGameStateContext, IPlayer } from "./types";
 
 export const GameStateContext = React.createContext<IGameStateContext>({
+  currentPlayerName: "",
   gameStarted: false,
   players: [],
   turn: "",
@@ -83,6 +84,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   return (
     <GameStateContext.Provider
       value={{
+        currentPlayerName: socket.id,
         gameStarted,
         players,
         turn,

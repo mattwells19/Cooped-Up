@@ -18,6 +18,7 @@ interface IPlayer {
 }
 
 interface IGameStateContext {
+  currentPlayerName: string;
   gameStarted: boolean;
   players: Array<IPlayer>;
   turn: string;
