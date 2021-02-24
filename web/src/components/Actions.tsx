@@ -1,4 +1,4 @@
-import { Button, Wrap, WrapItem, Text, VStack, ButtonProps } from "@chakra-ui/react";
+import { Button, Wrap, WrapItem, Text, VStack, ButtonProps, useColorModeValue } from "@chakra-ui/react";
 import * as React from "react";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 
@@ -15,9 +15,8 @@ const Actions: React.FC = () => {
       <Text fontSize="lg" alignSelf="flex-start">Actions</Text>
       <Wrap
         align="center"
+        backgroundColor={useColorModeValue("gray.200", "gray.700")}
         justify="space-evenly"
-        border="2px solid"
-        borderColor="grey.400"
         borderRadius="10px"
         height="280px"
         padding="3"

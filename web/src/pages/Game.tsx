@@ -15,15 +15,15 @@ const Game: React.FC<IGameProps> = () => {
   const otherPlayers = players.filter((player) => player.name.localeCompare(currentPlayerName) !== 0);
 
   return (
-    <Box height="100vh">
-      <Wrap justify="center" spacing="60px" maxWidth="90%" margin="auto" paddingTop="5vh">
+    <Box height="100vh" paddingTop="20">
+      <Wrap justify="center" spacing="60px" maxWidth="90%" margin="auto">
         {otherPlayers.map((player) => (
           <WrapItem key={player.name}>
             <PlayerHand player={player} />
           </WrapItem>
         ))}
       </Wrap>
-      <HStack bottom="5vh" position="absolute" spacing="60px" width="100%" justifyContent="center">
+      <HStack bottom="20" position="absolute" spacing="60px" width="100%" justifyContent="center">
         <PlayerHand player={currentPlayer} isCurrentPlayer />
         <Actions />
       </HStack>
