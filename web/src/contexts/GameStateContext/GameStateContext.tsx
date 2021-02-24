@@ -61,18 +61,28 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     handleGameEvent(newGameState);
   };
 
+  React.useEffect(() => {
+    socket.off("players_changed");
+    socket.on("players_changed", (playersInRoom: string[]) => {
+      // only update player list if someone left once the game has started
+      if (gameStarted && playersInRoom.length < players.length) {
+        setPlayers((prevplayers) => (
+          prevplayers.filter((player) => playersInRoom.find((p) => p === player.name))
+        ));
+      }
+    });
+  }, [gameStarted]);
+
   // put socket listeners in useEffect so it only registers on render
   React.useEffect(() => {
     if (!socket.connected) socket.connect();
 
     socket.on("players_changed", (playersInRoom: string[]) => {
-      if (!gameStarted) {
-        setPlayers(playersInRoom.map((player) => ({
-          coins: 2,
-          influences: [],
-          name: player,
-        })));
-      }
+      setPlayers(playersInRoom.map((player) => ({
+        coins: 2,
+        influences: [],
+        name: player,
+      })));
     });
 
     socket.on("gameStateUpdate", handleGameStateUpdate);
