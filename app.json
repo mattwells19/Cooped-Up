@@ -1,0 +1,11 @@
+{
+  "name": "Cooped Up",
+  "description": "A web-based version of the popular card game Coup.",
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "stack": "container"
+}
