@@ -23,6 +23,7 @@
     "@snowpack/web-test-runner-plugin": "^0.2.0",
     "@testing-library/react": "^11.0.0",
     "@types/chai": "^4.2.13",
+    "@types/history": "^4.7.8",
     "@types/mocha": "^8.2.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
