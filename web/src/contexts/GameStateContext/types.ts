@@ -12,13 +12,14 @@ interface IPlayerInfluence {
 }
 
 interface IPlayer {
+  id: string;
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
 }
 
 interface IGameStateContext {
-  currentPlayerName: string;
+  currentPlayerId: string;
   gameStarted: boolean;
   players: Array<IPlayer>;
   turn: string;

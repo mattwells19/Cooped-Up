@@ -48,7 +48,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Header>Cooped Up</Header>
-      <Center margin="auto" marginTop="10" maxWidth="lg">
+      <Center marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
           <Text paddingX="4" fontSize="large">
             So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,

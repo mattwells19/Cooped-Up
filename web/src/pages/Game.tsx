@@ -7,12 +7,12 @@ import Actions from "../components/Actions";
 interface IGameProps {}
 
 const Game: React.FC<IGameProps> = () => {
-  const { currentPlayerName, players } = useGameState();
+  const { currentPlayerId, players } = useGameState();
 
-  const currentPlayer = players.find((player) => player.name.localeCompare(currentPlayerName) === 0);
+  const currentPlayer = players.find((player) => player.id.localeCompare(currentPlayerId) === 0);
   if (!currentPlayer) throw Error("Current player not found in players.");
 
-  const otherPlayers = players.filter((player) => player.name.localeCompare(currentPlayerName) !== 0);
+  const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayerId) !== 0);
 
   return (
     <Box height="100vh" paddingTop="20">

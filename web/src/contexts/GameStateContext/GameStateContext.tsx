@@ -5,7 +5,7 @@ import deck from "../../utils/Deck";
 import type { IGameState, IGameStateContext, IPlayer } from "./types";
 
 export const GameStateContext = React.createContext<IGameStateContext>({
-  currentPlayerName: "",
+  currentPlayerId: "",
   gameStarted: false,
   players: [],
   turn: "",
@@ -67,7 +67,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
       // only update player list if someone left once the game has started
       if (gameStarted && playersInRoom.length < players.length) {
         setPlayers((prevplayers) => (
-          prevplayers.filter((player) => playersInRoom.find((p) => p === player.name))
+          prevplayers.filter((player) => playersInRoom.find((p) => p === player.id))
         ));
       }
     });
@@ -78,10 +78,11 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     if (!socket.connected) socket.connect();
 
     socket.on("players_changed", (playersInRoom: string[]) => {
-      setPlayers(playersInRoom.map((player) => ({
+      setPlayers(playersInRoom.map((playerId) => ({
+        id: playerId,
         coins: 2,
         influences: [],
-        name: player,
+        name: playerId, // set name to playerId until actual name is available
       })));
     });
 
@@ -94,7 +95,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   return (
     <GameStateContext.Provider
       value={{
-        currentPlayerName: socket.id,
+        currentPlayerId: socket.id,
         gameStarted,
         players,
         turn,
