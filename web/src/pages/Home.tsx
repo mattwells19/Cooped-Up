@@ -54,18 +54,18 @@ const Home: React.FC<ILobbyProps> = ({ redirect }) => {
   React.useEffect(() => {
     if (redirect) {
       toast({
-        title: "",
-        description: "Unable to create user account.",
+        title: "The room you tried to join doesn't exist.",
+        description: "Double check you have the correct room code, or start a new room.",
         status: "error",
-        duration: 3000,
+        duration: 7000,
         isClosable: true,
+        position: "top-right",
       });
       history.push({
         state: {
-          redirect: false,
+          redirect: undefined,
         },
       });
-      console.log(redirect);
     }
   }, []);
 
