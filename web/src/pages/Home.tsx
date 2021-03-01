@@ -12,14 +12,19 @@ import {
   PinInputField,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
-import Toast from "../components/Toast";
 import useDocTitle from "../hooks/useDocTitle";
 import get from "../utils/get";
 
-const Home: React.FC = () => {
+interface ILobbyProps {
+  redirect: boolean | undefined;
+}
+
+const Home: React.FC<ILobbyProps> = ({ redirect }) => {
   const history = useHistory();
+  const toast = useToast();
   useDocTitle("Home");
   const [error, setError] = React.useState<boolean>(false);
 
@@ -45,6 +50,19 @@ const Home: React.FC = () => {
       },
     });
   }
+
+  React.useEffect(() => {
+    if (redirect) {
+      toast({
+        title: "",
+        description: "Unable to create user account.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.log(redirect);
+    }
+  }, []);
 
   return (
     <>
@@ -92,7 +110,6 @@ const Home: React.FC = () => {
           </Button>
         </VStack>
       </Center>
-      <Toast />
     </>
   );
 };

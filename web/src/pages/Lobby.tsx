@@ -20,7 +20,14 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
     async function doesRoomExist() {
       const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
-      if (!validRoom) history.push(`/`);
+      if (!validRoom) {
+        history.push({
+          pathname: `/`,
+          state: {
+            redirect: true,
+          },
+        });
+      }
     }
 
     if (!newRoom) doesRoomExist();
