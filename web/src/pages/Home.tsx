@@ -60,6 +60,11 @@ const Home: React.FC<ILobbyProps> = ({ redirect }) => {
         duration: 3000,
         isClosable: true,
       });
+      history.push({
+        state: {
+          redirect: false,
+        },
+      });
       console.log(redirect);
     }
   }, []);
