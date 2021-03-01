@@ -14,6 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
+import Toast from "../components/Toast";
 import useDocTitle from "../hooks/useDocTitle";
 import get from "../utils/get";
 
@@ -91,6 +92,7 @@ const Home: React.FC = () => {
           </Button>
         </VStack>
       </Center>
+      <Toast />
     </>
   );
 };
