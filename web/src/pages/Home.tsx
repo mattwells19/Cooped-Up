@@ -12,13 +12,19 @@ import {
   PinInputField,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 import get from "../utils/get";
 
-const Home: React.FC = () => {
+interface ILobbyProps {
+  invalidRoomCode: boolean | undefined;
+}
+
+const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   const history = useHistory();
+  const toast = useToast();
   useDocTitle("Home");
   const [error, setError] = React.useState<boolean>(false);
 
@@ -44,6 +50,24 @@ const Home: React.FC = () => {
       },
     });
   }
+
+  React.useEffect(() => {
+    if (invalidRoomCode) {
+      toast({
+        title: "The room you tried to join doesn't exist.",
+        description: "Double check you have the correct room code, or start a new room.",
+        status: "error",
+        duration: 7000,
+        isClosable: true,
+        position: "top-right",
+      });
+      history.push({
+        state: {
+          invalidRoomCode: undefined,
+        },
+      });
+    }
+  }, []);
 
   return (
     <>
