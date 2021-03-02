@@ -19,10 +19,10 @@ import useDocTitle from "../hooks/useDocTitle";
 import get from "../utils/get";
 
 interface ILobbyProps {
-  redirect: boolean | undefined;
+  invalidRoomCode: boolean | undefined;
 }
 
-const Home: React.FC<ILobbyProps> = ({ redirect }) => {
+const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   const history = useHistory();
   const toast = useToast();
   useDocTitle("Home");
@@ -52,7 +52,7 @@ const Home: React.FC<ILobbyProps> = ({ redirect }) => {
   }
 
   React.useEffect(() => {
-    if (redirect) {
+    if (invalidRoomCode) {
       toast({
         title: "The room you tried to join doesn't exist.",
         description: "Double check you have the correct room code, or start a new room.",
@@ -63,7 +63,7 @@ const Home: React.FC<ILobbyProps> = ({ redirect }) => {
       });
       history.push({
         state: {
-          redirect: undefined,
+          invalidRoomCode: undefined,
         },
       });
     }

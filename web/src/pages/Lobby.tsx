@@ -24,7 +24,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
         history.push({
           pathname: `/`,
           state: {
-            redirect: true,
+            invalidRoomCode: true,
           },
         });
       }

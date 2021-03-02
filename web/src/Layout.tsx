@@ -9,7 +9,7 @@ type LobbyRouteStateType = {
 }
 
 type HomeRouteStateType = {
-  redirect: boolean | undefined;
+  invalidRoomCode: boolean | undefined;
 }
 
 type LobbyRouteParamsType = {
@@ -34,7 +34,7 @@ const Layout: React.FC = () => (
         path="/"
         render={({ location }: RouteComponentProps<LobbyRouteParamsType>) => (
           <Home
-            redirect={(location.state as HomeRouteStateType)?.redirect}
+            invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode}
           />
         )}
       />
