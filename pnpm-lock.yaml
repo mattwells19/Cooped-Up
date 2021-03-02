@@ -30,6 +30,7 @@ importers:
       '@emotion/styled': 11.1.5_a444bc1706cb5f754e69bc6eb4e89491
       framer-motion: 3.9.0_react-dom@17.0.1+react@17.0.1
       http-proxy: 1.18.1
+      lodash: 4.17.21
       react: 17.0.1
       react-dom: 17.0.1_react@17.0.1
       react-router-dom: 5.2.0_react@17.0.1
@@ -84,6 +85,7 @@ importers:
       eslint-plugin-react-hooks: ^4.2.0
       framer-motion: ^3.9.0
       http-proxy: ^1.18.1
+      lodash: ^4.17.21
       prettier: ^2.2.1
       react: ^17.0.1
       react-dom: ^17.0.1
