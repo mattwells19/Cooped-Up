@@ -55,7 +55,7 @@ const Home: React.FC = () => {
             but you can&apos;t because the virus is still at large. What better way to connect with your friends
             than with a little bit of deception!&nbsp;
             <Text fontWeight="bold" as="span">Cooped Up</Text>
-            &nbsp;is based on the popular card game Coup.
+            &nbsp;is based on the popular board game Coup.
           </Text>
           <Divider />
           <VStack spacing={4}>

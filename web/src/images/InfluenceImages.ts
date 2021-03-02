@@ -5,7 +5,6 @@ import Blank from "./Blank.png";
 import Captain from "./Captain.png";
 import Contessa from "./Contessa.png";
 import Duke from "./Duke.png";
-import Inquisitor from "./Inquisitor.png";
 
 const InfluenceImages = new Map<Influence | "Blank", string>([
   ["Ambassador", Ambassador],
@@ -13,7 +12,6 @@ const InfluenceImages = new Map<Influence | "Blank", string>([
   ["Captain", Captain],
   ["Contessa", Contessa],
   ["Duke", Duke],
-  ["Inquisitor", Inquisitor],
   ["Blank", Blank],
 ]);
 
