@@ -32,7 +32,7 @@ const Layout: React.FC = () => (
       />
       <Route
         path="/"
-        render={({ location }: RouteComponentProps<LobbyRouteParamsType>) => (
+        render={({ location }) => (
           <Home
             invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode}
           />
