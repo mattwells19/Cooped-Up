@@ -1,4 +1,4 @@
-type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin" | "Inquisitor";
+type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
 interface IGameState {
   gameStarted: boolean;

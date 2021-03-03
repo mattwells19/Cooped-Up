@@ -62,18 +62,6 @@ const startingDeck: Array<IPlayerInfluence> = [
     type: "Contessa",
     isDead: false,
   },
-  {
-    type: "Inquisitor",
-    isDead: false,
-  },
-  {
-    type: "Inquisitor",
-    isDead: false,
-  },
-  {
-    type: "Inquisitor",
-    isDead: false,
-  },
 ];
 
 class Deck {

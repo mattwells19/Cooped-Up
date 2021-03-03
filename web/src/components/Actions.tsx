@@ -27,10 +27,9 @@ const Actions: React.FC = () => (
       <WrappedButton colorScheme="purple">Collect Tax</WrappedButton>
       <WrappedButton colorScheme="blue">Steal</WrappedButton>
       <WrappedButton colorScheme="gray">Assassinate</WrappedButton>
-      <WrappedButton variant="outline">Foreign Aid</WrappedButton>
-      <WrappedButton colorScheme="yellow">Inquisite</WrappedButton>
-      <WrappedButton variant="outline">Income</WrappedButton>
       <WrappedButton colorScheme="green">Exchange</WrappedButton>
+      <WrappedButton variant="outline">Income</WrappedButton>
+      <WrappedButton variant="outline">Foreign Aid</WrappedButton>
       <WrappedButton colorScheme="red">Coup</WrappedButton>
     </Wrap>
   </VStack>
