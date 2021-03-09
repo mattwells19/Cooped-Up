@@ -1,31 +1,33 @@
-type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
+import type { SingleOrArray, SCXML, EventData, Event } from "xstate";
+import type { GameStateMachineEvent } from "../../utils/GameStateMachine";
 
-interface IGameState {
-  gameStarted: boolean;
-  players: Array<IPlayer>;
-  turn: string;
+export type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
+
+export type Action = "Assassinate" | "Tax" | "Steal" | "Exchange" | "Income" | "Aid" | "Coup" | null;
+
+export interface IGameState {
+  event: SingleOrArray<Event<GameStateMachineEvent>> | SCXML.Event<GameStateMachineEvent>;
+  eventPayload?: EventData | undefined;
+  players?: Array<IPlayer>;
 }
 
-interface IPlayerInfluence {
+export interface IPlayerInfluence {
   type: Influence;
   isDead: boolean;
 }
 
-interface IPlayer {
+export interface IPlayer {
   id: string;
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
 }
 
-interface IGameStateContext {
+export interface IGameStateContext {
   currentPlayerId: string;
   gameStarted: boolean;
   players: Array<IPlayer>;
   turn: string;
   handleGameEvent: (newGameState: IGameState) => void;
-  handleGameStateUpdate: (newGameState: IGameState) => void;
   handleStartGame: () => void;
 }
-
-export { Influence, IGameState, IPlayerInfluence, IPlayer, IGameStateContext };
