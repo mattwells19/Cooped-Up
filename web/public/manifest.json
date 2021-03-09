@@ -1,0 +1,22 @@
+{
+  "name": "Cooped Up",
+  "short_name": "CoopedUp",
+  "dir": "ltr",
+  "lang": "en-US",
+  "orientation": "landscape",
+  "start_url": "/",
+  "background_color": "#1A202C",
+  "theme_color": "#4FD1C5",
+  "display": "standalone",
+  "description": "A web based version of the popular board game Coup.",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512"
+    }
+  ]
+}
