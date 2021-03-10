@@ -5,7 +5,8 @@ import { useMachine } from "@xstate/react";
 import deck from "../../utils/Deck";
 import type { IGameState, IGameStateContext, IPlayer } from "./types";
 import GameStateMachine from "../../utils/GameStateMachine";
-import { getNextPlayerTurnId, IncomeAction } from "./Actions";
+import { getCurrentPlayer, getNextPlayerTurnId, IncomeAction } from "./Actions";
+import useActionToast from "../../hooks/useActionToast";
 
 export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
@@ -14,6 +15,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const [players, setPlayers] = React.useState<Array<IPlayer>>([]);
   const { roomCode } = useParams<{ roomCode: string }>();
+  const actionToast = useActionToast();
 
   const socket = React.useMemo(() => (
     io("/", {
@@ -36,6 +38,9 @@ const GameStateContextProvider: React.FC = ({ children }) => {
         break;
       case currentGameState.matches("perform_action") && currentGameState.context.action === "Income": {
         IncomeAction(setPlayers, currentGameState.context.playerTurnId);
+        actionToast({
+          playerName: getCurrentPlayer(players, currentGameState.context.playerTurnId)[0].name,
+        });
         sendGameStateEvent("COMPLETE", {
           nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
         });

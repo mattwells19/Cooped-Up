@@ -76,7 +76,8 @@
       "react/jsx-props-no-spreading": [
           "warn",
           {
-              "custom": "ignore"
+              "custom": "ignore",
+              "exceptions": ["svg"]
           }
       ],
       "react/prop-types": "off",
