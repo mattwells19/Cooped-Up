@@ -1,4 +1,4 @@
-type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin" | "Inquisitor";
+type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
 interface IGameState {
   gameStarted: boolean;
@@ -12,12 +12,14 @@ interface IPlayerInfluence {
 }
 
 interface IPlayer {
+  id: string;
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
 }
 
 interface IGameStateContext {
+  currentPlayerId: string;
   gameStarted: boolean;
   players: Array<IPlayer>;
   turn: string;

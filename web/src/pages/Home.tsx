@@ -12,13 +12,19 @@ import {
   PinInputField,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 import get from "../utils/get";
 
-const Home: React.FC = () => {
+interface ILobbyProps {
+  invalidRoomCode: boolean | undefined;
+}
+
+const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   const history = useHistory();
+  const toast = useToast();
   useDocTitle("Home");
   const [error, setError] = React.useState<boolean>(false);
 
@@ -45,17 +51,35 @@ const Home: React.FC = () => {
     });
   }
 
+  React.useEffect(() => {
+    if (invalidRoomCode) {
+      toast({
+        title: "The room you tried to join doesn't exist.",
+        description: "Double check you have the correct room code, or start a new room.",
+        status: "error",
+        duration: 7000,
+        isClosable: true,
+        position: "top-right",
+      });
+      history.push({
+        state: {
+          invalidRoomCode: undefined,
+        },
+      });
+    }
+  }, []);
+
   return (
     <>
       <Header>Cooped Up</Header>
-      <Center margin="auto" marginTop="10" maxWidth="lg">
+      <Center marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
           <Text paddingX="4" fontSize="large">
             So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,
             but you can&apos;t because the virus is still at large. What better way to connect with your friends
             than with a little bit of deception!&nbsp;
             <Text fontWeight="bold" as="span">Cooped Up</Text>
-            &nbsp;is based on the popular card game Coup.
+            &nbsp;is based on the popular board game Coup.
           </Text>
           <Divider />
           <VStack spacing={4}>
