@@ -1,10 +1,10 @@
 import { Button, Wrap, WrapItem, Text, VStack, ButtonProps, useColorModeValue } from "@chakra-ui/react";
 import * as React from "react";
-import type { Action } from "../contexts/GameStateContext/types";
+import { Actions as InfluenceActions } from "../contexts/GameStateContext/types";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 
 interface WrappedButtonProps extends Omit<Omit<ButtonProps, "onClick">, "width"> {
-  actionPayload?: { action: Action, victimId: string | null };
+  actionPayload?: { action: InfluenceActions, victimId: string | null };
 }
 
 const Actions: React.FC = () => {
@@ -52,7 +52,7 @@ const Actions: React.FC = () => {
         <WrappedButton colorScheme="green">Exchange</WrappedButton>
         <WrappedButton
           actionPayload={{
-            action: "Income",
+            action: InfluenceActions.Income,
             victimId: null,
           }}
           variant="outline"

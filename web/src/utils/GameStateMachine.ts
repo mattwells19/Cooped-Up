@@ -1,16 +1,16 @@
 import { assign, createMachine } from "xstate";
-import type { Action } from "../contexts/GameStateContext/types";
+import type { Actions } from "../contexts/GameStateContext/types";
 
 interface GameStateMachineContext {
   playerTurnId: string;
-  action: Action;
+  action: Actions | null;
   performerId: string;
   gameStarted: boolean;
   victimId: string;
 }
 
 export type GameStateMachineEvent =
-  | { type: "ACTION"; action: Action; victimId: string }
+  | { type: "ACTION"; action: Actions; victimId: string }
   | { type: "BLOCK" }
   | { type: "CHALLENGE" }
   | { type: "COMPLETE"; nextPlayerTurnId: string }

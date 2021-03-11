@@ -3,7 +3,15 @@ import type { GameStateMachineEvent } from "../../utils/GameStateMachine";
 
 export type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
-export type Action = "Assassinate" | "Tax" | "Steal" | "Exchange" | "Income" | "Aid" | "Coup" | null;
+export const enum Actions {
+  Assassinate,
+  Tax,
+  Steal,
+  Exchange,
+  Income,
+  Aid,
+  Coup,
+}
 
 export interface IGameState {
   event: SingleOrArray<Event<GameStateMachineEvent>> | SCXML.Event<GameStateMachineEvent>;

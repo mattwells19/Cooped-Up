@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { useMachine } from "@xstate/react";
 import deck from "../../utils/Deck";
-import type { IGameState, IGameStateContext, IPlayer } from "./types";
+import { Actions, IGameState, IGameStateContext, IPlayer } from "./types";
 import GameStateMachine from "../../utils/GameStateMachine";
 import { getCurrentPlayer, getNextPlayerTurnId, IncomeAction } from "./Actions";
 import useActionToast from "../../hooks/useActionToast";
@@ -33,10 +33,10 @@ const GameStateContextProvider: React.FC = ({ children }) => {
       case currentGameState.matches("pregame"):
       case currentGameState.matches("idle"):
         break;
-      case currentGameState.matches("propose_action") && currentGameState.context.action === "Income":
+      case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Income:
         sendGameStateEvent("PASS"); // auto pass on income as it cannot be blocked or challenged
         break;
-      case currentGameState.matches("perform_action") && currentGameState.context.action === "Income": {
+      case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Income: {
         IncomeAction(setPlayers, currentGameState.context.playerTurnId);
         actionToast({
           playerName: getCurrentPlayer(players, currentGameState.context.playerTurnId)[0].name,
