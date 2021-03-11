@@ -47,7 +47,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           <Divider />
           <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
             {players.map((player) => (
-              <Text key={player.name}>{player.name}</Text>
+              <Text key={player.id}>{player.name}</Text>
             ))}
           </VStack>
           <FormControl display="flex" flexDirection="column">

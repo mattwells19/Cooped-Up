@@ -25,6 +25,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     io("/", {
       auth: {
         roomCode,
+        playerName: localStorage.getItem("playerName")
       },
       autoConnect: false,
       reconnectionAttempts: 5,
