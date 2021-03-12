@@ -4,6 +4,7 @@ import { Socket, Server } from "socket.io";
 import path from "path";
 import { sample as _sample } from "lodash";
 import { alphabet } from "./constants";
+import * as Rooms from "./rooms";
 
 /* Server Setup */
 const app: Application = require("express")();
@@ -11,15 +12,26 @@ const app: Application = require("express")();
 const httpServer = createServer(app);
 const io: Server = require("socket.io")(httpServer);
 
+Rooms.init();
+
+interface ISocketAuth {
+  roomCode: string;
+  playerName: string;
+}
+
 /* Socket Implementation */
 io.on("connection", async (socket: Socket) => {
   // can't specify auth object structure so using type assertion to make typescript happy
-  const { roomCode, playerName } = socket.handshake.auth as { roomCode: string, playerName: string };
+  const { roomCode, playerName }: ISocketAuth = socket.handshake.auth as ISocketAuth;
   if (!roomCode) throw Error("No room code was provided.");
 
   try {
     await socket.join(roomCode);
-    const playersInRoom = Array.from(io.sockets.adapter.rooms.get(roomCode) || new Set());
+    const playerToAdd: Rooms.IPlayer = {
+      id: socket.id,
+      name: playerName,
+    };
+    const playersInRoom = await Rooms.addPlayerToRoom(roomCode, playerToAdd);
     io.to(roomCode).emit("players_changed", playersInRoom);
   } catch (e) {
     throw Error(`Cannot join room with code ${roomCode}`);
@@ -29,9 +41,9 @@ io.on("connection", async (socket: Socket) => {
     io.to(roomCode).emit("gameStateUpdate", newGameState);
   });
 
-  socket.on("disconnect", () => {
-    const playersInRoom = Array.from(io.sockets.adapter.rooms.get(roomCode) || new Set());
-    io.to(roomCode).emit("players_changed", playersInRoom);
+  socket.on("disconnect", async () => {
+    const players = await Rooms.removePlayer(socket.id);
+    if (players) io.to(roomCode).emit("players_changed", players);
   });
 });
 
