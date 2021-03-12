@@ -20,7 +20,14 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
     async function doesRoomExist() {
       const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
-      if (!validRoom) history.push(`/`);
+      if (!validRoom) {
+        history.push({
+          pathname: `/`,
+          state: {
+            invalidRoomCode: true,
+          },
+        });
+      }
     }
 
     if (!newRoom) doesRoomExist();
@@ -40,7 +47,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           <Divider />
           <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
             {players.map((player) => (
-              <Text key={player.name}>{player.name}</Text>
+              <Text key={player.id}>{player.name}</Text>
             ))}
           </VStack>
           <FormControl display="flex" flexDirection="column">

@@ -14,7 +14,7 @@ const io: Server = require("socket.io")(httpServer);
 /* Socket Implementation */
 io.on("connection", async (socket: Socket) => {
   // can't specify auth object structure so using type assertion to make typescript happy
-  const { roomCode } = socket.handshake.auth as { roomCode: string };
+  const { roomCode, playerName } = socket.handshake.auth as { roomCode: string, playerName: string };
   if (!roomCode) throw Error("No room code was provided.");
 
   try {

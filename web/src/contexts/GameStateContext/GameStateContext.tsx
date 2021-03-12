@@ -5,6 +5,7 @@ import deck from "../../utils/Deck";
 import type { IGameState, IGameStateContext, IPlayer } from "./types";
 
 export const GameStateContext = React.createContext<IGameStateContext>({
+  currentPlayerId: "",
   gameStarted: false,
   players: [],
   turn: "",
@@ -24,6 +25,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     io("/", {
       auth: {
         roomCode,
+        playerName: localStorage.getItem("playerName")
       },
       autoConnect: false,
       reconnectionAttempts: 5,
@@ -60,18 +62,29 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     handleGameEvent(newGameState);
   };
 
+  React.useEffect(() => {
+    socket.off("players_changed");
+    socket.on("players_changed", (playersInRoom: string[]) => {
+      // only update player list if someone left once the game has started
+      if (gameStarted && playersInRoom.length < players.length) {
+        setPlayers((prevplayers) => (
+          prevplayers.filter((player) => playersInRoom.find((p) => p === player.id))
+        ));
+      }
+    });
+  }, [gameStarted]);
+
   // put socket listeners in useEffect so it only registers on render
   React.useEffect(() => {
     if (!socket.connected) socket.connect();
 
     socket.on("players_changed", (playersInRoom: string[]) => {
-      if (!gameStarted) {
-        setPlayers(playersInRoom.map((player) => ({
-          coins: 2,
-          influences: [],
-          name: player,
-        })));
-      }
+      setPlayers(playersInRoom.map((playerId) => ({
+        id: playerId,
+        coins: 2,
+        influences: [],
+        name: playerId, // set name to playerId until actual name is available
+      })));
     });
 
     socket.on("gameStateUpdate", handleGameStateUpdate);
@@ -83,6 +96,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   return (
     <GameStateContext.Provider
       value={{
+        currentPlayerId: socket.id,
         gameStarted,
         players,
         turn,

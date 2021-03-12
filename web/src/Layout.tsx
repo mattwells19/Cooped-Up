@@ -5,7 +5,11 @@ import Home from "./pages/Home";
 import GameStateContextProvider from "./contexts/GameStateContext/GameStateContext";
 
 type LobbyRouteStateType = {
-  newRoom: boolean | undefined
+  newRoom: boolean | undefined;
+}
+
+type HomeRouteStateType = {
+  invalidRoomCode: boolean | undefined;
 }
 
 type LobbyRouteParamsType = {
@@ -26,7 +30,14 @@ const Layout: React.FC = () => (
           </GameStateContextProvider>
         )}
       />
-      <Route path="/" component={Home} />
+      <Route
+        path="/"
+        render={({ location }) => (
+          <Home
+            invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode}
+          />
+        )}
+      />
       <Route path="*">
         <Redirect to="/" />
       </Route>

@@ -1,37 +1,33 @@
 import * as React from "react";
-import { Text, Table, Th, Thead, Tr, Td, Tbody, Checkbox } from "@chakra-ui/react";
+import { Wrap, WrapItem, HStack, Box } from "@chakra-ui/react";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
+import PlayerHand from "../components/PlayerHand";
+import Actions from "../components/Actions";
 
 interface IGameProps {}
 
 const Game: React.FC<IGameProps> = () => {
-  const { players, turn } = useGameState();
+  const { currentPlayerId, players } = useGameState();
+
+  const currentPlayer = players.find((player) => player.id.localeCompare(currentPlayerId) === 0);
+  if (!currentPlayer) throw Error("Current player not found in players.");
+
+  const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayerId) !== 0);
 
   return (
-    <Table variant="simple">
-      <Thead>
-        <Tr>
-          <Th>Is Turn</Th>
-          <Th>Name</Th>
-          <Th isNumeric>Coins</Th>
-          <Th>Influences</Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {players.map((player) => (
-          <Tr key={player.name}>
-            <Td><Checkbox isChecked={turn.localeCompare(player.name) === 0} isReadOnly /></Td>
-            <Td>{player.name}</Td>
-            <Td isNumeric>{player.coins}</Td>
-            <Td>
-              {player.influences.map((influence) => (
-                <Text key={`${player.name}-${influence.type}-${Math.random()}`}>{influence.type}</Text>
-              ))}
-            </Td>
-          </Tr>
+    <Box height="100vh" paddingTop="20">
+      <Wrap justify="center" spacing="60px" maxWidth="90%" margin="auto">
+        {otherPlayers.map((player) => (
+          <WrapItem key={player.name}>
+            <PlayerHand player={player} />
+          </WrapItem>
         ))}
-      </Tbody>
-    </Table>
+      </Wrap>
+      <HStack bottom="20" position="absolute" spacing="60px" width="100%" justifyContent="center">
+        <PlayerHand player={currentPlayer} isCurrentPlayer />
+        <Actions />
+      </HStack>
+    </Box>
   );
 };
 
