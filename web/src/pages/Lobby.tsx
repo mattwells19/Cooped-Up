@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Center, Divider, FormControl, 
+import { Button, Divider, FormControl, 
   FormHelperText, Heading, Text, VStack, ButtonGroup, Center } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
@@ -34,9 +34,13 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
     if (!newRoom) doesRoomExist();
   }, []);
 
+  function handleDisconnect() {
+    history.push('/')
+  }
+
   useDocTitle(`Lobby - ${roomCode}`);
 
-  const { players, gameStarted, handleStartGame } = useGameState();
+  const { players, gameStarted, handleStartGame, } = useGameState();
 
   if (gameStarted) return <Game />;
   return (
@@ -54,15 +58,12 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
             <Button
-              alignSelf="center"
-              disabled={players.length < 3 || players.length > 8}
-              onClick={() => handleStartGame()}
+              onClick={() => handleDisconnect()}
               size="lg"
             >
               Disconnect
             </Button>
                           <Button
-              alignSelf="center"
               disabled={players.length < 3 || players.length > 8}
               onClick={() => handleStartGame()}
               size="lg"
@@ -73,7 +74,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
             <Center>            
               {players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
             {players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
-            </Center>
+          </Center>
           </FormControl>
         </VStack>
       </Center>
