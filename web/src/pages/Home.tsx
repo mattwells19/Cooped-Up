@@ -84,7 +84,11 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
       <Header>Cooped Up</Header>
       <Center marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
-          <Input placeholder={localStorage.getItem("playerName") || "name"} onChange={(e) => setPlayerName(e.target.value)} style={{textAlign: 'center'}}></Input>
+          
+          {
+            // if player's name is set, use Input with player's name as value; if not, use input with name as placeholder
+            playerName ? <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} textAlign="center" ></Input> : <Input placeholder="name" onChange={(e) => setPlayerName(e.target.value)} textAlign="center"></Input>
+          }
           <Text paddingX="4" fontSize="large">
             So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,
             but you can&apos;t because the virus is still at large. What better way to connect with your friends
