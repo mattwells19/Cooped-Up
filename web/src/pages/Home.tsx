@@ -33,7 +33,6 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
 
   async function handleJoinRoom(roomCode: string) {
     if (playerName) {
-      console.log(playerName);
       localStorage.setItem("playerName", playerName);
       const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
@@ -87,7 +86,7 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
         <VStack spacing={10}>
           {
             // if player's name is set, use Input with player's name as value; if not, use input with name as placeholder
-            playerName ? <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} textAlign="center" marginBottom="-8"></Input> : <Input placeholder="name" onChange={(e) => setPlayerName(e.target.value)} textAlign="center"></Input>
+            playerName ? <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} textAlign="center" marginBottom="-8"></Input> : <Input placeholder="name" onChange={(e) => setPlayerName(e.target.value)} textAlign="center" marginBottom="-8"></Input>
           }
           <FormLabel fontFamily="aria" >Your Name</FormLabel>
           <Text paddingX="4" fontSize="large">
