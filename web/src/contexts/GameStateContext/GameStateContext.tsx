@@ -5,7 +5,7 @@ import { useMachine } from "@xstate/react";
 import deck from "../../utils/Deck";
 import { Actions, IGameState, IGameStateContext, IPlayer } from "./types";
 import GameStateMachine from "../../utils/GameStateMachine";
-import { getCurrentPlayer, getNextPlayerTurnId, IncomeAction } from "./Actions";
+import { CoupAction, getPlayerById, getNextPlayerTurnId, IncomeAction } from "./Actions";
 import useActionToast from "../../hooks/useActionToast";
 
 export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
@@ -33,13 +33,49 @@ const GameStateContextProvider: React.FC = ({ children }) => {
       case currentGameState.matches("pregame"):
       case currentGameState.matches("idle"):
         break;
+      case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Coup: {
+        const victim = getPlayerById(players, currentGameState.context.victimId).player;
+        if (!victim) throw new Error(`No player was found with the id ${currentGameState.context.victimId}.`);
+
+        // if victim only has one influence skip the selection step and eliminate the single influence
+        const victimAliveInfluences = victim.influences.filter((i) => !i.isDead);
+        if (victimAliveInfluences.length < 2) {
+          sendGameStateEvent("PASS", {
+            killedInfluence: victimAliveInfluences[0].type,
+          });
+        }
+
+        break;
+      }
       case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Income:
-        sendGameStateEvent("PASS"); // auto pass on income as it cannot be blocked or challenged
+        sendGameStateEvent("PASS"); // auto pass on income and coup as they cannot be blocked or challenged
         break;
       case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Income: {
-        IncomeAction(setPlayers, currentGameState.context.playerTurnId);
+        setPlayers((prevPlayers) => IncomeAction(prevPlayers, currentGameState.context));
+        const performer = getPlayerById(players, currentGameState.context.playerTurnId).player;
+        if (!performer) throw new Error(`No player was found with the id ${currentGameState.context.playerTurnId}.`);
+
         actionToast({
-          playerName: getCurrentPlayer(players, currentGameState.context.playerTurnId)[0].name,
+          performerName: performer.name,
+          variant: Actions.Income,
+        });
+        sendGameStateEvent("COMPLETE", {
+          nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
+        });
+        break;
+      }
+      case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Coup: {
+        setPlayers((prevPlayers) => CoupAction(prevPlayers, currentGameState.context));
+        const performer = getPlayerById(players, currentGameState.context.performerId).player;
+        const victim = getPlayerById(players, currentGameState.context.victimId).player;
+
+        if (!performer) throw new Error(`No player was found with the id ${currentGameState.context.performerId}.`);
+        if (!victim) throw new Error(`No player was found with the id ${currentGameState.context.victimId}.`);
+
+        actionToast({
+          performerName: performer.name,
+          victimName: victim.name,
+          variant: Actions.Coup,
         });
         sendGameStateEvent("COMPLETE", {
           nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
@@ -114,11 +150,11 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     <GameStateContext.Provider
       value={{
         currentPlayerId: socket.id,
-        gameStarted: currentGameState.context.gameStarted,
         players,
         turn: currentGameState.context.playerTurnId,
         handleGameEvent,
         handleStartGame,
+        ...currentGameState.context,
       }}
     >
       {children}

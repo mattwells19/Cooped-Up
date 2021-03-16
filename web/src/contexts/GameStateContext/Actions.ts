@@ -1,15 +1,21 @@
-import type { SetStateAction } from "react";
 import type { IPlayer } from "./types";
+import type { IGameStateMachineContext } from "../../utils/GameStateMachine";
 
 /**
- * A function that finds the player whose turn it is.
+ * A function that finds the player with the specified ID.
  * @param players The array of players in the lobby.
- * @param playerTurnId The id of the player whose turn it is.
- * @returns The player object and player index as an array.
+ * @param playerId The id of the player being looked up.
+ * @returns The player object and player index as an object.
  */
-export function getCurrentPlayer(players: Array<IPlayer>, playerTurnId: string): [IPlayer, number] {
-  const playerIndex = players.findIndex((p) => p.id.localeCompare(playerTurnId) === 0);
-  return [players[playerIndex], playerIndex];
+export function getPlayerById(
+  players: Array<IPlayer>,
+  playerId: string,
+): { player: IPlayer | undefined; index: number } {
+  const playerIndex = players.findIndex((p) => p.id.localeCompare(playerId) === 0);
+  return {
+    player: players[playerIndex],
+    index: playerIndex,
+  };
 }
 
 /**
@@ -23,14 +29,47 @@ export function getNextPlayerTurnId(players: Array<IPlayer>, playerTurnId: strin
   return players[currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1].id;
 }
 
-export function IncomeAction(setPlayers: (value: SetStateAction<Array<IPlayer>>) => void, playerTurnId: string): void {
-  setPlayers((prevPlayers) => {
-    const [, currentPlayerIndex] = getCurrentPlayer(prevPlayers, playerTurnId);
-    const newPlayers = [...prevPlayers];
-    newPlayers[currentPlayerIndex] = {
-      ...newPlayers[currentPlayerIndex],
-      coins: newPlayers[currentPlayerIndex].coins + 1,
-    };
-    return newPlayers;
-  });
-}
+type ActionFunction = (players: Array<IPlayer>, gameContext: IGameStateMachineContext) => Array<IPlayer>;
+
+export const IncomeAction: ActionFunction = (players, gameContext) => {
+  const { index: currentPlayerIndex } = getPlayerById(players, gameContext.playerTurnId);
+  const newPlayers = [...players];
+  newPlayers[currentPlayerIndex] = {
+    ...newPlayers[currentPlayerIndex],
+    coins: newPlayers[currentPlayerIndex].coins + 1,
+  };
+  return newPlayers;
+};
+
+export const CoupAction: ActionFunction = (players, gameContext) => {
+  const currentPlayerIndex = getPlayerById(players, gameContext.playerTurnId).index;
+  const victimIndex = getPlayerById(players, gameContext.victimId).index;
+
+  const newPlayers = [...players];
+
+  // performer loses 7 coins
+  newPlayers[currentPlayerIndex] = {
+    ...newPlayers[currentPlayerIndex],
+    coins: newPlayers[currentPlayerIndex].coins - 7,
+  };
+
+  const influenceToKillIndex = newPlayers[victimIndex].influences.findIndex(
+    (influence) => influence.type === gameContext.killedInfluence && !influence.isDead,
+  );
+
+  // victim's chosen influence to kill
+  newPlayers[victimIndex] = {
+    ...newPlayers[victimIndex],
+    influences: newPlayers[victimIndex].influences.map((influence, index) => {
+      if (index === influenceToKillIndex) {
+        return {
+          ...influence,
+          isDead: true,
+        };
+      }
+      return influence;
+    }),
+  };
+
+  return newPlayers;
+};

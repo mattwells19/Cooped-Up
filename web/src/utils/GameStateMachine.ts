@@ -1,32 +1,33 @@
 import { assign, createMachine } from "xstate";
-import type { Actions } from "../contexts/GameStateContext/types";
+import type { Actions, Influence } from "../contexts/GameStateContext/types";
 
-interface GameStateMachineContext {
+export interface IGameStateMachineContext {
   playerTurnId: string;
   action: Actions | null;
   performerId: string;
   gameStarted: boolean;
   victimId: string;
+  killedInfluence: Influence | undefined;
 }
 
 export type GameStateMachineEvent =
-  | { type: "ACTION"; action: Actions; victimId: string }
+  | { type: "ACTION"; action: Actions; performerId: string; victimId: string }
   | { type: "BLOCK" }
   | { type: "CHALLENGE" }
   | { type: "COMPLETE"; nextPlayerTurnId: string }
   | { type: "FAILED" }
-  | { type: "PASS" }
+  | { type: "PASS"; killedInfluence: Influence | undefined }
   | { type: "START"; playerTurnId: string };
 
 export type GameStateMachineState =
-  | { value: "pregame"; context: GameStateMachineContext }
-  | { value: "idle"; context: GameStateMachineContext }
-  | { value: "propose_action"; context: GameStateMachineContext }
-  | { value: "perform_action"; context: GameStateMachineContext }
-  | { value: "blocked"; context: GameStateMachineContext }
-  | { value: "challenged"; context: GameStateMachineContext };
+  | { value: "pregame"; context: IGameStateMachineContext }
+  | { value: "idle"; context: IGameStateMachineContext }
+  | { value: "propose_action"; context: IGameStateMachineContext }
+  | { value: "perform_action"; context: IGameStateMachineContext }
+  | { value: "blocked"; context: IGameStateMachineContext }
+  | { value: "challenged"; context: IGameStateMachineContext };
 
-const GameStateMachine = createMachine<GameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
+const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
   id: "gameState",
   initial: "pregame",
   context: {
@@ -35,6 +36,7 @@ const GameStateMachine = createMachine<GameStateMachineContext, GameStateMachine
     gameStarted: false,
     performerId: "",
     victimId: "",
+    killedInfluence: undefined,
   },
   states: {
     pregame: {
@@ -49,11 +51,19 @@ const GameStateMachine = createMachine<GameStateMachineContext, GameStateMachine
       },
     },
     idle: {
+      entry: assign((context) => ({
+        ...context,
+        action: null,
+        performerId: "",
+        victimId: "",
+        killedInfluence: undefined,
+      })),
       on: {
         ACTION: {
           target: "propose_action",
           actions: assign((_, event) => ({
             action: event.action,
+            performerId: event.performerId,
             victimId: event.victimId,
           })),
         },
@@ -63,7 +73,12 @@ const GameStateMachine = createMachine<GameStateMachineContext, GameStateMachine
       on: {
         BLOCK: "blocked",
         CHALLENGE: "challenged",
-        PASS: "perform_action",
+        PASS: {
+          target: "perform_action",
+          actions: assign({
+            killedInfluence: (_, event) => event.killedInfluence,
+          }),
+        },
       },
     },
     perform_action: {
