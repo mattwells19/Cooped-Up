@@ -50,13 +50,8 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
   const prevPlayers = prevPlayersRef.current;
 
-  function arrayEquals(arr1: Array<IPlayer>, arr2: Array<IPlayer>) {
-    return arr1.length === arr2.length
-    && arr1.every((val, index) => val === arr2[index]);
-  }
-
   React.useEffect(() => {
-    if (prevPlayers > players && !arrayEquals(prevPlayers, players)) {
+    if (prevPlayers > players) {
       const playerNames = players.map(({ name }) => name);
       const prevPlayerNames = prevPlayers.map(({ name }) => name);
       const playerLeft = prevPlayerNames.filter((x) => playerNames.indexOf(x) === -1).toString();
