@@ -41,7 +41,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
   useDocTitle(`Lobby - ${roomCode}`);
 
-  const { players, gameStarted, handleStartGame } = useGameState();
+  const { players, gameStarted } = useGameState();
   const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
 
   React.useEffect(() => {
