@@ -78,10 +78,11 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
               <Button
-                onClick={() => handleDisconnect()}
+                onClick={() => history.push("/")}
                 size="lg"
+                variant="outline"
               >
-                Disconnect
+                Leave Lobby
               </Button>
               <Button
                 disabled={players.length < 3 || players.length > 8}
