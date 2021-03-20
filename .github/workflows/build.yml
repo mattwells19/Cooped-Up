@@ -30,12 +30,14 @@ jobs:
         with:
           eslint: true
           eslint_dir: server/
+          eslint_extensions: ts
 
       - name: Run Lint for Web
         uses: wearerequired/lint-action@v1
         with:
           eslint: true
           eslint_dir: web/
+          eslint_extensions: ts,tsx
 
   build:
     runs-on: ubuntu-latest
