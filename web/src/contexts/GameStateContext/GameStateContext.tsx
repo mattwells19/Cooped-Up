@@ -65,6 +65,8 @@ const GameStateContextProvider: React.FC = ({ children }) => {
         break;
       }
       case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Coup: {
+        if (!currentGameState.context.killedInfluence) throw new Error("No influence was selected to eliminate.");
+
         setPlayers((prevPlayers) => CoupAction(prevPlayers, currentGameState.context));
         const performer = getPlayerById(players, currentGameState.context.performerId).player;
         const victim = getPlayerById(players, currentGameState.context.victimId).player;
@@ -76,6 +78,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
           performerName: performer.name,
           victimName: victim.name,
           variant: Actions.Coup,
+          lostInfluence: currentGameState.context.killedInfluence,
         });
         sendGameStateEvent("COMPLETE", {
           nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
