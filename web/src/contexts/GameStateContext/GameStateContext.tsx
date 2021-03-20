@@ -48,7 +48,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
         break;
       }
       case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Income:
-        sendGameStateEvent("PASS"); // auto pass on income and coup as they cannot be blocked or challenged
+        sendGameStateEvent("PASS"); // auto pass on income as it cannot be blocked or challenged
         break;
       case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Income: {
         setPlayers((prevPlayers) => IncomeAction(prevPlayers, currentGameState.context));
