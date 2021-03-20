@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Center, Progress, Text, useToast, useToken } from "@chakra-ui/react";
-import CoinIcon from "../icons/CoinIcon";
-import AxeIcon from "../icons/AxeIcon";
+import { AxeIcon, CoinIcon } from "../icons";
 import { Actions, Influence } from "../contexts/GameStateContext/types";
 
 type IActionToastProps =
