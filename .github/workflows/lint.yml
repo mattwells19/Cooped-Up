@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  lint-server:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +32,23 @@ jobs:
           eslint_dir: server/
           eslint_extensions: ts
           continue_on_error: false
+
+  lint-web:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - uses: pnpm/action-setup@v1.2.1
+        with:
+          version: 5.17.2
+          run_install: |
+            - recursive: true
 
       - name: Run Lint for Web
         uses: wearerequired/lint-action@v1
