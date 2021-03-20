@@ -8,48 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - uses: pnpm/action-setup@v1.2.1
-        with:
-          version: 5.17.2
-          run_install: |
-            - recursive: true
-
-      - name: Run Lint for Server
-        uses: wearerequired/lint-action@v1
-        with:
-          eslint: true
-          eslint_dir: server/
-          eslint_extensions: ts
-
-      - name: Run Lint for Web
-        uses: wearerequired/lint-action@v1
-        with:
-          eslint: true
-          eslint_dir: web/
-          eslint_extensions: ts,tsx
-
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       - name: Run build with pnpm
         uses: creepinson/pnpm-action@master
         with:
-          # Arguments to pass to pnpm as a JSON array
           arguments: '["-r build"]'
 
       - name: Upload build folder as artifact
