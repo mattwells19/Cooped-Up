@@ -32,6 +32,7 @@ jobs:
           eslint_dir: server/
           eslint_extensions: ts
           continue_on_error: false
+          check_name: "${linter} ${dir}"
 
   lint-web:
     runs-on: ubuntu-latest
@@ -57,3 +58,4 @@ jobs:
           eslint_dir: web/
           eslint_extensions: ts,tsx
           continue_on_error: false
+          check_name: "${linter} ${dir}"
