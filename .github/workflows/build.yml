@@ -31,6 +31,7 @@ jobs:
           eslint: true
           eslint_dir: server/
           eslint_extensions: ts
+          continue_on_error: false
 
       - name: Run Lint for Web
         uses: wearerequired/lint-action@v1
@@ -38,6 +39,7 @@ jobs:
           eslint: true
           eslint_dir: web/
           eslint_extensions: ts,tsx
+          continue_on_error: false
 
   build:
     runs-on: ubuntu-latest
