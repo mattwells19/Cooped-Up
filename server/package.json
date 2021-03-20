@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint -f compact -o ../lint_results/server_lint_output.txt \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"src/**/*.ts\"",
     "postbuild": "copyfiles package*.json ../build",
     "prod": "node server.js",
     "start": "ts-node-dev src/server.ts"
