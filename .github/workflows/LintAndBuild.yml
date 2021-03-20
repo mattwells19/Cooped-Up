@@ -1,4 +1,4 @@
-name: Lint project
+name: Build and Lint Project
 
 on:
   pull_request:
@@ -59,3 +59,20 @@ jobs:
           eslint_extensions: ts,tsx
           continue_on_error: false
           check_name: "${linter} ${dir}"
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run build with pnpm
+        uses: creepinson/pnpm-action@master
+        with:
+          arguments: '["-r build"]'
+
+      - name: Upload build folder as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ./build
