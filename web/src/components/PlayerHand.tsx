@@ -15,9 +15,12 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, player }) => 
       <Text fontSize="lg" color="gray.400">{`Coins: ${player.coins}`}</Text>
     </HStack>
     <HStack spacing={isCurrentPlayer ? "20px" : "10px"}>
-      {player.influences.map(({ type, isDead }) => (
+      {player.influences.map(({ type, isDead }, i) => (
         <InfluenceCard
-          key={`${player.name}-${type}-${Math.random()}`}
+          // have to use index here as it is the only way to for-sure differentiate the two cards
+          // and we know the order shouldn't ever change.
+          // eslint-disable-next-line react/no-array-index-key
+          key={`${player.name}-${type}-${i}`}
           influence={type}
           faceUp={isCurrentPlayer || isDead}
           enlarge={isCurrentPlayer}

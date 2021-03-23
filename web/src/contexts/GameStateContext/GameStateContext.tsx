@@ -1,25 +1,21 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { useMachine } from "@xstate/react";
 import deck from "../../utils/Deck";
-import type { IGameState, IGameStateContext, IPlayer } from "./types";
+import { Actions, IGameState, IGameStateContext, IPlayer } from "./types";
+import GameStateMachine from "../../utils/GameStateMachine";
+import { getCurrentPlayer, getNextPlayerTurnId, IncomeAction } from "./Actions";
+import useActionToast from "../../hooks/useActionToast";
 
-export const GameStateContext = React.createContext<IGameStateContext>({
-  currentPlayerId: "",
-  gameStarted: false,
-  players: [],
-  turn: "",
-  handleGameEvent: () => null,
-  handleGameStateUpdate: () => null,
-  handleStartGame: () => null,
-});
+export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
 
 const GameStateContextProvider: React.FC = ({ children }) => {
+  const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const [players, setPlayers] = React.useState<Array<IPlayer>>([]);
-  const [gameStarted, setGameStarted] = React.useState<boolean>(false);
-  const [turn, setTurn] = React.useState<string>("");
   const { roomCode } = useParams<{ roomCode: string }>();
+  const actionToast = useActionToast();
 
   const socket = React.useMemo(() => (
     io("/", {
@@ -32,10 +28,33 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     })
   ), [roomCode]);
 
+  // Handling game state
+  React.useEffect(() => {
+    switch (true) {
+      case currentGameState.matches("pregame"):
+      case currentGameState.matches("idle"):
+        break;
+      case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Income:
+        sendGameStateEvent("PASS"); // auto pass on income as it cannot be blocked or challenged
+        break;
+      case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Income: {
+        IncomeAction(setPlayers, currentGameState.context.playerTurnId);
+        actionToast({
+          playerName: getCurrentPlayer(players, currentGameState.context.playerTurnId)[0].name,
+        });
+        sendGameStateEvent("COMPLETE", {
+          nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
+        });
+        break;
+      }
+      default:
+        throw new Error(`The state '${currentGameState.value}' has either not been implemented or does not exist`);
+    }
+  }, [currentGameState.value]);
+
   function handleGameStateUpdate(newGameState: IGameState) {
-    setGameStarted(newGameState.gameStarted);
-    setPlayers(newGameState.players);
-    setTurn(newGameState.turn);
+    sendGameStateEvent(newGameState.event, newGameState.eventPayload);
+    if (newGameState.players) setPlayers(newGameState.players);
   }
 
   function handleGameEvent(newGameState: IGameState) {
@@ -51,28 +70,27 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     }));
 
     setPlayers(playerHands);
-    setGameStarted(true);
-    setTurn(players[0].name);
 
-    const newGameState: IGameState = {
-      gameStarted: true,
+    handleGameEvent({
+      event: "START",
+      eventPayload: {
+        playerTurnId: playerHands[0].id,
+      },
       players: playerHands,
-      turn: players[0].name,
-    };
-    handleGameEvent(newGameState);
+    });
   };
 
   React.useEffect(() => {
     socket.off("players_changed");
     socket.on("players_changed", (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
       // only update player list if someone left once the game has started
-      if (gameStarted && playersInRoom.length < players.length) {
+      if (currentGameState.context.gameStarted && playersInRoom.length < players.length) {
         setPlayers((prevplayers) => (
           prevplayers.filter((player) => playersInRoom.find((p) => p.id === player.id))
         ));
       }
     });
-  }, [gameStarted]);
+  }, [currentGameState.context.gameStarted]);
 
   // put socket listeners in useEffect so it only registers on render
   React.useEffect(() => {
@@ -97,11 +115,10 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     <GameStateContext.Provider
       value={{
         currentPlayerId: socket.id,
-        gameStarted,
+        gameStarted: currentGameState.context.gameStarted,
         players,
-        turn,
+        turn: currentGameState.context.playerTurnId,
         handleGameEvent,
-        handleGameStateUpdate,
         handleStartGame,
       }}
     >

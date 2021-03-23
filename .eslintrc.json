@@ -49,6 +49,8 @@
       "import/no-unresolved": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["warn"],
+      "no-shadow": "off",
+      "@typescript-eslint/no-shadow": ["warn"],
       "no-underscore-dangle": "off",
       "react/destructuring-assignment": [
           "error",
@@ -76,7 +78,8 @@
       "react/jsx-props-no-spreading": [
           "warn",
           {
-              "custom": "ignore"
+              "custom": "ignore",
+              "exceptions": ["svg"]
           }
       ],
       "react/prop-types": "off",
