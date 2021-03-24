@@ -46,12 +46,8 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
   React.useEffect(() => {
     const prevPlayers = prevPlayersRef.current;
-
-    prevPlayersRef.current = players;
-    if (prevPlayers > players) {
-      const playerIds = players.map(({ id }) => id);
-      const prevPlayersIds = prevPlayers.map(({ name }) => name);
-      const playerLeft = prevPlayersIds.filter((x) => playerIds.indexOf(x) === -1).toString();
+    if (prevPlayers.length > players.length) {
+      const playerLeft = prevPlayers.filter((x) => players.every((p) => p.id !== x.id))[0].name;
       toast({
         title: `${playerLeft} has disconnected.`,
         status: "info",
@@ -59,6 +55,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
         isClosable: false,
         position: "top-right",
       });
+      prevPlayersRef.current = players;
     }
   }, [players]);
 
@@ -78,10 +75,12 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
               <Button
+                to="/"
+                as={Link}
                 size="lg"
                 variant="outline"
               >
-                <Link to="/">Leave Lobby</Link>
+                Leave Lobby
               </Button>
               <Button
                 disabled={players.length < 3 || players.length > 8}
