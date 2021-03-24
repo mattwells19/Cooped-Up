@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import {
   Button, Divider, FormControl,
   FormHelperText, Heading, Text, VStack,
@@ -41,17 +41,17 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
   useDocTitle(`Lobby - ${roomCode}`);
 
-  const { players, gameStarted } = useGameState();
+  const { players, gameStarted, handleStartGame } = useGameState();
   const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
 
   React.useEffect(() => {
-    prevPlayersRef.current = players;
     const prevPlayers = prevPlayersRef.current;
 
+    prevPlayersRef.current = players;
     if (prevPlayers > players) {
-      const playerId = players.map(({ id }) => id);
-      const prevPlayerId = prevPlayers.map(({ id }) => id);
-      const playerLeft = prevPlayerId.filter((x) => playerId.indexOf(x) === -1).toString();
+      const playerIds = players.map(({ id }) => id);
+      const prevPlayersIds = prevPlayers.map(({ name }) => name);
+      const playerLeft = prevPlayersIds.filter((x) => playerIds.indexOf(x) === -1).toString();
       toast({
         title: `${playerLeft} has disconnected.`,
         status: "info",
@@ -78,15 +78,14 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
               <Button
-                onClick={() => history.push("/")}
                 size="lg"
                 variant="outline"
               >
-                Leave Lobby
+                <Link to="/">Leave Lobby</Link>
               </Button>
               <Button
                 disabled={players.length < 3 || players.length > 8}
-                onClick={() => history.push("/")}
+                onClick={() => handleStartGame()}
                 size="lg"
               >
                 Start Game
