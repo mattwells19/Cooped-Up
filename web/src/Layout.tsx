@@ -2,6 +2,7 @@ import * as React from "react";
 import { Redirect, Route, Switch, BrowserRouter, RouteComponentProps } from "react-router-dom";
 import Lobby from "./pages/Lobby";
 import Home from "./pages/Home";
+import PlayerName from "./pages/PlayerName";
 import GameStateContextProvider from "./contexts/GameStateContext/GameStateContext";
 
 type LobbyRouteStateType = {
@@ -21,14 +22,25 @@ const Layout: React.FC = () => (
     <Switch>
       <Route
         path="/room/:roomCode"
-        render={({ location, match }: RouteComponentProps<LobbyRouteParamsType>) => (
-          <GameStateContextProvider>
-            <Lobby
+        render={({ location, match }: RouteComponentProps<LobbyRouteParamsType>) => {
+          // if the player joining doesn't have a name set, render the player name page instead
+          if (localStorage.getItem("playerName")) {
+            return (
+              <GameStateContextProvider>
+                <Lobby
+                  newRoom={(location.state as LobbyRouteStateType)?.newRoom}
+                  roomCode={match.params.roomCode}
+                />
+              </GameStateContextProvider>
+            );
+          }
+          return (
+            <PlayerName
               newRoom={(location.state as LobbyRouteStateType)?.newRoom}
               roomCode={match.params.roomCode}
             />
-          </GameStateContextProvider>
-        )}
+          );
+        }}
       />
       <Route
         path="/"
