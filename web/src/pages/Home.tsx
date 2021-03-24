@@ -13,8 +13,6 @@ import {
   Text,
   VStack,
   useToast,
-  Input,
-  FormLabel
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
@@ -29,16 +27,12 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   const toast = useToast();
   useDocTitle("Home");
   const [error, setError] = React.useState<boolean>(false);
-  const [playerName, setPlayerName] = React.useState<string>(localStorage.getItem("playerName") ?? "");
 
   async function handleJoinRoom(roomCode: string) {
-    if (playerName) {
-      localStorage.setItem("playerName", playerName);
-      const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
+    const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
-      if (validRoom) history.push(`/room/${roomCode.toUpperCase()}`);
-      else setError(true);
-    }
+    if (validRoom) history.push(`/room/${roomCode.toUpperCase()}`);
+    else setError(true);
   }
 
   function handleRoomCodeChange(code: string) {
@@ -47,18 +41,14 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   }
 
   async function handleNewRoom() {
-    if (playerName) {
-      console.log(playerName);
-      localStorage.setItem("playerName", playerName);
-      const roomCode = await get<string>("newRoom");
+    const roomCode = await get<string>("newRoom");
 
-      history.push({
-        pathname: `/room/${roomCode}`,
-        state: {
-          newRoom: true,
-        },
-      });
-    }
+    history.push({
+      pathname: `/room/${roomCode}`,
+      state: {
+        newRoom: true,
+      },
+    });
   }
 
   React.useEffect(() => {
@@ -84,11 +74,6 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
       <Header>Cooped Up</Header>
       <Center marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
-          {
-            // if player's name is set, use Input with player's name as value; if not, use input with name as placeholder
-            playerName ? <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} textAlign="center" marginBottom="-8"></Input> : <Input placeholder="name" onChange={(e) => setPlayerName(e.target.value)} textAlign="center" marginBottom="-8"></Input>
-          }
-          <FormLabel fontFamily="aria" >Your Name</FormLabel>
           <Text paddingX="4" fontSize="large">
             So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,
             but you can&apos;t because the virus is still at large. What better way to connect with your friends
