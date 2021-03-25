@@ -55,8 +55,8 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
         isClosable: false,
         position: "top-right",
       });
-      prevPlayersRef.current = players;
     }
+    prevPlayersRef.current = players;
   }, [players]);
 
   if (gameStarted) return <Game />;
