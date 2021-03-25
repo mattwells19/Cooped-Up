@@ -1,11 +1,16 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { Button, Center, Divider, FormControl, FormHelperText, Heading, Text, VStack } from "@chakra-ui/react";
+import { useHistory, Link } from "react-router-dom";
+import {
+  Button, Divider, FormControl,
+  FormHelperText, Heading, Text, VStack,
+  ButtonGroup, Center, useToast,
+} from "@chakra-ui/react";
 import Header from "../components/Header";
 import useDocTitle from "../hooks/useDocTitle";
 import { useGameState } from "../contexts/GameStateContext/GameStateContext";
 import Game from "./Game";
 import get from "../utils/get";
+import type { IPlayer } from "../contexts/GameStateContext/types";
 
 interface ILobbyProps {
   newRoom: boolean | undefined;
@@ -15,6 +20,7 @@ interface ILobbyProps {
 const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
   // use history module to push URLs
   const history = useHistory();
+  const toast = useToast();
 
   React.useEffect(() => {
     async function doesRoomExist() {
@@ -36,31 +42,58 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
   useDocTitle(`Lobby - ${roomCode}`);
 
   const { players, gameStarted, handleStartGame } = useGameState();
+  const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
+
+  React.useEffect(() => {
+    const prevPlayers = prevPlayersRef.current;
+    if (prevPlayers.length > players.length) {
+      const playerLeft = prevPlayers.filter((x) => players.every((p) => p.id !== x.id))[0].name;
+      toast({
+        title: `${playerLeft} has disconnected.`,
+        status: "info",
+        duration: 5000,
+        isClosable: false,
+        position: "top-right",
+      });
+    }
+    prevPlayersRef.current = players;
+  }, [players]);
 
   if (gameStarted) return <Game />;
   return (
     <>
       <Header>{roomCode}</Header>
       <Center marginTop="10">
-        <VStack alignItems="flex-start">
+        <VStack alignItems="center">
           <Heading as="h2">Players</Heading>
           <Divider />
-          <VStack height="20rem" alignItems="flex-start" overflowY="auto" width="100%">
+          <VStack height="20rem" alignItems="center" overflowY="auto" width="100%">
             {players.map((player) => (
-              <Text key={player.name}>{player.name}</Text>
+              <Text key={player.id}>{player.name}</Text>
             ))}
           </VStack>
           <FormControl display="flex" flexDirection="column">
-            <Button
-              alignSelf="center"
-              disabled={players.length < 3 || players.length > 8}
-              onClick={() => handleStartGame()}
-              size="lg"
-            >
-              Start Game
-            </Button>
-            {players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
-            {players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
+            <ButtonGroup direction="row" spacing={4}>
+              <Button
+                to="/"
+                as={Link}
+                size="lg"
+                variant="outline"
+              >
+                Leave Lobby
+              </Button>
+              <Button
+                disabled={players.length < 3 || players.length > 8}
+                onClick={() => handleStartGame()}
+                size="lg"
+              >
+                Start Game
+              </Button>
+            </ButtonGroup>
+            <Center>
+              {players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
+              {players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
+            </Center>
           </FormControl>
         </VStack>
       </Center>

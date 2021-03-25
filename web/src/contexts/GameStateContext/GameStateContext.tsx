@@ -21,6 +21,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     io("/", {
       auth: {
         roomCode,
+        playerName: localStorage.getItem("playerName"),
       },
       autoConnect: false,
       reconnectionAttempts: 5,
@@ -120,11 +121,11 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 
   React.useEffect(() => {
     socket.off("players_changed");
-    socket.on("players_changed", (playersInRoom: string[]) => {
+    socket.on("players_changed", (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
       // only update player list if someone left once the game has started
       if (currentGameState.context.gameStarted && playersInRoom.length < players.length) {
         setPlayers((prevplayers) => (
-          prevplayers.filter((player) => playersInRoom.find((p) => p === player.id))
+          prevplayers.filter((player) => playersInRoom.find((p) => p.id === player.id))
         ));
       }
     });
@@ -134,12 +135,12 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     if (!socket.connected) socket.connect();
 
-    socket.on("players_changed", (playersInRoom: string[]) => {
-      setPlayers(playersInRoom.map((playerId) => ({
-        id: playerId,
+    socket.on("players_changed", (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
+      setPlayers(playersInRoom.map((player) => ({
+        id: player.id,
         coins: 2,
         influences: [],
-        name: playerId, // set name to playerId until actual name is available
+        name: player.name,
       })));
     });
 
