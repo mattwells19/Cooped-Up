@@ -1,6 +1,6 @@
 import { Actions, IPlayer } from "@contexts/GameStateContext/types";
 import type { Dispatch, SetStateAction } from "react";
-import { getPlayerById } from "./Actions";
+import { getPlayerById } from "./helperFns";
 import type { ICurrentGameState, ISendGameStateUpdate } from "./types";
 
 export default function processProposeAction(
@@ -18,9 +18,7 @@ export default function processProposeAction(
       // if victim only has one influence skip the selection step and eliminate the single influence
       const victimAliveInfluences = victim.influences.filter((i) => !i.isDead);
       if (victimAliveInfluences.length < 2) {
-        sendGameStateEvent("PASS", {
-          killedInfluence: victimAliveInfluences[0].type,
-        });
+        sendGameStateEvent("PASS", { killedInfluence: victimAliveInfluences[0].type });
       }
 
       break;

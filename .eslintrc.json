@@ -88,10 +88,7 @@
       "@typescript-eslint/no-use-before-define": ["error"],
       "react/button-has-type": ["off"],
       "object-curly-newline": ["error", {
-        "ObjectExpression": "always",
-        "ObjectPattern": { "multiline": false },
-        "ImportDeclaration": { "multiline": true },
-        "ExportDeclaration": "never"
+        "consistent": true
       }]
   }
 }

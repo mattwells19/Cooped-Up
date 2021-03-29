@@ -1,6 +1,6 @@
 import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react";
 import * as React from "react";
-import { getPlayerById } from "@utils/GameState/Actions";
+import { getPlayerById } from "@utils/GameState/helperFns";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import { Actions } from "@contexts/GameStateContext/types";
 

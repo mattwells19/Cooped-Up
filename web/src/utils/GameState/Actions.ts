@@ -1,33 +1,6 @@
 import type { IPlayer } from "@contexts/GameStateContext/types";
 import type { IGameStateMachineContext } from "./GameStateMachine";
-
-/**
- * A function that finds the player with the specified ID.
- * @param players The array of players in the lobby.
- * @param playerId The id of the player being looked up.
- * @returns The player object and player index as an object.
- */
-export function getPlayerById(
-  players: Array<IPlayer>,
-  playerId: string,
-): { player: IPlayer | undefined; index: number } {
-  const playerIndex = players.findIndex((p) => p.id.localeCompare(playerId) === 0);
-  return {
-    player: players[playerIndex],
-    index: playerIndex,
-  };
-}
-
-/**
- * Gets the id of the player whose turn it should be next.
- * @param players The array of players in the lobby.
- * @param playerTurnId he id of the player whose turn it is.
- * @returns The id of the player whose turn it should be next.
- */
-export function getNextPlayerTurnId(players: Array<IPlayer>, playerTurnId: string): string {
-  const currentPlayerIndex = players.findIndex((p) => p.id.localeCompare(playerTurnId) === 0);
-  return players[currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1].id;
-}
+import { getPlayerById } from "./helperFns";
 
 type ActionFunction = (players: Array<IPlayer>, gameContext: IGameStateMachineContext) => Array<IPlayer>;
 

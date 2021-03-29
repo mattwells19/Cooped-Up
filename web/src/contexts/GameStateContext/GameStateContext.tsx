@@ -2,9 +2,9 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import deck from "@utils/Deck";
-import { getPlayerById } from "@utils/GameState/Actions";
+import { getPlayerById } from "@utils/GameState/helperFns";
+import useCurrentGameState from "@utils/GameState/useCurrentGameState";
 import type { IGameState, IGameStateContext, IPlayer } from "./types";
-import useCurrentGameState from "../../utils/GameState/useCurrentGameState";
 
 export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
@@ -50,9 +50,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 
     handleGameEvent({
       event: "START",
-      eventPayload: {
-        playerTurnId: playerHands[0].id,
-      },
+      eventPayload: { playerTurnId: playerHands[0].id },
       players: playerHands,
     });
   };
@@ -88,7 +86,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
       sendGameStateEvent("PASS");
     } else if (players.some((p) => p.actionResponse === "CHALLENGE")) {
       sendGameStateEvent("CHALLENGE", {
-        // we know it exists because of the some above
+        // we know it exists because of the 'some' above
         challengerId: players.find((p) => p.actionResponse === "CHALLENGE")!.id,
       });
     }

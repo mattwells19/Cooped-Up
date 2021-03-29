@@ -1,7 +1,8 @@
 import { Actions, IPlayer } from "@contexts/GameStateContext/types";
 import type { IActionToastProps } from "@hooks/useActionToast";
 import type { Dispatch, SetStateAction } from "react";
-import { CoupAction, getPlayerById, IncomeAction, TaxAction } from "./Actions";
+import { CoupAction, IncomeAction, TaxAction } from "./Actions";
+import { getPlayerById } from "./helperFns";
 import type { ICurrentGameState } from "./types";
 
 export default function processPerformAction(

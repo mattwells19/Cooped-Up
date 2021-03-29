@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import type { IPlayer } from "@contexts/GameStateContext/types";
 import { useMachine } from "@xstate/react";
 import GameStateMachine from "./GameStateMachine";
-import { getNextPlayerTurnId } from "./Actions";
+import { getNextPlayerTurnId } from "./helperFns";
 import type { ICurrentGameState, ISendGameStateUpdate } from "./types";
 import processProposeAction from "./ProcessProposeAction";
 import processPerformAction from "./ProcessPerformAction";
