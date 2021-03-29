@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Redirect, Route, Switch, BrowserRouter, RouteComponentProps } from "react-router-dom";
-import Lobby from "./pages/Lobby";
-import Home from "./pages/Home";
-import PlayerName from "./pages/PlayerName";
-import GameStateContextProvider from "./contexts/GameStateContext/GameStateContext";
+import GameStateContextProvider from "@contexts/GameStateContext/GameStateContext";
+import Lobby from "@pages/Lobby";
+import Home from "@pages/Home";
+import PlayerName from "@pages/PlayerName";
 
 type LobbyRouteStateType = {
   newRoom: boolean | undefined;

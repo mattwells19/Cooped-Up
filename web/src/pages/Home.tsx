@@ -14,9 +14,9 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import Header from "../components/Header";
-import useDocTitle from "../hooks/useDocTitle";
-import get from "../utils/get";
+import Header from "@components/Header";
+import useDocTitle from "@hooks/useDocTitle";
+import get from "@utils/get";
 
 interface ILobbyProps {
   invalidRoomCode: boolean | undefined;

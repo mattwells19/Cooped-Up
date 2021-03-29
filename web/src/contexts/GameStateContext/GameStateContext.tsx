@@ -1,21 +1,18 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { useMachine } from "@xstate/react";
-import deck from "../../utils/Deck";
-import { Actions, IGameState, IGameStateContext, IPlayer } from "./types";
-import GameStateMachine from "../../utils/GameStateMachine";
-import { CoupAction, getPlayerById, getNextPlayerTurnId, IncomeAction } from "./Actions";
-import useActionToast from "../../hooks/useActionToast";
+import deck from "@utils/Deck";
+import { getPlayerById } from "@utils/GameState/Actions";
+import type { IGameState, IGameStateContext, IPlayer } from "./types";
+import useCurrentGameState from "../../utils/GameState/useCurrentGameState";
 
 export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
 
 const GameStateContextProvider: React.FC = ({ children }) => {
-  const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const [players, setPlayers] = React.useState<Array<IPlayer>>([]);
+  const [currentGameState, sendGameStateEvent] = useCurrentGameState([players, setPlayers]);
   const { roomCode } = useParams<{ roomCode: string }>();
-  const actionToast = useActionToast();
 
   const socket = React.useMemo(() => (
     io("/", {
@@ -28,69 +25,6 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     })
   ), [roomCode]);
 
-  // Handling game state
-  React.useEffect(() => {
-    switch (true) {
-      case currentGameState.matches("pregame"):
-      case currentGameState.matches("idle"):
-        break;
-      case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Coup: {
-        const victim = getPlayerById(players, currentGameState.context.victimId).player;
-        if (!victim) throw new Error(`No player was found with the id ${currentGameState.context.victimId}.`);
-
-        // if victim only has one influence skip the selection step and eliminate the single influence
-        const victimAliveInfluences = victim.influences.filter((i) => !i.isDead);
-        if (victimAliveInfluences.length < 2) {
-          sendGameStateEvent("PASS", {
-            killedInfluence: victimAliveInfluences[0].type,
-          });
-        }
-
-        break;
-      }
-      case currentGameState.matches("propose_action") && currentGameState.context.action === Actions.Income:
-        sendGameStateEvent("PASS"); // auto pass on income as it cannot be blocked or challenged
-        break;
-      case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Income: {
-        setPlayers((prevPlayers) => IncomeAction(prevPlayers, currentGameState.context));
-        const performer = getPlayerById(players, currentGameState.context.playerTurnId).player;
-        if (!performer) throw new Error(`No player was found with the id ${currentGameState.context.playerTurnId}.`);
-
-        actionToast({
-          performerName: performer.name,
-          variant: Actions.Income,
-        });
-        sendGameStateEvent("COMPLETE", {
-          nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
-        });
-        break;
-      }
-      case currentGameState.matches("perform_action") && currentGameState.context.action === Actions.Coup: {
-        if (!currentGameState.context.killedInfluence) throw new Error("No influence was selected to eliminate.");
-
-        setPlayers((prevPlayers) => CoupAction(prevPlayers, currentGameState.context));
-        const performer = getPlayerById(players, currentGameState.context.performerId).player;
-        const victim = getPlayerById(players, currentGameState.context.victimId).player;
-
-        if (!performer) throw new Error(`No player was found with the id ${currentGameState.context.performerId}.`);
-        if (!victim) throw new Error(`No player was found with the id ${currentGameState.context.victimId}.`);
-
-        actionToast({
-          performerName: performer.name,
-          victimName: victim.name,
-          variant: Actions.Coup,
-          lostInfluence: currentGameState.context.killedInfluence,
-        });
-        sendGameStateEvent("COMPLETE", {
-          nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
-        });
-        break;
-      }
-      default:
-        throw new Error(`The state '${currentGameState.value}' has either not been implemented or does not exist`);
-    }
-  }, [currentGameState.value]);
-
   function handleGameStateUpdate(newGameState: IGameState) {
     sendGameStateEvent(newGameState.event, newGameState.eventPayload);
     if (newGameState.players) setPlayers(newGameState.players);
@@ -98,6 +32,10 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 
   function handleGameEvent(newGameState: IGameState) {
     socket.emit("updateGameState", newGameState);
+  }
+
+  function handleActionResponse(response: "PASS" | "CHALLENGE") {
+    socket.emit("proposeActionResponse", response);
   }
 
   const handleStartGame = () => {
@@ -131,6 +69,31 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     });
   }, [currentGameState.context.gameStarted]);
 
+  React.useEffect(() => {
+    socket.off("updatePlayerActionResponse");
+    socket.on("updatePlayerActionResponse", (actionResponse: { playerId: string, response: "PASS" | "CHALLENGE" }) => {
+      setPlayers((prevPlayers) => {
+        const playerToUpdate = getPlayerById(prevPlayers, actionResponse.playerId).index;
+        if (playerToUpdate === -1) throw new Error(`No player with id ${actionResponse.playerId}`);
+        const newPlayers = [...prevPlayers];
+        newPlayers[playerToUpdate] = {
+          ...newPlayers[playerToUpdate],
+          actionResponse: actionResponse.response,
+        };
+        return newPlayers;
+      });
+    });
+
+    if (players.every((p) => p.actionResponse === "PASS")) {
+      sendGameStateEvent("PASS");
+    } else if (players.some((p) => p.actionResponse === "CHALLENGE")) {
+      sendGameStateEvent("CHALLENGE", {
+        // we know it exists because of the some above
+        challengerId: players.find((p) => p.actionResponse === "CHALLENGE")!.id,
+      });
+    }
+  }, [players]);
+
   // put socket listeners in useEffect so it only registers on render
   React.useEffect(() => {
     if (!socket.connected) socket.connect();
@@ -141,6 +104,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
         coins: 2,
         influences: [],
         name: player.name,
+        actionResponse: null,
       })));
     });
 
@@ -158,6 +122,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
         turn: currentGameState.context.playerTurnId,
         handleGameEvent,
         handleStartGame,
+        handleActionResponse,
         ...currentGameState.context,
       }}
     >

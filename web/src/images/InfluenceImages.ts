@@ -1,4 +1,4 @@
-import type { Influence } from "../contexts/GameStateContext/types";
+import type { Influence } from "@contexts/GameStateContext/types";
 import Ambassador from "./Ambassador.png";
 import Assassin from "./Assassin.png";
 import Blank from "./Blank.png";

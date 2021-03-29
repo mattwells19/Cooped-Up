@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Image, ImageProps } from "@chakra-ui/react";
-import type { Influence } from "../contexts/GameStateContext/types";
-import InfluenceImages from "../images/InfluenceImages";
+import type { Influence } from "@contexts/GameStateContext/types";
+import InfluenceImages from "@images/InfluenceImages";
 
 interface IInfluenceCardProps extends ImageProps {
   faceUp: boolean;

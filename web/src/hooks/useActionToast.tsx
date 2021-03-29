@@ -1,11 +1,12 @@
 import React from "react";
 import { Box, Center, Progress, Text, useToast, useToken } from "@chakra-ui/react";
-import { AxeIcon, CoinIcon } from "../icons";
-import { Actions, Influence } from "../contexts/GameStateContext/types";
+import { AxeIcon, CoinIcon } from "@icons";
+import { Actions, Influence } from "@contexts/GameStateContext/types";
 
-type IActionToastProps =
+export type IActionToastProps =
  | { variant: Actions.Coup, performerName: string, victimName: string, lostInfluence: Influence }
  | { variant: Actions.Income, performerName: string, victimName?: never, lostInfluence?: never }
+ | { variant: Actions.Tax, performerName: string, victimName?: never, lostInfluence?: never }
 
 const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, victimName, lostInfluence }) => {
   // starting at 5% makes the progress bar end closer towards the end
@@ -40,6 +41,12 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
           <Text>
             <Text as="span" fontWeight="bold">{performerName}</Text>
             &nbsp;took income which is only performed by mere peasants.
+          </Text>
+        )}
+        {variant === Actions.Tax && (
+          <Text>
+            <Text as="span" fontWeight="bold">{performerName}</Text>
+            &nbsp;must have royalty in their blood as they have collected tax from the peasants.
           </Text>
         )}
         {variant === Actions.Coup && (

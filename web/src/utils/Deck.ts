@@ -1,5 +1,5 @@
 import { shuffle as _shuffle } from "lodash";
-import type { IPlayerInfluence } from "../contexts/GameStateContext/types";
+import type { IPlayerInfluence } from "@contexts/GameStateContext/types";
 
 const startingDeck: Array<IPlayerInfluence> = [
   {

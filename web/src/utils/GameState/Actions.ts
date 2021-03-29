@@ -1,5 +1,5 @@
-import type { IPlayer } from "./types";
-import type { IGameStateMachineContext } from "../../utils/GameStateMachine";
+import type { IPlayer } from "@contexts/GameStateContext/types";
+import type { IGameStateMachineContext } from "./GameStateMachine";
 
 /**
  * A function that finds the player with the specified ID.
@@ -69,6 +69,23 @@ export const CoupAction: ActionFunction = (players, gameContext) => {
       }
       return influence;
     }),
+  };
+
+  return newPlayers;
+};
+
+export const TaxAction: ActionFunction = (players, gameContext) => {
+  const performerIndex = getPlayerById(players, gameContext.performerId).index;
+
+  const newPlayers = players.map((p) => ({
+    ...p,
+    actionResponse: null,
+  }));
+
+  // performer loses 7 coins
+  newPlayers[performerIndex] = {
+    ...newPlayers[performerIndex],
+    coins: newPlayers[performerIndex].coins + 3,
   };
 
   return newPlayers;

@@ -1,5 +1,5 @@
 import type { SingleOrArray, SCXML, EventData, Event } from "xstate";
-import type { GameStateMachineEvent, IGameStateMachineContext } from "../../utils/GameStateMachine";
+import type { GameStateMachineEvent, IGameStateMachineContext } from "@utils/GameState/GameStateMachine";
 
 export type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
@@ -29,6 +29,7 @@ export interface IPlayer {
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
+  actionResponse: "PASS" | "CHALLENGE" | null;
 }
 
 export interface IGameStateContext extends IGameStateMachineContext {
@@ -36,5 +37,6 @@ export interface IGameStateContext extends IGameStateMachineContext {
   players: Array<IPlayer>;
   turn: string;
   handleGameEvent: (newGameState: IGameState) => void;
+  handleActionResponse: (newGameState: "PASS" | "CHALLENGE") => void;
   handleStartGame: () => void;
 }

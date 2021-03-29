@@ -1,5 +1,5 @@
 import { assign, createMachine } from "xstate";
-import type { Actions, Influence } from "../contexts/GameStateContext/types";
+import type { Actions, Influence } from "@contexts/GameStateContext/types";
 
 export interface IGameStateMachineContext {
   playerTurnId: string;
@@ -8,12 +8,13 @@ export interface IGameStateMachineContext {
   gameStarted: boolean;
   victimId: string;
   killedInfluence: Influence | undefined;
+  challengerId: string | undefined;
 }
 
 export type GameStateMachineEvent =
   | { type: "ACTION"; action: Actions; performerId: string; victimId: string }
   | { type: "BLOCK" }
-  | { type: "CHALLENGE" }
+  | { type: "CHALLENGE"; challengerId: string }
   | { type: "COMPLETE"; nextPlayerTurnId: string }
   | { type: "FAILED" }
   | { type: "PASS"; killedInfluence: Influence | undefined }
@@ -37,6 +38,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     performerId: "",
     victimId: "",
     killedInfluence: undefined,
+    challengerId: undefined,
   },
   states: {
     pregame: {
@@ -57,6 +59,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
         performerId: "",
         victimId: "",
         killedInfluence: undefined,
+        challengerId: undefined,
       })),
       on: {
         ACTION: {
@@ -72,7 +75,12 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     propose_action: {
       on: {
         BLOCK: "blocked",
-        CHALLENGE: "challenged",
+        CHALLENGE: {
+          target: "challenged",
+          actions: assign({
+            challengerId: (_, event) => event.challengerId,
+          }),
+        },
         PASS: {
           target: "perform_action",
           actions: assign({

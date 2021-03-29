@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ChakraProvider } from "@chakra-ui/react";
-import theme from "./utils/theme";
+import theme from "@utils/theme";
 import Layout from "./Layout";
 
 const App: React.FC = () => (

@@ -5,12 +5,12 @@ import {
   FormHelperText, Heading, Text, VStack,
   ButtonGroup, Center, useToast,
 } from "@chakra-ui/react";
-import Header from "../components/Header";
-import useDocTitle from "../hooks/useDocTitle";
-import { useGameState } from "../contexts/GameStateContext/GameStateContext";
+import Header from "@components/Header";
+import useDocTitle from "@hooks/useDocTitle";
+import { useGameState } from "@contexts/GameStateContext/GameStateContext";
+import type { IPlayer } from "@contexts/GameStateContext/types";
+import get from "@utils/get";
 import Game from "./Game";
-import get from "../utils/get";
-import type { IPlayer } from "../contexts/GameStateContext/types";
 
 interface ILobbyProps {
   newRoom: boolean | undefined;

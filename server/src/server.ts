@@ -41,6 +41,13 @@ io.on("connection", async (socket: Socket) => {
     io.to(roomCode).emit("gameStateUpdate", newGameState);
   });
 
+  socket.on("proposeActionResponse", (response: "PASS" | "CHALLENGE") => {
+    io.to(roomCode).emit("updatePlayerActionResponse", {
+      playerId: socket.id,
+      response,
+    });
+  });
+
   socket.on("disconnect", async () => {
     const players = await Rooms.removePlayer(socket.id);
     if (players) io.to(roomCode).emit("players_changed", players);
