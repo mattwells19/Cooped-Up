@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, Center, Progress, Text, useToast, useToken } from "@chakra-ui/react";
-import { AxeIcon, CoinIcon } from "@icons";
+import { AxeIcon, ChallengeIcon, CoinIcon } from "@icons";
 import { Actions, Influence } from "@contexts/GameStateContext/types";
 
 export type IActionToastProps =
  | { variant: Actions.Coup, performerName: string, victimName: string, lostInfluence: Influence }
  | { variant: Actions.Income, performerName: string, victimName?: never, lostInfluence?: never }
  | { variant: Actions.Tax, performerName: string, victimName?: never, lostInfluence?: never }
+ | { variant: "Challenge", performerName?: never, victimName: string, lostInfluence: Influence }
 
 const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, victimName, lostInfluence }) => {
   // starting at 5% makes the progress bar end closer towards the end
@@ -35,6 +36,7 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
         {variant === Actions.Income && <CoinIcon width={useToken("sizes", "40")} />}
         {/* I don't like the coup icon. definitely need to find something better */}
         {variant === Actions.Coup && <AxeIcon width={useToken("sizes", "40")} />}
+        {variant === "Challenge" && <ChallengeIcon width={useToken("sizes", "40")} />}
       </Center>
       <Box fontSize="large">
         {variant === Actions.Income && (
@@ -67,6 +69,14 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
             </Text>
           </>
         )}
+        {variant === "Challenge" && (
+          <Text marginTop="3">
+            <Text as="span" fontWeight="bold">{victimName}</Text>
+            &nbsp;lost their&nbsp;
+            {lostInfluence}
+            .
+          </Text>
+        )}
       </Box>
     </Box>
   );
@@ -74,14 +84,11 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
 
 const useActionToast = () => {
   const toast = useToast();
-  return (props: IActionToastProps) => {
-    toast.closeAll();
-    return toast({
-      position: "top",
-      duration: 5000,
-      render: () => <ActionToast {...props} />,
-    });
-  };
+  return (props: IActionToastProps) => toast({
+    position: "top",
+    duration: 5000,
+    render: () => <ActionToast {...props} />,
+  });
 };
 
 export default useActionToast;

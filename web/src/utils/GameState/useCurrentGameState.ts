@@ -7,6 +7,7 @@ import { getNextPlayerTurnId } from "./helperFns";
 import type { ICurrentGameState, ISendGameStateUpdate } from "./types";
 import processProposeAction from "./ProcessProposeAction";
 import processPerformAction from "./ProcessPerformAction";
+import processChallenge from "./ProcessChallenge";
 
 export default function useCurrentGameState(
   playerState: [IPlayer[], Dispatch<SetStateAction<IPlayer[]>>],
@@ -19,8 +20,20 @@ export default function useCurrentGameState(
     switch (true) {
       case currentGameState.matches("pregame"):
       case currentGameState.matches("idle"):
-      case currentGameState.matches("challenged"):
         break;
+      case currentGameState.matches("challenged"): {
+        const actionToastProps = processChallenge(currentGameState, [players, setPlayers]);
+        if (actionToastProps) {
+          actionToast(actionToastProps);
+          if (currentGameState.context.challengeFailed) sendGameStateEvent("FAILED");
+          else {
+            sendGameStateEvent("COMPLETE", {
+              nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
+            });
+          }
+        }
+        break;
+      }
       case currentGameState.matches("propose_action"):
         processProposeAction(currentGameState, [players, setPlayers], sendGameStateEvent);
         break;
@@ -35,7 +48,7 @@ export default function useCurrentGameState(
       default:
         throw new Error(`The state '${currentGameState.value}' has either not been implemented or does not exist`);
     }
-  }, [currentGameState.value]);
+  }, [currentGameState.value, currentGameState.context.challengeFailed]);
 
   return [currentGameState, sendGameStateEvent];
 }

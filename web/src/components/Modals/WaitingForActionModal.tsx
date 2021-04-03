@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Center, Image, Text, VStack } from "@chakra-ui/react";
+import { Center, Image, Text, VStack, useId } from "@chakra-ui/react";
 import WaitingGif from "@images/Waiting.gif";
 import BaseModal from "./BaseModal";
 
@@ -11,7 +11,7 @@ const WaitingForActionModal: React.FC<IWaitingForActionModal> = ({ messaging }) 
   <BaseModal>
     <VStack margin="10" spacing="6">
       {messaging.map((m) => (
-        <Text fontSize="large" textAlign="center">
+        <Text key={useId()} fontSize="large" textAlign="center">
           {m}
         </Text>
       ))}

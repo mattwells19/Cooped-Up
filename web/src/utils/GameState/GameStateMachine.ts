@@ -8,6 +8,7 @@ export interface IGameStateMachineContext {
   gameStarted: boolean;
   victimId: string;
   killedInfluence: Influence | undefined;
+  challengeFailed: boolean | undefined;
   challengerId: string | undefined;
 }
 
@@ -18,6 +19,7 @@ export type GameStateMachineEvent =
   | { type: "COMPLETE"; nextPlayerTurnId: string }
   | { type: "FAILED" }
   | { type: "PASS"; killedInfluence: Influence | undefined }
+  | { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
   | { type: "START"; playerTurnId: string };
 
 export type GameStateMachineState =
@@ -38,6 +40,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     performerId: "",
     victimId: "",
     killedInfluence: undefined,
+    challengeFailed: undefined,
     challengerId: undefined,
   },
   states: {
@@ -59,6 +62,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
         performerId: "",
         victimId: "",
         killedInfluence: undefined,
+        challengeFailed: undefined,
         challengerId: undefined,
       })),
       on: {
@@ -108,7 +112,18 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     challenged: {
       on: {
         FAILED: "perform_action",
-        COMPLETE: "idle",
+        COMPLETE: {
+          target: "idle",
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
+        },
+        LOSE_INFLUENCE: {
+          actions: assign((_, event) => ({
+            killedInfluence: event.killedInfluence,
+            challengeFailed: event.challengeFailed,
+          })),
+        },
       },
     },
   },

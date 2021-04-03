@@ -1,17 +1,32 @@
 import * as React from "react";
-import { Box, Center, Text, VStack } from "@chakra-ui/react";
-import type { IPlayer } from "@contexts/GameStateContext/types";
+import { Box, Center, Text, VStack, keyframes, useToken } from "@chakra-ui/react";
+import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { ChallengeIcon } from "@icons";
 import BaseModal from "./BaseModal";
 
 interface IChallengedModal {
+  actionInfluence: Influence;
   performer: IPlayer;
+  challengeFailed: boolean;
   challenger: IPlayer;
   onDone: () => void;
 }
 
+const slideIn = keyframes({
+  "0%": {
+    transform: "translateY(100%)",
+  },
+  "90%": {
+    transform: "translateY(-5%)",
+  },
+  "100%": {
+    transform: "translateY(0%)",
+  },
+});
+
 const CustomBox: React.FC = ({ children }) => (
   <Box
+    animation={`${slideIn} 1s ease`}
     alignItems="center"
     backgroundColor="gray.700"
     filter="drop-shadow(0px 4px 1px #242830)"
@@ -25,42 +40,79 @@ const CustomBox: React.FC = ({ children }) => (
   </Box>
 );
 
-const ChallengedModal: React.FC<IChallengedModal> = ({ performer, challenger, onDone }) => (
-  <BaseModal>
-    <Center backgroundColor="#4D2527" flexDirection="column" padding="2" rounded="md">
-      <ChallengeIcon width="93px" height="93px" />
-      <Text textTransform="uppercase" fontFamily="Nova Flat" fontSize="5xl" color="#E4E768" textAlign="center">
-        Challenge
-      </Text>
-      <VStack width="100%" spacing="2">
-        <CustomBox>
-          <Text fontSize="larger">
-            <Text as="span" fontWeight="bold">{challenger.name}</Text>
-            &nbsp;has challenged that&nbsp;
-            <Text as="span" fontWeight="bold">{performer.name}</Text>
-            &nbsp;has a Duke!
-          </Text>
-        </CustomBox>
-        <CustomBox>
-          <Text fontSize="larger">
-            <Text as="span" fontWeight="bold">{challenger.name}</Text>
-            &nbsp;has&nbsp;
-            <Text as="span" color="red.300" textTransform="uppercase" fontWeight="bold">
-              Lost
-            </Text>
-            &nbsp;the challenge.
-          </Text>
-        </CustomBox>
-        <CustomBox>
-          <Text fontSize="larger">
-            Waiting for&nbsp;
-            <Text as="span" fontWeight="bold">{challenger.name}</Text>
-            &nbsp;to choose an influence to lose...
-          </Text>
-        </CustomBox>
-      </VStack>
-    </Center>
-  </BaseModal>
-);
+const enum Stages {
+  initial = 0,
+  result,
+}
+
+const ChallengedModal: React.FC<IChallengedModal> = ({
+  actionInfluence,
+  performer,
+  challenger,
+  challengeFailed,
+  onDone,
+}) => {
+  const [stage, setStage] = React.useState<Stages>(Stages.initial);
+
+  React.useEffect(() => {
+    const timerInterval = setInterval(() => {
+      if (stage === Stages.initial) setStage(Stages.result);
+      else {
+        setStage(Stages.initial);
+        clearInterval(timerInterval);
+        onDone();
+      }
+    }, 5000);
+    return () => {
+      clearInterval(timerInterval);
+    };
+  }, [stage]);
+
+  return (
+    <BaseModal>
+      <Center backgroundColor="#4D2527" flexDirection="column" padding="2" rounded="md" overflow="hidden">
+        <ChallengeIcon width="93px" height="93px" />
+        <Text textTransform="uppercase" fontFamily="Nova Flat" fontSize="5xl" color="#E4E768" textAlign="center">
+          Challenge
+        </Text>
+        <VStack
+          width="100%"
+          spacing="2"
+          transition="height 300ms linear"
+          height={`calc(${(stage + 1)} * ${useToken("sizes", "16")})`}
+        >
+          {stage >= Stages.initial && (
+            <CustomBox>
+              <Text fontSize="larger">
+                <Text as="span" fontWeight="bold">{challenger.name}</Text>
+                    &nbsp;has challenged that&nbsp;
+                <Text as="span" fontWeight="bold">{performer.name}</Text>
+                &nbsp;has a&nbsp;
+                {actionInfluence}
+                !
+              </Text>
+            </CustomBox>
+          )}
+          {stage >= Stages.result && (
+            <CustomBox>
+              <Text fontSize="larger">
+                The challenge has&nbsp;
+                <Text
+                  as="span"
+                  color={challengeFailed ? "red.300" : "green.300"}
+                  textTransform="uppercase"
+                  fontWeight="bold"
+                >
+                  {challengeFailed ? "failed" : "succeeded"}
+                </Text>
+                !
+              </Text>
+            </CustomBox>
+          )}
+        </VStack>
+      </Center>
+    </BaseModal>
+  );
+};
 
 export default ChallengedModal;

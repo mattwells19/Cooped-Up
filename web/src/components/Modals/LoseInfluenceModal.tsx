@@ -1,21 +1,17 @@
 import * as React from "react";
-import { Center, HStack, Text, VStack } from "@chakra-ui/react";
+import { Center, HStack, Text, useId, VStack } from "@chakra-ui/react";
 import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
 import InfluenceCard from "../InfluenceCard";
 import BaseModal from "./BaseModal";
 
 interface ILoseInfluenceModal {
   handleClose: (killInfluence: Influence) => void;
-  performer: IPlayer;
   currentPlayer: IPlayer;
 }
 
-const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, performer, handleClose }) => (
+const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, handleClose }) => (
   <BaseModal>
     <VStack spacing="4" margin="10">
-      <Text fontSize="large" textAlign="center">
-        {`${performer.name} has chosen to coup you!`}
-      </Text>
       <Text fontSize="large" textAlign="center">
         Select an influence to lose.
       </Text>
@@ -23,8 +19,7 @@ const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, perf
         <HStack spacing="10px">
           {currentPlayer.influences.filter((i) => !i.isDead).map((influence, index) => (
             <InfluenceCard
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${influence.type}-${index}`}
+              key={useId(influence.type)}
               enlarge
               faceUp
               influence={influence.type}
