@@ -1,7 +1,7 @@
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import { Actions } from "@contexts/GameStateContext/types";
 import { getPlayerById, getPlayersByIds } from "@utils/GameState/helperFns";
-import { getInfluenceFromAction, wasValidAction } from "@utils/InfluenceUtils";
+import { getInfluencesFromAction, wasValidAction } from "@utils/InfluenceUtils";
 import * as React from "react";
 import ActionProposedModal from "./ActionProposedModal";
 import ChallengedModal from "./ChallengedModal";
@@ -40,7 +40,7 @@ const GameModalChooser: React.FC = () => {
       <ChallengedModal
         performer={performer}
         challenger={challenger}
-        actionInfluence={getInfluenceFromAction(action)}
+        actionInfluences={getInfluencesFromAction(action)}
         challengeFailed={challengeFailed}
         onDone={() => setChallengeResult(challengeFailed ? "failed" : "success")}
       />
@@ -114,7 +114,7 @@ const GameModalChooser: React.FC = () => {
       />
     );
   }
-  if (action === Actions.Tax && performer) {
+  if (action && action !== Actions.Coup && action !== Actions.Income && performer) {
     return currentPlayer.actionResponse === "PASS" ? (
       // player decided not to challenge
       <WaitingForActionModal
@@ -126,7 +126,7 @@ const GameModalChooser: React.FC = () => {
     ) : (
       // player given the option to challenge
       <ActionProposedModal
-        action="collect tax"
+        action={action}
         performer={performer}
         handleClose={handleActionResponse}
       />

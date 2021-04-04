@@ -1,20 +1,28 @@
 import { Actions, Influence } from "@contexts/GameStateContext/types";
+import { AmbassadorImg, AssassinImg, CaptainImg, ContessaImg, DukeImg } from "@images/InfluenceImages";
+import theme from "@utils/theme";
 
-const InfluenceValidActions: Record<Influence, Actions | null> = {
-  Duke: Actions.Tax,
-  Captain: Actions.Steal,
-  Ambassador: Actions.Exchange,
-  Assassin: Actions.Assassinate,
-  Contessa: null,
+export interface IInfluenceDetails {
+  img: string;
+  actions: Array<Actions>;
+  color: string;
+}
+
+export const InfluenceDetails: Record<Influence, IInfluenceDetails> = {
+  Ambassador: { img: AmbassadorImg, actions: [Actions.Exchange], color: theme.colors.green["300"] },
+  Assassin: { img: AssassinImg, actions: [Actions.Assassinate], color: theme.colors.gray["300"] },
+  Captain: { img: CaptainImg, actions: [Actions.Steal], color: theme.colors.blue["300"] },
+  Contessa: { img: ContessaImg, actions: [], color: theme.colors.orange["300"] },
+  Duke: { img: DukeImg, actions: [Actions.Tax], color: theme.colors.purple["300"] },
 };
 
 export function wasValidAction(influence: Influence, action: Actions): boolean {
   if (action === Actions.Coup || action === Actions.Income) return true;
-  return InfluenceValidActions[influence] === action;
+  return InfluenceDetails[influence].actions.includes(action);
 }
 
-export function getInfluenceFromAction(action: Actions): Influence {
-  const foundKey = Object.keys(InfluenceValidActions).find((key) => InfluenceValidActions[key as Influence] === action);
-  if (!foundKey) throw new Error(`Invalid action ${action}.`);
-  return foundKey as Influence;
+export function getInfluencesFromAction(action: Actions): Array<Influence> {
+  const InfluenceDetailsKeys = Object.keys(InfluenceDetails) as Array<Influence>;
+  const foundKey = InfluenceDetailsKeys.filter((key) => InfluenceDetails[key].actions.includes(action));
+  return foundKey;
 }

@@ -2,10 +2,11 @@ import * as React from "react";
 import { Box, Center, Text, VStack, keyframes, useToken } from "@chakra-ui/react";
 import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { ChallengeIcon } from "@icons";
+import { InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
 
 interface IChallengedModal {
-  actionInfluence: Influence;
+  actionInfluences: Array<Influence>;
   performer: IPlayer;
   challengeFailed: boolean;
   challenger: IPlayer;
@@ -46,7 +47,7 @@ const enum Stages {
 }
 
 const ChallengedModal: React.FC<IChallengedModal> = ({
-  actionInfluence,
+  actionInfluences,
   performer,
   challenger,
   challengeFailed,
@@ -88,7 +89,16 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
                     &nbsp;has challenged that&nbsp;
                 <Text as="span" fontWeight="bold">{performer.name}</Text>
                 &nbsp;has a&nbsp;
-                {actionInfluence}
+                {actionInfluences.map((influence, i) => (
+                  <Text
+                    key={influence}
+                    as="span"
+                    color={InfluenceDetails[influence].color}
+                    fontWeight="bold"
+                  >
+                    {`${influence}${i < actionInfluences.length - 1 ? ", " : ""}`}
+                  </Text>
+                ))}
                 !
               </Text>
             </CustomBox>

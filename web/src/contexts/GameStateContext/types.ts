@@ -4,13 +4,13 @@ import type { GameStateMachineEvent, IGameStateMachineContext } from "@utils/Gam
 export type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
 export const enum Actions {
-  Assassinate,
-  Tax,
-  Steal,
-  Exchange,
-  Income,
-  Aid,
-  Coup,
+  Assassinate = "assassinate",
+  Tax = "collect tax",
+  Steal = "steal",
+  Exchange = "exchange Influences",
+  Income = "collect income",
+  Aid = "collect foreign aid",
+  Coup = "coup",
 }
 
 export interface IGameState {
