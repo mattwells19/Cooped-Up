@@ -4,7 +4,7 @@ import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import PlayerHand from "@components/PlayerHand";
 import Actions from "@components/Actions/Actions";
 import { getPlayerById } from "@utils/GameState/helperFns";
-import GameModalChooser from "@components/Modals/GameModalChooser";
+import GameModalChooser from "@components/GameModalChooser";
 
 interface IGameProps {}
 

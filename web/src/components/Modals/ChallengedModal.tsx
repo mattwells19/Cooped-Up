@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Center, Text, VStack, keyframes, useToken } from "@chakra-ui/react";
+import { Box, Center, Text, VStack, keyframes } from "@chakra-ui/react";
 import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { ChallengeIcon } from "@icons";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
@@ -34,7 +34,7 @@ const CustomBox: React.FC = ({ children }) => (
     display="flex"
     justifyContent="center"
     width="100%"
-    height="16"
+    height="64px"
     borderRadius="2xl"
   >
     {children}
@@ -79,8 +79,7 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
         <VStack
           width="100%"
           spacing="2"
-          transition="height 300ms linear"
-          height={`calc(${(stage + 1)} * ${useToken("sizes", "16")})`}
+          height="138px"
         >
           {stage >= Stages.initial && (
             <CustomBox>

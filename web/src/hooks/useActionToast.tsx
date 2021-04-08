@@ -26,8 +26,10 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
       <CloseButton marginLeft="auto" onClick={() => closeAllToasts()} />
       <Center>
         {variant === Actions.Income && <CoinIcon width={useToken("sizes", "40")} />}
-        {/* I don't like the coup icon. definitely need to find something better */}
+        {/* TODO: Needs Graphic */}
         {variant === Actions.Coup && <AxeIcon width={useToken("sizes", "40")} />}
+        {/* TODO: Needs Graphic */}
+        {variant === Actions.Tax && <CoinIcon width={useToken("sizes", "40")} />}
         {variant === "Challenge" && <ChallengeIcon width={useToken("sizes", "40")} />}
       </Center>
       <Box fontSize="large">

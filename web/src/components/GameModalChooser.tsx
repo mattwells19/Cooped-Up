@@ -3,10 +3,10 @@ import { Actions } from "@contexts/GameStateContext/types";
 import { getPlayerById, getPlayersByIds } from "@utils/GameState/helperFns";
 import { getInfluencesFromAction, wasValidAction } from "@utils/InfluenceUtils";
 import * as React from "react";
-import ActionProposedModal from "./ActionProposedModal";
-import ChallengedModal from "./ChallengedModal";
-import LoseInfluenceModal from "./LoseInfluenceModal";
-import WaitingForActionModal from "./WaitingForActionModal";
+import ActionProposedModal from "./Modals/ActionProposedModal";
+import ChallengedModal from "./Modals/ChallengedModal";
+import LoseInfluenceModal from "./Modals/LoseInfluenceModal";
+import WaitingForActionModal from "./Modals/WaitingForActionModal";
 
 const GameModalChooser: React.FC = () => {
   const {
