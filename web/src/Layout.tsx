@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Redirect, Route, Switch, BrowserRouter, RouteComponentProps } from "react-router-dom";
-import GameStateContextProvider from "@contexts/GameStateContext/GameStateContext";
+import { GameStateContextProvider } from "@contexts/GameStateContext";
+import { DeckContextProvider } from "@contexts/DeckContext";
+import { PlayersContextProvider } from "@contexts/PlayersContext";
 import Lobby from "@pages/Lobby";
 import Home from "@pages/Home";
 import PlayerName from "@pages/PlayerName";
@@ -26,12 +28,16 @@ const Layout: React.FC = () => (
 					// if the player joining doesn't have a name set, render the player name page instead
 					if (localStorage.getItem("playerName")) {
 						return (
-							<GameStateContextProvider>
-								<Lobby
-									newRoom={(location.state as LobbyRouteStateType)?.newRoom}
-									roomCode={match.params.roomCode}
-								/>
-							</GameStateContextProvider>
+							<DeckContextProvider>
+								<PlayersContextProvider>
+									<GameStateContextProvider>
+										<Lobby
+											newRoom={(location.state as LobbyRouteStateType)?.newRoom}
+											roomCode={match.params.roomCode}
+										/>
+									</GameStateContextProvider>
+								</PlayersContextProvider>
+							</DeckContextProvider>
 						);
 					}
 					return (

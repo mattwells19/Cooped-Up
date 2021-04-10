@@ -1,17 +1,18 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { getPlayerById } from "@utils/GameState/helperFns";
-import useCurrentGameState from "@utils/GameState/useCurrentGameState";
-import type { IGameState, IGameStateContext, Influence, IPlayer } from "./types";
+import useCurrentGameState from "@GameState/useCurrentGameState";
+import { IGameState, IGameStateContext, IncomingSocketActions, Influence, IPlayer, OutgoingSocketActions } from "./types";
+import { usePlayers } from "@contexts/PlayersContext";
+import { useDeck } from "@contexts/DeckContext";
 
-export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
+const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
 
-const GameStateContextProvider: React.FC = ({ children }) => {
-	const [players, setPlayers] = React.useState<Array<IPlayer>>([]);
-	const [deck, setDeck] = React.useState<Array<Influence>>([]);
-	const [currentGameState, sendGameStateEvent] = useCurrentGameState([players, setPlayers], [deck, setDeck]);
+export const GameStateContextProvider: React.FC = ({ children }) => {
+	const { players, setPlayers, getPlayerById } = usePlayers();
+	const { deck, setDeck } = useDeck();
+	const [currentGameState, sendGameStateEvent] = useCurrentGameState();
 	const { roomCode } = useParams<{ roomCode: string }>();
 
 	const socket = React.useMemo(() => (
@@ -32,11 +33,11 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 	}
 
 	function handleGameEvent(newGameState: IGameState) {
-		socket.emit("updateGameState", newGameState);
+		socket.emit(OutgoingSocketActions.UpdateGameState, newGameState);
 	}
 
 	function handleActionResponse(response: "PASS" | "CHALLENGE") {
-		socket.emit("proposeActionResponse", response);
+		socket.emit(OutgoingSocketActions.ProposeActionResponse, response);
 	}
 
 	const handleStartGame = () => {
@@ -56,8 +57,8 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 	};
 
 	React.useEffect(() => {
-		socket.off("players_changed");
-		socket.on("players_changed", (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
+		socket.off(IncomingSocketActions.PlayersChanged);
+		socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
 			// only update player list if someone left once the game has started
 			if (currentGameState.context.gameStarted && playersInRoom.length < players.length) {
 				setPlayers((prevplayers) => (
@@ -68,10 +69,10 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 	}, [currentGameState.context.gameStarted]);
 
 	React.useEffect(() => {
-		socket.off("updatePlayerActionResponse");
-		socket.on("updatePlayerActionResponse", (actionResponse: { playerId: string, response: "PASS" | "CHALLENGE" }) => {
+		socket.off(IncomingSocketActions.UpdatePlayerActionResponse);
+		socket.on(IncomingSocketActions.UpdatePlayerActionResponse, (actionResponse: { playerId: string, response: "PASS" | "CHALLENGE" }) => {
 			setPlayers((prevPlayers) => {
-				const playerToUpdate = getPlayerById(prevPlayers, actionResponse.playerId).index;
+				const playerToUpdate = getPlayerById(actionResponse.playerId).index;
 				if (playerToUpdate === -1) throw new Error(`No player with id ${actionResponse.playerId}`);
 				const newPlayers = [...prevPlayers];
 				newPlayers[playerToUpdate] = {
@@ -97,7 +98,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 	React.useEffect(() => {
 		if (!socket.connected) socket.connect();
 
-		socket.on("players_changed", (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
+		socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
 			setPlayers(playersInRoom.map((player) => ({
 				id: player.id,
 				coins: 2,
@@ -107,9 +108,9 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 			})));
 		});
 
-		socket.on("gameStateUpdate", handleGameStateUpdate);
+		socket.on(IncomingSocketActions.GameStateUpdate, handleGameStateUpdate);
 
-		socket.on("startingDeck", (startinDeck: Array<Influence>) => { setDeck(startinDeck); });
+		socket.on(IncomingSocketActions.StartingDeck, (startinDeck: Array<Influence>) => { setDeck(startinDeck); });
 
 		// perform cleanup of socket when component is removed from the DOM
 		return () => { socket.offAny(); socket.disconnect(); };
@@ -119,7 +120,6 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 		<GameStateContext.Provider
 			value={{
 				currentPlayerId: socket.id,
-				players,
 				turn: currentGameState.context.playerTurnId,
 				handleGameEvent,
 				handleStartGame,
@@ -132,10 +132,8 @@ const GameStateContextProvider: React.FC = ({ children }) => {
 	);
 };
 
-function useGameState(): IGameStateContext {
+export function useGameState(): IGameStateContext {
 	const gameState = React.useContext(GameStateContext);
 	if (!gameState) throw Error("Tried to use game state hook outside of a GameStateProvider.");
 	else return gameState;
 }
-
-export { GameStateContextProvider as default, useGameState };

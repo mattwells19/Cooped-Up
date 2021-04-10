@@ -1,7 +1,7 @@
-import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
+import type { Influence, IPlayer } from "@contexts/GameStateContext";
+import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
 import type { IActionToastProps } from "@hooks/useActionToast";
 import { getInfluencesFromAction } from "@utils/InfluenceUtils";
-import { getPlayersByIds } from "./helperFns";
 import type { ICurrentGameState } from "./types";
 
 interface IProcessChallengeResponse {
@@ -13,6 +13,7 @@ interface IProcessChallengeResponse {
 export default function processChallenge(
 	currentGameState: ICurrentGameState,
 	players: Array<IPlayer>,
+	getPlayersByIds: (playerIds: Array<string>) => Array<IFindPlayerByIdResponse>,
 	deck: Array<Influence>,
 ): IProcessChallengeResponse | undefined {
 	const { action, killedInfluence, challengeFailed, challengerId, performerId } = currentGameState.context;
@@ -20,17 +21,10 @@ export default function processChallenge(
 	if (action && killedInfluence && challengeFailed !== undefined && challengerId && performerId) {
 		const loserId = challengeFailed ? challengerId : performerId;
 		const winnerId = challengeFailed ? performerId : challengerId;
-		const [{ index: loserIndex, player: loser }, { index: winnerIndex, player: winner }] = getPlayersByIds(players, [
+		const [{ index: loserIndex, player: loser }, { index: winnerIndex, player: winner }] = getPlayersByIds([
 			loserId,
 			winnerId,
 		]);
-
-		if (loserIndex === -1 || !loser) {
-			throw new Error(`No player with the ID ${loserId} was found.`);
-		}
-		if (winnerIndex === -1 || !winner) {
-			throw new Error(`No player with the ID ${winnerId} was found.`);
-		}
 
 		const newPlayers: Array<IPlayer> = [...players].map((player) => ({ ...player, actionResponse: null }));
 		const newDeck: Array<Influence> = [...deck];

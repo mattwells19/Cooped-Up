@@ -1,11 +1,15 @@
-import type { IPlayer } from "@contexts/GameStateContext/types";
+import type { IPlayer } from "@contexts/GameStateContext";
+import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
 import type { IGameStateMachineContext } from "./GameStateMachine";
-import { getPlayerById } from "./helperFns";
 
-type ActionFunction = (players: Array<IPlayer>, gameContext: IGameStateMachineContext) => Array<IPlayer>;
+type ActionFunction = (
+	players: Array<IPlayer>,
+	gameContext: IGameStateMachineContext,
+	getPlayerById: (playerId: string) => IFindPlayerByIdResponse,
+) => Array<IPlayer>;
 
-export const IncomeAction: ActionFunction = (players, gameContext) => {
-	const { index: currentPlayerIndex } = getPlayerById(players, gameContext.playerTurnId);
+export const IncomeAction: ActionFunction = (players, gameContext, getPlayerById) => {
+	const { index: currentPlayerIndex } = getPlayerById(gameContext.playerTurnId);
 	const newPlayers = [...players];
 	newPlayers[currentPlayerIndex] = {
 		...newPlayers[currentPlayerIndex],
@@ -14,9 +18,9 @@ export const IncomeAction: ActionFunction = (players, gameContext) => {
 	return newPlayers;
 };
 
-export const CoupAction: ActionFunction = (players, gameContext) => {
-	const currentPlayerIndex = getPlayerById(players, gameContext.playerTurnId).index;
-	const victimIndex = getPlayerById(players, gameContext.victimId).index;
+export const CoupAction: ActionFunction = (players, gameContext, getPlayerById) => {
+	const currentPlayerIndex = getPlayerById(gameContext.playerTurnId).index;
+	const victimIndex = getPlayerById(gameContext.victimId).index;
 
 	const newPlayers = [...players];
 
@@ -47,8 +51,8 @@ export const CoupAction: ActionFunction = (players, gameContext) => {
 	return newPlayers;
 };
 
-export const TaxAction: ActionFunction = (players, gameContext) => {
-	const performerIndex = getPlayerById(players, gameContext.performerId).index;
+export const TaxAction: ActionFunction = (players, gameContext, getPlayerById) => {
+	const performerIndex = getPlayerById(gameContext.performerId).index;
 
 	const newPlayers = players.map((p) => ({
 		...p,

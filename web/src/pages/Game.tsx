@@ -3,13 +3,14 @@ import { Wrap, WrapItem, HStack, Box } from "@chakra-ui/react";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import PlayerHand from "@components/PlayerHand";
 import Actions from "@components/Actions/Actions";
-import { getPlayerById } from "@utils/GameState/helperFns";
 import GameModalChooser from "@components/GameModalChooser";
+import { usePlayers } from "@contexts/PlayersContext";
 
 const Game: React.FC = () => {
-	const { currentPlayerId, players } = useGameState();
+	const { currentPlayerId } = useGameState();
+	const { players, getPlayerById } = usePlayers();
 
-	const currentPlayer = getPlayerById(players, currentPlayerId).player;
+	const currentPlayer = getPlayerById(currentPlayerId).player;
 	if (!currentPlayer) throw new Error(`No player was found with the id ${currentPlayerId}.`);
 
 	const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayerId) !== 0);

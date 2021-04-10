@@ -1,6 +1,13 @@
-# Cooped Up
-
-A web-based version of the popular card game [Coup](http://indieboardsandcards.com/index.php/our-games/coup/).
+<div style="display: flex; justify-content: center; align-items: center; margin: 2rem">
+  <img width="125" src="./web/public/android-chrome-192x192.png"/>
+  <div style="margin-left: 2rem">
+    <h1 style="font-size: 3rem; margin: 0">Cooped Up</h1>
+    <h2 style="font-size: 1.5rem; margin-top: 1rem">
+      A web-based version of the popular card game <a href="http://indieboardsandcards.com/index.php/our-games/coup/">Coup</a>.
+    </h2>
+  </div>
+</div>
+<br/>
 
 ## Project Architecture
 

@@ -1,6 +1,6 @@
 import { Text, List, ListItem, ListProps } from "@chakra-ui/react";
 import * as React from "react";
-import type { IPlayer } from "@contexts/GameStateContext/types";
+import type { IPlayer } from "@contexts/GameStateContext";
 
 interface IPlayerSelectProps extends ListProps {
   players: Array<IPlayer>;

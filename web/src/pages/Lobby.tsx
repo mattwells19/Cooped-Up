@@ -11,6 +11,7 @@ import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import type { IPlayer } from "@contexts/GameStateContext/types";
 import get from "@utils/get";
 import Game from "./Game";
+import { usePlayers } from "@contexts/PlayersContext";
 
 interface ILobbyProps {
   newRoom: boolean | undefined;
@@ -41,7 +42,8 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
 	useDocTitle(`Lobby - ${roomCode}`);
 
-	const { players, gameStarted, handleStartGame } = useGameState();
+	const { gameStarted, handleStartGame } = useGameState();
+	const { players } = usePlayers();
 	const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
 
 	React.useEffect(() => {
