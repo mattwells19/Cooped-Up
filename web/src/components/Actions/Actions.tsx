@@ -1,7 +1,7 @@
 import { Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import * as React from "react";
-import { Actions as InfluenceActions, IPlayer } from "../../contexts/GameStateContext/types";
-import { useGameState } from "../../contexts/GameStateContext/GameStateContext";
+import { Actions as InfluenceActions, IPlayer } from "@contexts/GameStateContext/types";
+import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import PlayerSelect from "./components/PlayerSelect";
 import ActionButtons from "./components/ActionButtons";
 

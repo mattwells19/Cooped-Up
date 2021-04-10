@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Image, ImageProps } from "@chakra-ui/react";
-import type { Influence } from "../contexts/GameStateContext/types";
-import InfluenceImages from "../images/InfluenceImages";
+import type { Influence } from "@contexts/GameStateContext/types";
+import { InfluenceDetails } from "@utils/InfluenceUtils";
+import { BlankImg } from "@images/InfluenceImages";
 
 interface IInfluenceCardProps extends ImageProps {
   faceUp: boolean;
@@ -13,7 +14,7 @@ interface IInfluenceCardProps extends ImageProps {
 const InfluenceCard: React.FC<IInfluenceCardProps> = ({ influence, enlarge = false, faceUp, onClick, ...props }) => (
   <Image
     alt={faceUp ? influence.toString() : "Hidden Influence"}
-    src={InfluenceImages.get(faceUp ? influence : "Blank")}
+    src={faceUp ? InfluenceDetails[influence].img : BlankImg}
     htmlWidth={enlarge ? "200px" : "157px"}
     htmlHeight={enlarge ? "280px" : "220px"}
     onClick={onClick}

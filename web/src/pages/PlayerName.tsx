@@ -1,7 +1,7 @@
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
 import * as React from "react";
 import { useHistory } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "@components/Header";
 
 interface IPlayerNameProps {
   newRoom: boolean | undefined;

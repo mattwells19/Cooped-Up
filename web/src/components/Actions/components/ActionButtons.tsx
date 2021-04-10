@@ -1,8 +1,8 @@
 import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react";
 import * as React from "react";
-import { getPlayerById } from "../../../contexts/GameStateContext/Actions";
-import { useGameState } from "../../../contexts/GameStateContext/GameStateContext";
-import { Actions } from "../../../contexts/GameStateContext/types";
+import { getPlayerById } from "@utils/GameState/helperFns";
+import { useGameState } from "@contexts/GameStateContext/GameStateContext";
+import { Actions } from "@contexts/GameStateContext/types";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
   actionPayload?: { action: Actions, victimId: string | null };
@@ -26,7 +26,10 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
         disabled={!isTurn || disabled}
         onClick={() => handleGameEvent({
           event: "ACTION",
-          eventPayload: actionPayload,
+          eventPayload: {
+            ...actionPayload,
+            performerId: currentPlayerId,
+          },
         })}
         width="130px"
         {...buttonProps}
@@ -43,7 +46,16 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       padding="3"
       {...props}
     >
-      <WrappedButton colorScheme="purple" disabled={currentPlayer.coins >= 10}>Collect Tax</WrappedButton>
+      <WrappedButton
+        actionPayload={{
+          action: Actions.Tax,
+          victimId: null,
+        }}
+        colorScheme="purple"
+        disabled={currentPlayer.coins >= 10}
+      >
+        Collect Tax
+      </WrappedButton>
       <WrappedButton colorScheme="blue" disabled={currentPlayer.coins >= 10}>Steal</WrappedButton>
       <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>Assassinate</WrappedButton>
       <WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>Exchange</WrappedButton>

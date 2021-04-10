@@ -1,22 +1,23 @@
 import type { SingleOrArray, SCXML, EventData, Event } from "xstate";
-import type { GameStateMachineEvent, IGameStateMachineContext } from "../../utils/GameStateMachine";
+import type { GameStateMachineEvent, IGameStateMachineContext } from "@utils/GameState/GameStateMachine";
 
 export type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
 export const enum Actions {
-  Assassinate,
-  Tax,
-  Steal,
-  Exchange,
-  Income,
-  Aid,
-  Coup,
+  Assassinate = "assassinate",
+  Tax = "collect tax",
+  Steal = "steal",
+  Exchange = "exchange Influences",
+  Income = "collect income",
+  Aid = "collect foreign aid",
+  Coup = "coup",
 }
 
 export interface IGameState {
   event: SingleOrArray<Event<GameStateMachineEvent>> | SCXML.Event<GameStateMachineEvent>;
   eventPayload?: EventData | undefined;
   players?: Array<IPlayer>;
+  deck?: Array<Influence>;
 }
 
 export interface IPlayerInfluence {
@@ -29,6 +30,7 @@ export interface IPlayer {
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
+  actionResponse: "PASS" | "CHALLENGE" | null;
 }
 
 export interface IGameStateContext extends IGameStateMachineContext {
@@ -36,5 +38,6 @@ export interface IGameStateContext extends IGameStateMachineContext {
   players: Array<IPlayer>;
   turn: string;
   handleGameEvent: (newGameState: IGameState) => void;
+  handleActionResponse: (newGameState: "PASS" | "CHALLENGE") => void;
   handleStartGame: () => void;
 }

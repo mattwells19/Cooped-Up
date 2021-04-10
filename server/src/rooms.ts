@@ -1,13 +1,11 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import * as fs from "fs";
+import { shuffle as _shuffle } from "lodash";
+import { startingDeck } from "./constants";
+import { IPlayer, IRoomValue } from "./types";
 
-export interface IPlayer {
-  id: string;
-  name: string;
-}
-
-type RoomsData = Map<string, Array<IPlayer>>;
+type RoomsData = Map<string, IRoomValue>;
 
 /**
  * Creates the data.json file if it does not exist.
@@ -28,10 +26,10 @@ async function readData(): Promise<RoomsData> {
   const dataString = await fs.promises.readFile("data.json", "utf-8");
   const parsedData = JSON.parse(dataString);
 
-  const data = new Map<string, Array<IPlayer>>();
+  const data = new Map<string, IRoomValue>();
   for (const roomCode in parsedData) {
-    const players = parsedData[roomCode] as Array<IPlayer>;
-    data.set(roomCode, players);
+    const value = parsedData[roomCode] as IRoomValue;
+    data.set(roomCode, value);
   }
 
   return data;
@@ -43,7 +41,7 @@ async function readData(): Promise<RoomsData> {
  */
 async function saveData(data: RoomsData): Promise<void> {
   // eslint-disable-next-line object-curly-newline
-  const dataToWrite: Record<string, IPlayer[]> = {};
+  const dataToWrite: Record<string, IRoomValue> = {};
   data.forEach((value, key) => {
     dataToWrite[key] = value;
   });
@@ -55,10 +53,10 @@ async function saveData(data: RoomsData): Promise<void> {
  * @param roomCode The roomCode to get the players for
  * @returns The list of players in the room or undefined if the room does not exist
  */
-export async function getRoom(roomCode: string): Promise<Array<IPlayer> | undefined> {
+export async function getRoom(roomCode: string): Promise<IRoomValue | undefined> {
   const data = await readData();
-  const players = data.get(roomCode);
-  return players;
+  const value = data.get(roomCode);
+  return value;
 }
 
 /**
@@ -70,14 +68,14 @@ export async function removePlayer(playerId: string): Promise<Array<IPlayer> | n
   const data = await readData();
 
   const dataKeys = Array.from(data.keys());
-  const foundKey = dataKeys.find((key) => data.get(key)!.some((p) => p.id === playerId));
+  const foundKey = dataKeys.find((key) => data.get(key)!.players.some((p) => p.id === playerId));
   if (!foundKey) return null;
 
-  const players = data.get(foundKey)!;
+  const { players, deck } = data.get(foundKey)!;
   const newPlayerList = [...players].filter((p) => p.id !== playerId);
 
   if (newPlayerList.length === 0) data.delete(foundKey);
-  else data.set(foundKey, newPlayerList);
+  else data.set(foundKey, { players: newPlayerList, deck });
 
   await saveData(data);
   return newPlayerList;
@@ -89,16 +87,18 @@ export async function removePlayer(playerId: string): Promise<Array<IPlayer> | n
  * @param player The player to add to the room
  * @returns The updated list of players
  */
-export async function addPlayerToRoom(roomCode: string, player: IPlayer): Promise<Array<IPlayer>> {
+export async function addPlayerToRoom(roomCode: string, player: IPlayer): Promise<IRoomValue> {
   const data = await readData();
 
-  const players = (data.has(roomCode) ? data.get(roomCode) : [])!;
+  const { players, deck } = data.has(roomCode) ? data.get(roomCode)! : { players: [], deck: _shuffle(startingDeck) };
 
-  const newPlayers = [...players];
-  newPlayers.push(player);
+  const newValue: IRoomValue = {
+    players: [...players, player],
+    deck,
+  };
 
-  data.set(roomCode, newPlayers);
+  data.set(roomCode, newValue);
   await saveData(data);
 
-  return newPlayers;
+  return newValue;
 }
