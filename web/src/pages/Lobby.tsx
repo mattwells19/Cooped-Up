@@ -54,6 +54,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
         duration: 5000,
         isClosable: false,
         position: "top-right",
+        variant: "left-accent",
       });
     }
     prevPlayersRef.current = players;

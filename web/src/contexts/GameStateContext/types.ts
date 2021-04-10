@@ -17,6 +17,7 @@ export interface IGameState {
   event: SingleOrArray<Event<GameStateMachineEvent>> | SCXML.Event<GameStateMachineEvent>;
   eventPayload?: EventData | undefined;
   players?: Array<IPlayer>;
+  deck?: Array<Influence>;
 }
 
 export interface IPlayerInfluence {

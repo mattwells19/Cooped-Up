@@ -1,17 +1,17 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import deck from "@utils/Deck";
 import { getPlayerById } from "@utils/GameState/helperFns";
 import useCurrentGameState from "@utils/GameState/useCurrentGameState";
-import type { IGameState, IGameStateContext, IPlayer } from "./types";
+import type { IGameState, IGameStateContext, Influence, IPlayer } from "./types";
 
 export const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
 
 const GameStateContextProvider: React.FC = ({ children }) => {
   const [players, setPlayers] = React.useState<Array<IPlayer>>([]);
-  const [currentGameState, sendGameStateEvent] = useCurrentGameState([players, setPlayers]);
+  const [deck, setDeck] = React.useState<Array<Influence>>([]);
+  const [currentGameState, sendGameStateEvent] = useCurrentGameState([players, setPlayers], [deck, setDeck]);
   const { roomCode } = useParams<{ roomCode: string }>();
 
   const socket = React.useMemo(() => (
@@ -28,6 +28,7 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   function handleGameStateUpdate(newGameState: IGameState) {
     sendGameStateEvent(newGameState.event, newGameState.eventPayload);
     if (newGameState.players) setPlayers(newGameState.players);
+    if (newGameState.deck) setDeck(newGameState.deck);
   }
 
   function handleGameEvent(newGameState: IGameState) {
@@ -39,19 +40,18 @@ const GameStateContextProvider: React.FC = ({ children }) => {
   }
 
   const handleStartGame = () => {
-    deck.shuffle();
+    const newDeck = [...deck];
 
     const playerHands: Array<IPlayer> = players.map((player) => ({
       ...player,
-      influences: deck.cards.splice(0, 2),
+      influences: newDeck.splice(0, 2).map((influence) => ({ type: influence, isDead: false })),
     }));
-
-    setPlayers(playerHands);
 
     handleGameEvent({
       event: "START",
       eventPayload: { playerTurnId: playerHands[0].id },
       players: playerHands,
+      deck: newDeck,
     });
   };
 
@@ -107,6 +107,8 @@ const GameStateContextProvider: React.FC = ({ children }) => {
     });
 
     socket.on("gameStateUpdate", handleGameStateUpdate);
+
+    socket.on("startingDeck", (startinDeck: Array<Influence>) => { setDeck(startinDeck); });
 
     // perform cleanup of socket when component is removed from the DOM
     return () => { socket.offAny(); socket.disconnect(); };

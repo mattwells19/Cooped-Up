@@ -1,6 +1,6 @@
 import useActionToast from "@hooks/useActionToast";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import type { IPlayer } from "@contexts/GameStateContext/types";
+import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { useMachine } from "@xstate/react";
 import GameStateMachine from "./GameStateMachine";
 import { getNextPlayerTurnId } from "./helperFns";
@@ -11,8 +11,10 @@ import processChallenge from "./ProcessChallenge";
 
 export default function useCurrentGameState(
   playerState: [IPlayer[], Dispatch<SetStateAction<IPlayer[]>>],
+  deckState: [Influence[], Dispatch<SetStateAction<Influence[]>>],
 ): [ICurrentGameState, ISendGameStateUpdate] {
   const [players, setPlayers] = playerState;
+  const [deck, setDeck] = deckState;
   const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const actionToast = useActionToast();
 
@@ -22,9 +24,14 @@ export default function useCurrentGameState(
       case currentGameState.matches("idle"):
         break;
       case currentGameState.matches("challenged"): {
-        const actionToastProps = processChallenge(currentGameState, [players, setPlayers]);
-        if (actionToastProps) {
-          actionToast(actionToastProps);
+        // challenge result will be undefined until the loser of the challenge selects their influence to lose
+        const challengeResult = processChallenge(currentGameState, players, deck);
+
+        if (challengeResult) {
+          setPlayers(challengeResult.newPlayers);
+          setDeck(challengeResult.newDeck);
+          actionToast(challengeResult.actionToastProps);
+
           if (currentGameState.context.challengeFailed) sendGameStateEvent("FAILED");
           else {
             sendGameStateEvent("COMPLETE", {

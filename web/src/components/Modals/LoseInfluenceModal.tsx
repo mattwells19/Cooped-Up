@@ -19,7 +19,7 @@ const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, hand
         <HStack spacing="10px">
           {currentPlayer.influences.filter((i) => !i.isDead).map((influence, index) => (
             <InfluenceCard
-              key={useId(influence.type)}
+              key={`${influence.type}-${useId()}`}
               enlarge
               faceUp
               influence={influence.type}
