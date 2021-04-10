@@ -7,14 +7,14 @@ import type { IPlayer } from "@contexts/GameStateContext/types";
  * @returns The player object and player index as an object.
  */
 export function getPlayerById(
-  players: Array<IPlayer>,
-  playerId: string,
+	players: Array<IPlayer>,
+	playerId: string,
 ): { player: IPlayer | undefined; index: number } {
-  const playerIndex = players.findIndex((p) => p.id.localeCompare(playerId) === 0);
-  return {
-    player: players[playerIndex],
-    index: playerIndex,
-  };
+	const playerIndex = players.findIndex((p) => p.id.localeCompare(playerId) === 0);
+	return {
+		player: players[playerIndex],
+		index: playerIndex,
+	};
 }
 
 /**
@@ -25,10 +25,10 @@ export function getPlayerById(
  * @returns An array containing each found player object and player index as an object.
  */
 export function getPlayersByIds(
-  players: Array<IPlayer>,
-  playerIds: Array<string>,
+	players: Array<IPlayer>,
+	playerIds: Array<string>,
 ): Array<{ player: IPlayer | undefined; index: number }> {
-  return playerIds.map((playerId) => getPlayerById(players, playerId));
+	return playerIds.map((playerId) => getPlayerById(players, playerId));
 }
 
 /**
@@ -38,6 +38,6 @@ export function getPlayersByIds(
  * @returns The id of the player whose turn it should be next.
  */
 export function getNextPlayerTurnId(players: Array<IPlayer>, playerTurnId: string): string {
-  const currentPlayerIndex = players.findIndex((p) => p.id.localeCompare(playerTurnId) === 0);
-  return players[currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1].id;
+	const currentPlayerIndex = players.findIndex((p) => p.id.localeCompare(playerTurnId) === 0);
+	return players[currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1].id;
 }

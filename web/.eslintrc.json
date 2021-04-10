@@ -1,0 +1,21 @@
+{
+	"env": {
+		"browser": true
+	},
+	"extends": ["plugin:react/recommended", "../.eslintrc.json"],
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
+	"plugins": ["react"],
+	"rules": {
+		"react/prop-types": "off",
+		"react/display-name": "off"
+	}
+}

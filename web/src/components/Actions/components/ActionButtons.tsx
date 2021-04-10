@@ -13,74 +13,74 @@ interface IActionButtonsProps extends WrapProps {
 }
 
 const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ...props }) => {
-  const { handleGameEvent, currentPlayerId, turn, players } = useGameState();
+	const { handleGameEvent, currentPlayerId, turn, players } = useGameState();
 
-  const currentPlayer = getPlayerById(players, currentPlayerId).player;
-  if (!currentPlayer) throw new Error(`No player was found with the id ${currentPlayerId}.`);
+	const currentPlayer = getPlayerById(players, currentPlayerId).player;
+	if (!currentPlayer) throw new Error(`No player was found with the id ${currentPlayerId}.`);
 
-  const isTurn = currentPlayerId.localeCompare(turn) === 0;
+	const isTurn = currentPlayerId.localeCompare(turn) === 0;
 
-  const WrappedButton: React.FC<IWrappedButtonProps> = ({ actionPayload, children, disabled, ...buttonProps }) => (
-    <WrapItem>
-      <Button
-        disabled={!isTurn || disabled}
-        onClick={() => handleGameEvent({
-          event: "ACTION",
-          eventPayload: {
-            ...actionPayload,
-            performerId: currentPlayerId,
-          },
-        })}
-        width="130px"
-        {...buttonProps}
-      >
-        {children}
-      </Button>
-    </WrapItem>
-  );
+	const WrappedButton: React.FC<IWrappedButtonProps> = ({ actionPayload, children, disabled, ...buttonProps }) => (
+		<WrapItem>
+			<Button
+				disabled={!isTurn || disabled}
+				onClick={() => handleGameEvent({
+					event: "ACTION",
+					eventPayload: {
+						...actionPayload,
+						performerId: currentPlayerId,
+					},
+				})}
+				width="130px"
+				{...buttonProps}
+			>
+				{children}
+			</Button>
+		</WrapItem>
+	);
 
-  return (
-    <Wrap
-      align="center"
-      justify="space-evenly"
-      padding="3"
-      {...props}
-    >
-      <WrappedButton
-        actionPayload={{
-          action: Actions.Tax,
-          victimId: null,
-        }}
-        colorScheme="purple"
-        disabled={currentPlayer.coins >= 10}
-      >
+	return (
+		<Wrap
+			align="center"
+			justify="space-evenly"
+			padding="3"
+			{...props}
+		>
+			<WrappedButton
+				actionPayload={{
+					action: Actions.Tax,
+					victimId: null,
+				}}
+				colorScheme="purple"
+				disabled={currentPlayer.coins >= 10}
+			>
         Collect Tax
-      </WrappedButton>
-      <WrappedButton colorScheme="blue" disabled={currentPlayer.coins >= 10}>Steal</WrappedButton>
-      <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>Assassinate</WrappedButton>
-      <WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>Exchange</WrappedButton>
-      <WrappedButton
-        actionPayload={{
-          action: Actions.Income,
-          victimId: null,
-        }}
-        disabled={currentPlayer.coins >= 10}
-        variant="outline"
-      >
+			</WrappedButton>
+			<WrappedButton colorScheme="blue" disabled={currentPlayer.coins >= 10}>Steal</WrappedButton>
+			<WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>Assassinate</WrappedButton>
+			<WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>Exchange</WrappedButton>
+			<WrappedButton
+				actionPayload={{
+					action: Actions.Income,
+					victimId: null,
+				}}
+				disabled={currentPlayer.coins >= 10}
+				variant="outline"
+			>
         Income
-      </WrappedButton>
-      <WrappedButton variant="outline" disabled={currentPlayer.coins >= 10}>Foreign Aid</WrappedButton>
-      <WrappedButton
-        onClick={() => {
-          if (currentPlayer.coins >= 7) handleShowPlayerList();
-        }}
-        colorScheme="red"
-        disabled={currentPlayer.coins < 7}
-      >
+			</WrappedButton>
+			<WrappedButton variant="outline" disabled={currentPlayer.coins >= 10}>Foreign Aid</WrappedButton>
+			<WrappedButton
+				onClick={() => {
+					if (currentPlayer.coins >= 7) handleShowPlayerList();
+				}}
+				colorScheme="red"
+				disabled={currentPlayer.coins < 7}
+			>
         Coup
-      </WrappedButton>
-    </Wrap>
-  );
+			</WrappedButton>
+		</Wrap>
+	);
 };
 
 export default ActionButtons;
