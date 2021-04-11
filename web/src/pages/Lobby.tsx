@@ -40,7 +40,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 		if (!newRoom) doesRoomExist();
 	}, []);
 
-	useDocTitle(`Lobby - ${roomCode}`);
+	useDocTitle(roomCode);
 
 	const { gameStarted, handleStartGame } = useGameState();
 	const { players } = usePlayers();

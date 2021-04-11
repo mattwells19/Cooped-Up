@@ -1,7 +1,6 @@
 {
-  "emmet.includeLanguages": {
-    "postcss": "css"
-  },
-  "javascript.format.enable": true,
-  "eslint.format.enable": true
+	"javascript.format.enable": true,
+	"eslint.format.enable": true,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false
 }

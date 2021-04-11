@@ -12,6 +12,8 @@ export type IActionToastProps =
 
 const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, victimName, lostInfluence }) => {
 	const { closeAll: closeAllToasts } = useToast();
+	const iconSize = useToken("sizes", "40");
+
 	return (
 		<Box
 			bg="gray.600"
@@ -25,12 +27,12 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
 		>
 			<CloseButton marginLeft="auto" onClick={() => closeAllToasts()} />
 			<Center>
-				{variant === Actions.Income && <CoinIcon width={useToken("sizes", "40")} />}
+				{variant === Actions.Income && <CoinIcon width={iconSize} />}
 				{/* TODO: Needs Graphic */}
-				{variant === Actions.Coup && <AxeIcon width={useToken("sizes", "40")} />}
+				{variant === Actions.Coup && <AxeIcon width={iconSize} />}
 				{/* TODO: Needs Graphic */}
-				{variant === Actions.Tax && <CoinIcon width={useToken("sizes", "40")} />}
-				{variant === "Challenge" && <ChallengeIcon width={useToken("sizes", "40")} />}
+				{variant === Actions.Tax && <CoinIcon width={iconSize} />}
+				{variant === "Challenge" && <ChallengeIcon width={iconSize} />}
 			</Center>
 			<Box fontSize="large">
 				{variant === Actions.Income && (

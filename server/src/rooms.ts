@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 import * as fs from "fs";
 import { shuffle as _shuffle } from "lodash";
 import { startingDeck } from "./constants";
