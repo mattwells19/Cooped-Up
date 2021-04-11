@@ -76,25 +76,20 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
         <Text textTransform="uppercase" fontFamily="Nova Flat" fontSize="5xl" color="#E4E768" textAlign="center">
           Challenge
         </Text>
-        <VStack
-          width="100%"
-          spacing="2"
-          height="138px"
-        >
+        <VStack width="100%" spacing="2" height="138px">
           {stage >= Stages.initial && (
             <CustomBox>
               <Text fontSize="larger">
-                <Text as="span" fontWeight="bold">{challenger.name}</Text>
-                    &nbsp;has challenged that&nbsp;
-                <Text as="span" fontWeight="bold">{performer.name}</Text>
+                <Text as="span" fontWeight="bold">
+                  {challenger.name}
+                </Text>
+                &nbsp;has challenged that&nbsp;
+                <Text as="span" fontWeight="bold">
+                  {performer.name}
+                </Text>
                 &nbsp;has a&nbsp;
                 {actionInfluences.map((influence, i) => (
-                  <Text
-                    key={influence}
-                    as="span"
-                    color={InfluenceDetails[influence].color}
-                    fontWeight="bold"
-                  >
+                  <Text key={influence} as="span" color={InfluenceDetails[influence].color} fontWeight="bold">
                     {`${influence}${i < actionInfluences.length - 1 ? ", " : ""}`}
                   </Text>
                 ))}

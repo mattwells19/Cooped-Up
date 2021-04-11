@@ -5,6 +5,6 @@ import type { GameStateMachineEvent, GameStateMachineState, IGameStateMachineCon
 export type ICurrentGameState = State<IGameStateMachineContext, GameStateMachineEvent, any, GameStateMachineState>;
 
 export type ISendGameStateUpdate = (
-	event: SingleOrArray<Event<GameStateMachineEvent>> | SCXML.Event<GameStateMachineEvent>,
-	payload?: EventData | undefined,
+  event: SingleOrArray<Event<GameStateMachineEvent>> | SCXML.Event<GameStateMachineEvent>,
+  payload?: EventData | undefined,
 ) => ICurrentGameState;

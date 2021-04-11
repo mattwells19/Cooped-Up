@@ -6,9 +6,9 @@ import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { ICurrentGameState } from "./types";
 
 interface IProcessChallengeResponse {
-	actionToastProps: IActionToastProps;
-	newPlayers: Array<IPlayer>;
-	newDeck: Array<Influence>;
+  actionToastProps: IActionToastProps;
+  newPlayers: Array<IPlayer>;
+  newDeck: Array<Influence>;
 }
 
 export default function processChallenge(

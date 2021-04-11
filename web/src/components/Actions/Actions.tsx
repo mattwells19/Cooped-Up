@@ -36,9 +36,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
       <Text fontSize="lg" alignSelf="flex-start">
         {getActionsText()}
       </Text>
-      {!showPlayerSelect && (
-        <ActionButtons handleShowPlayerList={() => setShowPlayerSelect(true)} {...commonStyles} />
-      )}
+      {!showPlayerSelect && <ActionButtons handleShowPlayerList={() => setShowPlayerSelect(true)} {...commonStyles} />}
       {showPlayerSelect && (
         <PlayerSelect
           onSelection={(victimId: string) => {

@@ -9,15 +9,15 @@ import PlayerName from "@pages/PlayerName";
 
 type LobbyRouteStateType = {
   newRoom: boolean | undefined;
-}
+};
 
 type HomeRouteStateType = {
   invalidRoomCode: boolean | undefined;
-}
+};
 
 type LobbyRouteParamsType = {
   roomCode: string;
-}
+};
 
 const Layout: React.FC = () => (
   <BrowserRouter>
@@ -41,18 +41,13 @@ const Layout: React.FC = () => (
             );
           }
           return (
-            <PlayerName
-              newRoom={(location.state as LobbyRouteStateType)?.newRoom}
-              roomCode={match.params.roomCode}
-            />
+            <PlayerName newRoom={(location.state as LobbyRouteStateType)?.newRoom} roomCode={match.params.roomCode} />
           );
         }}
       />
       <Route
         path="/"
-        render={({ location }) => (
-          <Home invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode} />
-        )}
+        render={({ location }) => <Home invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode} />}
       />
       <Route path="*">
         <Redirect to="/" />

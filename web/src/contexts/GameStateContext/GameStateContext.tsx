@@ -2,7 +2,14 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import useCurrentGameState from "@GameState/useCurrentGameState";
-import { IGameState, IGameStateContext, IncomingSocketActions, Influence, IPlayer, OutgoingSocketActions } from "./types";
+import {
+  IGameState,
+  IGameStateContext,
+  IncomingSocketActions,
+  Influence,
+  IPlayer,
+  OutgoingSocketActions,
+} from "./types";
 import { usePlayers } from "@contexts/PlayersContext";
 import { useDeck } from "@contexts/DeckContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
@@ -16,16 +23,18 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
   const [currentGameState, sendGameStateEvent] = useCurrentGameState();
   const { roomCode } = useParams<{ roomCode: string }>();
 
-  const socket = React.useMemo(() => (
-    io("/", {
-      auth: {
-        roomCode,
-        playerName: localStorage.getItem("playerName"),
-      },
-      autoConnect: false,
-      reconnectionAttempts: 5,
-    })
-  ), [roomCode]);
+  const socket = React.useMemo(
+    () =>
+      io("/", {
+        auth: {
+          roomCode,
+          playerName: localStorage.getItem("playerName"),
+        },
+        autoConnect: false,
+        reconnectionAttempts: 5,
+      }),
+    [roomCode],
+  );
 
   function handleGameStateUpdate(newGameState: IGameState) {
     sendGameStateEvent(newGameState.event, newGameState.eventPayload);
@@ -62,28 +71,29 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
       // only update player list if someone left once the game has started
       if (currentGameState.context.gameStarted && playersInRoom.length < players.length) {
-        setPlayers((prevplayers) => (
-          prevplayers.filter((player) => playersInRoom.find((p) => p.id === player.id))
-        ));
+        setPlayers((prevplayers) => prevplayers.filter((player) => playersInRoom.find((p) => p.id === player.id)));
       }
     });
   }, [currentGameState.context.gameStarted]);
 
   React.useEffect(() => {
     socket.off(IncomingSocketActions.UpdatePlayerActionResponse);
-    socket.on(IncomingSocketActions.UpdatePlayerActionResponse, (actionResponse: { playerId: string, response: "PASS" | "CHALLENGE" }) => {
-      setPlayers((prevPlayers) => {
-        const playerToUpdate = getPlayerById(actionResponse.playerId);
-        if (!playerToUpdate) throw new PlayerNotFoundError(actionResponse.playerId);
+    socket.on(
+      IncomingSocketActions.UpdatePlayerActionResponse,
+      (actionResponse: { playerId: string; response: "PASS" | "CHALLENGE" }) => {
+        setPlayers((prevPlayers) => {
+          const playerToUpdate = getPlayerById(actionResponse.playerId);
+          if (!playerToUpdate) throw new PlayerNotFoundError(actionResponse.playerId);
 
-        const newPlayers = [...prevPlayers];
-        newPlayers[playerToUpdate.index] = {
-          ...newPlayers[playerToUpdate.index],
-          actionResponse: actionResponse.response,
-        };
-        return newPlayers;
-      });
-    });
+          const newPlayers = [...prevPlayers];
+          newPlayers[playerToUpdate.index] = {
+            ...newPlayers[playerToUpdate.index],
+            actionResponse: actionResponse.response,
+          };
+          return newPlayers;
+        });
+      },
+    );
 
     if (players.every((p) => p.actionResponse === "PASS")) {
       sendGameStateEvent("PASS");
@@ -101,21 +111,28 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     if (!socket.connected) socket.connect();
 
     socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
-      setPlayers(playersInRoom.map((player) => ({
-        id: player.id,
-        coins: 2,
-        influences: [],
-        name: player.name,
-        actionResponse: null,
-      })));
+      setPlayers(
+        playersInRoom.map((player) => ({
+          id: player.id,
+          coins: 2,
+          influences: [],
+          name: player.name,
+          actionResponse: null,
+        })),
+      );
     });
 
     socket.on(IncomingSocketActions.GameStateUpdate, handleGameStateUpdate);
 
-    socket.on(IncomingSocketActions.StartingDeck, (startinDeck: Array<Influence>) => { setDeck(startinDeck); });
+    socket.on(IncomingSocketActions.StartingDeck, (startinDeck: Array<Influence>) => {
+      setDeck(startinDeck);
+    });
 
     // perform cleanup of socket when component is removed from the DOM
-    return () => { socket.offAny(); socket.disconnect(); };
+    return () => {
+      socket.offAny();
+      socket.disconnect();
+    };
   }, []);
 
   return (

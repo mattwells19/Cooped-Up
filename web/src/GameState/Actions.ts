@@ -4,9 +4,9 @@ import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { IGameStateMachineContext } from "./GameStateMachine";
 
 type ActionFunction = (
-	players: Array<IPlayer>,
-	gameContext: IGameStateMachineContext,
-	getPlayerById: (playerId: string) => IFindPlayerByIdResponse,
+  players: Array<IPlayer>,
+  gameContext: IGameStateMachineContext,
+  getPlayerById: (playerId: string) => IFindPlayerByIdResponse,
 ) => Array<IPlayer>;
 
 export const IncomeAction: ActionFunction = (players, gameContext, getPlayerById) => {

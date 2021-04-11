@@ -2,33 +2,33 @@ import { assign, createMachine } from "xstate";
 import type { Actions, Influence } from "@contexts/GameStateContext";
 
 export interface IGameStateMachineContext {
-	playerTurnId: string;
-	action: Actions | null;
-	performerId: string;
-	gameStarted: boolean;
-	victimId: string;
-	killedInfluence: Influence | undefined;
-	challengeFailed: boolean | undefined;
-	challengerId: string | undefined;
+  playerTurnId: string;
+  action: Actions | null;
+  performerId: string;
+  gameStarted: boolean;
+  victimId: string;
+  killedInfluence: Influence | undefined;
+  challengeFailed: boolean | undefined;
+  challengerId: string | undefined;
 }
 
 export type GameStateMachineEvent =
-	| { type: "ACTION"; action: Actions; performerId: string; victimId: string }
-	| { type: "BLOCK" }
-	| { type: "CHALLENGE"; challengerId: string }
-	| { type: "COMPLETE"; nextPlayerTurnId: string }
-	| { type: "FAILED" }
-	| { type: "PASS"; killedInfluence: Influence | undefined }
-	| { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
-	| { type: "START"; playerTurnId: string };
+  | { type: "ACTION"; action: Actions; performerId: string; victimId: string }
+  | { type: "BLOCK" }
+  | { type: "CHALLENGE"; challengerId: string }
+  | { type: "COMPLETE"; nextPlayerTurnId: string }
+  | { type: "FAILED" }
+  | { type: "PASS"; killedInfluence: Influence | undefined }
+  | { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
+  | { type: "START"; playerTurnId: string };
 
 export type GameStateMachineState =
-	| { value: "pregame"; context: IGameStateMachineContext }
-	| { value: "idle"; context: IGameStateMachineContext }
-	| { value: "propose_action"; context: IGameStateMachineContext }
-	| { value: "perform_action"; context: IGameStateMachineContext }
-	| { value: "blocked"; context: IGameStateMachineContext }
-	| { value: "challenged"; context: IGameStateMachineContext };
+  | { value: "pregame"; context: IGameStateMachineContext }
+  | { value: "idle"; context: IGameStateMachineContext }
+  | { value: "propose_action"; context: IGameStateMachineContext }
+  | { value: "perform_action"; context: IGameStateMachineContext }
+  | { value: "blocked"; context: IGameStateMachineContext }
+  | { value: "challenged"; context: IGameStateMachineContext };
 
 const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
   id: "gameState",

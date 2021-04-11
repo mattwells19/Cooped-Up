@@ -20,8 +20,9 @@ const GameModalChooser: React.FC = () => {
   } = useGameState();
   const { getPlayersByIds, getPlayerById } = usePlayers();
 
-  const [currentPlayer, performer, victim] = getPlayersByIds([currentPlayerId, performerId, victimId])
-    .map((p) => p?.player);
+  const [currentPlayer, performer, victim] = getPlayersByIds([currentPlayerId, performerId, victimId]).map(
+    (p) => p?.player,
+  );
   const challenger = challengerId ? getPlayerById(challengerId)?.player : null;
   if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
@@ -48,9 +49,9 @@ const GameModalChooser: React.FC = () => {
   }
   // auto select the influence if the player has only one influence remaining
   if (challengeResult && performer && challenger) {
-    const aliveInfluences = (challengeResult === "failed" ? challenger : performer)
-      .influences
-      .filter((influence) => !influence.isDead);
+    const aliveInfluences = (challengeResult === "failed" ? challenger : performer).influences.filter(
+      (influence) => !influence.isDead,
+    );
 
     if (aliveInfluences.length < 2) {
       setChallengeResult(null);
@@ -65,8 +66,8 @@ const GameModalChooser: React.FC = () => {
   }
   if (performer && challenger && challengeResult) {
     if (
-      (challengeResult === "failed" && currentPlayer.id === challenger.id)
-      || (challengeResult === "success" && currentPlayer.id === performer.id)
+      (challengeResult === "failed" && currentPlayer.id === challenger.id) ||
+      (challengeResult === "success" && currentPlayer.id === performer.id)
     ) {
       return (
         <LoseInfluenceModal
@@ -96,16 +97,18 @@ const GameModalChooser: React.FC = () => {
   }
   if (action === Actions.Coup && performer && victim) {
     return currentPlayer.id === victim.id ? (
-    // current player being coup'd
+      // current player being coup'd
       <LoseInfluenceModal
         currentPlayer={currentPlayer}
-        handleClose={(influenceToLose) => handleGameEvent({
-          event: "PASS",
-          eventPayload: { killedInfluence: influenceToLose },
-        })}
+        handleClose={(influenceToLose) =>
+          handleGameEvent({
+            event: "PASS",
+            eventPayload: { killedInfluence: influenceToLose },
+          })
+        }
       />
     ) : (
-    // some other player being coup'd
+      // some other player being coup'd
       <WaitingForActionModal
         messaging={[
           `${performer.name} has chosen to ${action} ${victim.name}.`,
@@ -116,20 +119,11 @@ const GameModalChooser: React.FC = () => {
   }
   if (action && action !== Actions.Coup && action !== Actions.Income && performer) {
     return currentPlayer.actionResponse === "PASS" ? (
-    // player decided not to challenge
-      <WaitingForActionModal
-        messaging={[
-          "You have chosen to pass.",
-          "Waiting for all players to pass/challenge...",
-        ]}
-      />
+      // player decided not to challenge
+      <WaitingForActionModal messaging={["You have chosen to pass.", "Waiting for all players to pass/challenge..."]} />
     ) : (
-    // player given the option to challenge
-      <ActionProposedModal
-        action={action}
-        performer={performer}
-        handleClose={handleActionResponse}
-      />
+      // player given the option to challenge
+      <ActionProposedModal action={action} performer={performer} handleClose={handleActionResponse} />
     );
   }
   // idle

@@ -75,10 +75,12 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
       <Center marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
           <Text paddingX="4" fontSize="large">
-            So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,
-            but you can&apos;t because the virus is still at large. What better way to connect with your friends
-            than with a little bit of deception!&nbsp;
-            <Text fontWeight="bold" as="span">Cooped Up</Text>
+            So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends, but you
+            can&apos;t because the virus is still at large. What better way to connect with your friends than with a
+            little bit of deception!&nbsp;
+            <Text fontWeight="bold" as="span">
+              Cooped Up
+            </Text>
             &nbsp;is based on the popular board game Coup.
           </Text>
           <Text>🚧 Still in development. 🚧</Text>
@@ -86,13 +88,7 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
           <VStack spacing={4}>
             <Text>Already have a room code? Type/paste it here.</Text>
             <HStack>
-              <PinInput
-                autoFocus
-                onChange={handleRoomCodeChange}
-                isInvalid={error}
-                size="lg"
-                type="alphanumeric"
-              >
+              <PinInput autoFocus onChange={handleRoomCodeChange} isInvalid={error} size="lg" type="alphanumeric">
                 <PinInputField aria-label="Room code, first letter." />
                 <PinInputField aria-label="Room code, second letter." />
                 <PinInputField aria-label="Room code, third letter." />

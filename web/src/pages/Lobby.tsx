@@ -1,9 +1,16 @@
 import React from "react";
 import { useHistory, Link } from "react-router-dom";
 import {
-  Button, Divider, FormControl,
-  FormHelperText, Heading, Text, VStack,
-  ButtonGroup, Center, useToast,
+  Button,
+  Divider,
+  FormControl,
+  FormHelperText,
+  Heading,
+  Text,
+  VStack,
+  ButtonGroup,
+  Center,
+  useToast,
 } from "@chakra-ui/react";
 import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
@@ -77,19 +84,10 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           </VStack>
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
-              <Button
-                to="/"
-                as={Link}
-                size="lg"
-                variant="outline"
-              >
+              <Button to="/" as={Link} size="lg" variant="outline">
                 Leave Lobby
               </Button>
-              <Button
-                disabled={players.length < 3 || players.length > 6}
-                onClick={() => handleStartGame()}
-                size="lg"
-              >
+              <Button disabled={players.length < 3 || players.length > 6} onClick={() => handleStartGame()} size="lg">
                 Start Game
               </Button>
             </ButtonGroup>

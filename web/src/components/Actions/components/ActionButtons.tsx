@@ -5,7 +5,7 @@ import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
-  actionPayload?: { action: Actions, victimId: string | null };
+  actionPayload?: { action: Actions; victimId: string | null };
 }
 
 interface IActionButtonsProps extends WrapProps {
@@ -14,7 +14,7 @@ interface IActionButtonsProps extends WrapProps {
 
 const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ...props }) => {
   const { handleGameEvent, currentPlayerId, turn } = useGameState();
-  const { getPlayerById }  = usePlayers();
+  const { getPlayerById } = usePlayers();
 
   const currentPlayer = getPlayerById(currentPlayerId)?.player;
   if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
@@ -25,13 +25,15 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
     <WrapItem>
       <Button
         disabled={!isTurn || disabled}
-        onClick={() => handleGameEvent({
-          event: "ACTION",
-          eventPayload: {
-            ...actionPayload,
-            performerId: currentPlayerId,
-          },
-        })}
+        onClick={() =>
+          handleGameEvent({
+            event: "ACTION",
+            eventPayload: {
+              ...actionPayload,
+              performerId: currentPlayerId,
+            },
+          })
+        }
         width="130px"
         {...buttonProps}
       >
@@ -41,12 +43,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
   );
 
   return (
-    <Wrap
-      align="center"
-      justify="space-evenly"
-      padding="3"
-      {...props}
-    >
+    <Wrap align="center" justify="space-evenly" padding="3" {...props}>
       <WrappedButton
         actionPayload={{
           action: Actions.Tax,
@@ -57,9 +54,15 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       >
         Collect Tax
       </WrappedButton>
-      <WrappedButton colorScheme="blue" disabled={currentPlayer.coins >= 10}>Steal</WrappedButton>
-      <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>Assassinate</WrappedButton>
-      <WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>Exchange</WrappedButton>
+      <WrappedButton colorScheme="blue" disabled={currentPlayer.coins >= 10}>
+        Steal
+      </WrappedButton>
+      <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>
+        Assassinate
+      </WrappedButton>
+      <WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>
+        Exchange
+      </WrappedButton>
       <WrappedButton
         actionPayload={{
           action: Actions.Income,
@@ -70,7 +73,9 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       >
         Income
       </WrappedButton>
-      <WrappedButton variant="outline" disabled={currentPlayer.coins >= 10}>Foreign Aid</WrappedButton>
+      <WrappedButton variant="outline" disabled={currentPlayer.coins >= 10}>
+        Foreign Aid
+      </WrappedButton>
       <WrappedButton
         onClick={() => {
           if (currentPlayer.coins >= 7) handleShowPlayerList();
