@@ -23,12 +23,9 @@ module.exports = {
     "@contexts": "./src/contexts",
     "@images": "./src/images",
     "@pages": "./src/pages",
+    "@GameState": "./src/GameState",
   },
-  plugins: [
-    "@snowpack/plugin-react-refresh",
-    "@snowpack/plugin-dotenv",
-    "@snowpack/plugin-typescript",
-  ],
+  plugins: ["@snowpack/plugin-react-refresh", "@snowpack/plugin-dotenv", "@snowpack/plugin-typescript"],
   routes: [
     {
       src: "/socket.io/.*",

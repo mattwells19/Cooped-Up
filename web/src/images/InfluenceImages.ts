@@ -1,8 +1,6 @@
-import AmbassadorImg from "./Ambassador.png";
-import AssassinImg from "./Assassin.png";
-import BlankImg from "./Blank.png";
-import CaptainImg from "./Captain.png";
-import ContessaImg from "./Contessa.png";
-import DukeImg from "./Duke.png";
-
-export { AmbassadorImg, AssassinImg, BlankImg, CaptainImg, ContessaImg, DukeImg };
+export { default as AmbassadorImg } from "./Ambassador.png";
+export { default as AssassinImg } from "./Assassin.png";
+export { default as BlankImg } from "./Blank.png";
+export { default as CaptainImg } from "./Captain.png";
+export { default as ContessaImg } from "./Contessa.png";
+export { default as DukeImg } from "./Duke.png";

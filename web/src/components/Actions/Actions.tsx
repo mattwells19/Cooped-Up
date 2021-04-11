@@ -1,7 +1,6 @@
 import { Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import * as React from "react";
-import { Actions as InfluenceActions, IPlayer } from "@contexts/GameStateContext/types";
-import { useGameState } from "@contexts/GameStateContext/GameStateContext";
+import { Actions as InfluenceActions, IPlayer, useGameState } from "@contexts/GameStateContext";
 import PlayerSelect from "./components/PlayerSelect";
 import ActionButtons from "./components/ActionButtons";
 
@@ -37,9 +36,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
       <Text fontSize="lg" alignSelf="flex-start">
         {getActionsText()}
       </Text>
-      {!showPlayerSelect && (
-        <ActionButtons handleShowPlayerList={() => setShowPlayerSelect(true)} {...commonStyles} />
-      )}
+      {!showPlayerSelect && <ActionButtons handleShowPlayerList={() => setShowPlayerSelect(true)} {...commonStyles} />}
       {showPlayerSelect && (
         <PlayerSelect
           onSelection={(victimId: string) => {

@@ -1,9 +1,16 @@
 import React from "react";
 import { useHistory, Link } from "react-router-dom";
 import {
-  Button, Divider, FormControl,
-  FormHelperText, Heading, Text, VStack,
-  ButtonGroup, Center, useToast,
+  Button,
+  Divider,
+  FormControl,
+  FormHelperText,
+  Heading,
+  Text,
+  VStack,
+  ButtonGroup,
+  Center,
+  useToast,
 } from "@chakra-ui/react";
 import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
@@ -11,6 +18,7 @@ import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import type { IPlayer } from "@contexts/GameStateContext/types";
 import get from "@utils/get";
 import Game from "./Game";
+import { usePlayers } from "@contexts/PlayersContext";
 
 interface ILobbyProps {
   newRoom: boolean | undefined;
@@ -28,7 +36,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 
       if (!validRoom) {
         history.push({
-          pathname: `/`,
+          pathname: "/",
           state: {
             invalidRoomCode: true,
           },
@@ -39,9 +47,10 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
     if (!newRoom) doesRoomExist();
   }, []);
 
-  useDocTitle(`Lobby - ${roomCode}`);
+  useDocTitle(roomCode);
 
-  const { players, gameStarted, handleStartGame } = useGameState();
+  const { gameStarted, handleStartGame } = useGameState();
+  const { players } = usePlayers();
   const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
 
   React.useEffect(() => {
@@ -75,25 +84,16 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
           </VStack>
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
-              <Button
-                to="/"
-                as={Link}
-                size="lg"
-                variant="outline"
-              >
+              <Button to="/" as={Link} size="lg" variant="outline">
                 Leave Lobby
               </Button>
-              <Button
-                disabled={players.length < 3 || players.length > 8}
-                onClick={() => handleStartGame()}
-                size="lg"
-              >
+              <Button disabled={players.length < 3 || players.length > 6} onClick={() => handleStartGame()} size="lg">
                 Start Game
               </Button>
             </ButtonGroup>
             <Center>
               {players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
-              {players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
+              {players.length > 6 && <FormHelperText>Can only support a maximum of 6 players.</FormHelperText>}
             </Center>
           </FormControl>
         </VStack>

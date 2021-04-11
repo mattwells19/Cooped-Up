@@ -4,7 +4,7 @@ import { alphabet } from "./constants";
 
 const router = Router();
 
-router.get("/checkRoom", (req: Request<{}, {}, {}, { roomCode: string }>, res) => {
+router.get("/checkRoom", (req: Request<unknown, unknown, unknown, { roomCode: string }>, res) => {
   const { roomCode } = req.query;
   const { rooms } = req;
 
@@ -14,8 +14,9 @@ router.get("/checkRoom", (req: Request<{}, {}, {}, { roomCode: string }>, res) =
 
 router.get("/newRoom", (req, res) => {
   const { rooms } = req;
-  let roomCode: string = "";
+  let roomCode = "";
   do {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     roomCode = _sample(alphabet)! + _sample(alphabet) + _sample(alphabet) + _sample(alphabet);
   } while (rooms.has(roomCode));
 

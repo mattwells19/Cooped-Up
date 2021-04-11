@@ -1,20 +1,17 @@
 import useActionToast from "@hooks/useActionToast";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
+import { useEffect } from "react";
 import { useMachine } from "@xstate/react";
 import GameStateMachine from "./GameStateMachine";
-import { getNextPlayerTurnId } from "./helperFns";
 import type { ICurrentGameState, ISendGameStateUpdate } from "./types";
 import processProposeAction from "./ProcessProposeAction";
 import processPerformAction from "./ProcessPerformAction";
 import processChallenge from "./ProcessChallenge";
+import { usePlayers } from "@contexts/PlayersContext";
+import { useDeck } from "@contexts/DeckContext";
 
-export default function useCurrentGameState(
-  playerState: [IPlayer[], Dispatch<SetStateAction<IPlayer[]>>],
-  deckState: [Influence[], Dispatch<SetStateAction<Influence[]>>],
-): [ICurrentGameState, ISendGameStateUpdate] {
-  const [players, setPlayers] = playerState;
-  const [deck, setDeck] = deckState;
+export default function useCurrentGameState(): [ICurrentGameState, ISendGameStateUpdate] {
+  const { players, setPlayers, getNextPlayerTurnId, getPlayerById, getPlayersByIds } = usePlayers();
+  const { deck, setDeck } = useDeck();
   const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const actionToast = useActionToast();
 
@@ -25,7 +22,7 @@ export default function useCurrentGameState(
         break;
       case currentGameState.matches("challenged"): {
         // challenge result will be undefined until the loser of the challenge selects their influence to lose
-        const challengeResult = processChallenge(currentGameState, players, deck);
+        const challengeResult = processChallenge(currentGameState, players, getPlayersByIds, deck);
 
         if (challengeResult) {
           setPlayers(challengeResult.newPlayers);
@@ -35,20 +32,20 @@ export default function useCurrentGameState(
           if (currentGameState.context.challengeFailed) sendGameStateEvent("FAILED");
           else {
             sendGameStateEvent("COMPLETE", {
-              nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
+              nextPlayerTurnId: getNextPlayerTurnId(currentGameState.context.playerTurnId),
             });
           }
         }
         break;
       }
       case currentGameState.matches("propose_action"):
-        processProposeAction(currentGameState, [players, setPlayers], sendGameStateEvent);
+        processProposeAction(currentGameState, sendGameStateEvent, setPlayers, getPlayerById);
         break;
       case currentGameState.matches("perform_action"): {
-        const actionToastProps = processPerformAction(currentGameState, [players, setPlayers]);
+        const actionToastProps = processPerformAction(currentGameState, setPlayers, getPlayerById);
         actionToast(actionToastProps);
         sendGameStateEvent("COMPLETE", {
-          nextPlayerTurnId: getNextPlayerTurnId(players, currentGameState.context.playerTurnId),
+          nextPlayerTurnId: getNextPlayerTurnId(currentGameState.context.playerTurnId),
         });
         break;
       }

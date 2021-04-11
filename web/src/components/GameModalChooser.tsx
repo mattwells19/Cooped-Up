@@ -1,7 +1,7 @@
-import { useGameState } from "@contexts/GameStateContext/GameStateContext";
-import { Actions } from "@contexts/GameStateContext/types";
-import { getPlayerById, getPlayersByIds } from "@utils/GameState/helperFns";
+import { Actions, useGameState } from "@contexts/GameStateContext";
+import { usePlayers } from "@contexts/PlayersContext";
 import { getInfluencesFromAction, wasValidAction } from "@utils/InfluenceUtils";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import * as React from "react";
 import ActionProposedModal from "./Modals/ActionProposedModal";
 import ChallengedModal from "./Modals/ChallengedModal";
@@ -11,7 +11,6 @@ import WaitingForActionModal from "./Modals/WaitingForActionModal";
 const GameModalChooser: React.FC = () => {
   const {
     action,
-    players,
     challengerId,
     currentPlayerId,
     performerId,
@@ -19,11 +18,13 @@ const GameModalChooser: React.FC = () => {
     handleGameEvent,
     handleActionResponse,
   } = useGameState();
+  const { getPlayersByIds, getPlayerById } = usePlayers();
 
-  const [currentPlayer, performer, victim] = getPlayersByIds(players, [currentPlayerId, performerId, victimId])
-    .map((p) => p.player);
-  const challenger = challengerId ? getPlayerById(players, challengerId).player : null;
-  if (!currentPlayer) throw new Error(`No player with the id ${currentPlayerId} was found.`);
+  const [currentPlayer, performer, victim] = getPlayersByIds([currentPlayerId, performerId, victimId]).map(
+    (p) => p?.player,
+  );
+  const challenger = challengerId ? getPlayerById(challengerId)?.player : null;
+  if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
   const [challengeResult, setChallengeResult] = React.useState<"success" | "failed" | null>(null);
 
@@ -48,9 +49,9 @@ const GameModalChooser: React.FC = () => {
   }
   // auto select the influence if the player has only one influence remaining
   if (challengeResult && performer && challenger) {
-    const aliveInfluences = (challengeResult === "failed" ? challenger : performer)
-      .influences
-      .filter((influence) => !influence.isDead);
+    const aliveInfluences = (challengeResult === "failed" ? challenger : performer).influences.filter(
+      (influence) => !influence.isDead,
+    );
 
     if (aliveInfluences.length < 2) {
       setChallengeResult(null);
@@ -65,8 +66,8 @@ const GameModalChooser: React.FC = () => {
   }
   if (performer && challenger && challengeResult) {
     if (
-      (challengeResult === "failed" && currentPlayer.id === challenger.id)
-      || (challengeResult === "success" && currentPlayer.id === performer.id)
+      (challengeResult === "failed" && currentPlayer.id === challenger.id) ||
+      (challengeResult === "success" && currentPlayer.id === performer.id)
     ) {
       return (
         <LoseInfluenceModal
@@ -99,10 +100,12 @@ const GameModalChooser: React.FC = () => {
       // current player being coup'd
       <LoseInfluenceModal
         currentPlayer={currentPlayer}
-        handleClose={(influenceToLose) => handleGameEvent({
-          event: "PASS",
-          eventPayload: { killedInfluence: influenceToLose },
-        })}
+        handleClose={(influenceToLose) =>
+          handleGameEvent({
+            event: "PASS",
+            eventPayload: { killedInfluence: influenceToLose },
+          })
+        }
       />
     ) : (
       // some other player being coup'd
@@ -117,19 +120,10 @@ const GameModalChooser: React.FC = () => {
   if (action && action !== Actions.Coup && action !== Actions.Income && performer) {
     return currentPlayer.actionResponse === "PASS" ? (
       // player decided not to challenge
-      <WaitingForActionModal
-        messaging={[
-          "You have chosen to pass.",
-          "Waiting for all players to pass/challenge...",
-        ]}
-      />
+      <WaitingForActionModal messaging={["You have chosen to pass.", "Waiting for all players to pass/challenge..."]} />
     ) : (
       // player given the option to challenge
-      <ActionProposedModal
-        action={action}
-        performer={performer}
-        handleClose={handleActionResponse}
-      />
+      <ActionProposedModal action={action} performer={performer} handleClose={handleActionResponse} />
     );
   }
   // idle

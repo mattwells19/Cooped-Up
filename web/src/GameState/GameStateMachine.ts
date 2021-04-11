@@ -1,5 +1,5 @@
 import { assign, createMachine } from "xstate";
-import type { Actions, Influence } from "@contexts/GameStateContext/types";
+import type { Actions, Influence } from "@contexts/GameStateContext";
 
 export interface IGameStateMachineContext {
   playerTurnId: string;
