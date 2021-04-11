@@ -3,6 +3,7 @@
 
 import { Actions, IPlayer } from "@contexts/GameStateContext";
 import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { Dispatch, SetStateAction } from "react";
 import type { ICurrentGameState, ISendGameStateUpdate } from "./types";
 
@@ -14,7 +15,8 @@ export default function processProposeAction(
 ): void {
 	switch (currentGameState.context.action) {
 		case Actions.Coup: {
-			const victim = getPlayerById(currentGameState.context.victimId).player;
+			const victim = getPlayerById(currentGameState.context.victimId)?.player;
+			if (!victim) throw new PlayerNotFoundError(currentGameState.context.victimId);
 
 			// if victim only has one influence skip the selection step and eliminate the single influence
 			const victimAliveInfluences = victim.influences.filter((i) => !i.isDead);
@@ -30,10 +32,12 @@ export default function processProposeAction(
 		case Actions.Tax:
 			// the performer isn't going to challenge themselves so automatically set their response to PASS
 			setPlayers((prevPlayers) => {
-				const { index: performerIndex } = getPlayerById(currentGameState.context.performerId);
+				const performer = getPlayerById(currentGameState.context.performerId);
+				if (!performer) throw new PlayerNotFoundError(currentGameState.context.performerId);
+
 				const newPlayers = [...prevPlayers];
-				newPlayers[performerIndex] = {
-					...newPlayers[performerIndex],
+				newPlayers[performer.index] = {
+					...newPlayers[performer.index],
 					actionResponse: "PASS",
 				};
 				return newPlayers;

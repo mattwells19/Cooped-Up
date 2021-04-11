@@ -1,6 +1,7 @@
 import { Actions, useGameState } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import { getInfluencesFromAction, wasValidAction } from "@utils/InfluenceUtils";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import * as React from "react";
 import ActionProposedModal from "./Modals/ActionProposedModal";
 import ChallengedModal from "./Modals/ChallengedModal";
@@ -20,9 +21,9 @@ const GameModalChooser: React.FC = () => {
 	const { getPlayersByIds, getPlayerById } = usePlayers();
 
 	const [currentPlayer, performer, victim] = getPlayersByIds([currentPlayerId, performerId, victimId])
-		.map((p) => p.player);
-	const challenger = challengerId ? getPlayerById(challengerId).player : null;
-	if (!currentPlayer) throw new Error(`No player with the id ${currentPlayerId} was found.`);
+		.map((p) => p?.player);
+	const challenger = challengerId ? getPlayerById(challengerId)?.player : null;
+	if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
 	const [challengeResult, setChallengeResult] = React.useState<"success" | "failed" | null>(null);
 

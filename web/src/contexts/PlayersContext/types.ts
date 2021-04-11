@@ -9,7 +9,9 @@ export interface IPlayersContext {
 	getNextPlayerTurnId: (playerTurnId: string) => string;
 }
 
-export interface IFindPlayerByIdResponse {
-	player: IPlayer;
-	index: number;
-}
+export type IFindPlayerByIdResponse =
+	| {
+			player: IPlayer;
+			index: number;
+		}
+	| undefined;

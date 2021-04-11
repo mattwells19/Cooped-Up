@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext";
 import type { IFindPlayerByIdResponse, IPlayersContext } from "./types";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 
 const PlayersContext = React.createContext<IPlayersContext | undefined>(undefined);
 PlayersContext.displayName = "PlayersContext";
@@ -15,10 +16,11 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
 	 */
 	function getPlayerById(playerId: string): IFindPlayerByIdResponse {
 		const playerIndex = players.findIndex((p) => p.id.localeCompare(playerId) === 0);
-		return {
+
+		return  playerIndex !== -1 ? {
 			player: players[playerIndex],
 			index: playerIndex,
-		};
+		} : undefined;
 	}
 
 	/**
@@ -37,8 +39,10 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
 	 * @returns The id of the player whose turn it should be next.
 	 */
 	function getNextPlayerTurnId(playerTurnId: string): string {
-		const { index: currentPlayerIndex } = getPlayerById(playerTurnId);
-		return players[currentPlayerIndex === players.length - 1 ? 0 : currentPlayerIndex + 1].id;
+		const currentPlayer = getPlayerById(playerTurnId);
+		if (!currentPlayer) throw new PlayerNotFoundError(playerTurnId);
+
+		return players[currentPlayer.index === players.length - 1 ? 0 : currentPlayer.index + 1].id;
 	}
 
 	return (

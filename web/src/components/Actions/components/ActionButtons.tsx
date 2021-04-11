@@ -2,6 +2,7 @@ import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react
 import * as React from "react";
 import { useGameState, Actions } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
   actionPayload?: { action: Actions, victimId: string | null };
@@ -15,7 +16,8 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
 	const { handleGameEvent, currentPlayerId, turn } = useGameState();
 	const { getPlayerById }  = usePlayers();
 
-	const currentPlayer = getPlayerById(currentPlayerId).player;
+	const currentPlayer = getPlayerById(currentPlayerId)?.player;
+	if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
 	const isTurn = currentPlayerId.localeCompare(turn) === 0;
 

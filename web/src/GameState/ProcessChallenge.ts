@@ -2,6 +2,7 @@ import type { Influence, IPlayer } from "@contexts/GameStateContext";
 import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
 import type { IActionToastProps } from "@hooks/useActionToast";
 import { getInfluencesFromAction } from "@utils/InfluenceUtils";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { ICurrentGameState } from "./types";
 
 interface IProcessChallengeResponse {
@@ -21,22 +22,22 @@ export default function processChallenge(
 	if (action && killedInfluence && challengeFailed !== undefined && challengerId && performerId) {
 		const loserId = challengeFailed ? challengerId : performerId;
 		const winnerId = challengeFailed ? performerId : challengerId;
-		const [{ index: loserIndex, player: loser }, { index: winnerIndex, player: winner }] = getPlayersByIds([
-			loserId,
-			winnerId,
-		]);
+		const [loser, winner] = getPlayersByIds([loserId, winnerId]);
+
+		if (!loser) throw new PlayerNotFoundError(loserId);
+		if (!winner) throw new PlayerNotFoundError(winnerId);
 
 		const newPlayers: Array<IPlayer> = [...players].map((player) => ({ ...player, actionResponse: null }));
 		const newDeck: Array<Influence> = [...deck];
 
-		const influenceToKillIndex = newPlayers[loserIndex].influences.findIndex(
+		const influenceToKillIndex = newPlayers[loser.index].influences.findIndex(
 			(influence) => influence.type === killedInfluence && !influence.isDead,
 		);
 
 		// victim's chosen influence to kill
-		newPlayers[loserIndex] = {
-			...newPlayers[loserIndex],
-			influences: newPlayers[loserIndex].influences.map((influence, index) => {
+		newPlayers[loser.index] = {
+			...newPlayers[loser.index],
+			influences: newPlayers[loser.index].influences.map((influence, index) => {
 				if (index === influenceToKillIndex) {
 					return {
 						...influence,
@@ -49,17 +50,17 @@ export default function processChallenge(
 
 		if (challengeFailed) {
 			const possibleInfluences = getInfluencesFromAction(action);
-			const [{ type: revealedInfluence }] = winner.influences.filter(
+			const [{ type: revealedInfluence }] = winner.player.influences.filter(
 				(influence) => possibleInfluences.indexOf(influence.type) !== -1,
 			);
 
-			const influenceToTradeIndex = newPlayers[winnerIndex].influences.findIndex(
+			const influenceToTradeIndex = newPlayers[winner.index].influences.findIndex(
 				(influence) => influence.type === revealedInfluence && !influence.isDead,
 			);
 
-			newPlayers[winnerIndex] = {
-				...newPlayers[winnerIndex],
-				influences: newPlayers[winnerIndex].influences.map((influence, index) => {
+			newPlayers[winner.index] = {
+				...newPlayers[winner.index],
+				influences: newPlayers[winner.index].influences.map((influence, index) => {
 					if (index === influenceToTradeIndex) {
 						newDeck.push(influence.type);
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -75,7 +76,7 @@ export default function processChallenge(
 			actionToastProps: {
 				variant: "Challenge",
 				lostInfluence: killedInfluence,
-				victimName: loser.name,
+				victimName: loser.player.name,
 			},
 			newDeck,
 			newPlayers,

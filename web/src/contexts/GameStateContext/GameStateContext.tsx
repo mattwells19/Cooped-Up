@@ -5,6 +5,7 @@ import useCurrentGameState from "@GameState/useCurrentGameState";
 import { IGameState, IGameStateContext, IncomingSocketActions, Influence, IPlayer, OutgoingSocketActions } from "./types";
 import { usePlayers } from "@contexts/PlayersContext";
 import { useDeck } from "@contexts/DeckContext";
+import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 
 const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
@@ -72,11 +73,12 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
 		socket.off(IncomingSocketActions.UpdatePlayerActionResponse);
 		socket.on(IncomingSocketActions.UpdatePlayerActionResponse, (actionResponse: { playerId: string, response: "PASS" | "CHALLENGE" }) => {
 			setPlayers((prevPlayers) => {
-				const playerToUpdate = getPlayerById(actionResponse.playerId).index;
-				if (playerToUpdate === -1) throw new Error(`No player with id ${actionResponse.playerId}`);
+				const playerToUpdate = getPlayerById(actionResponse.playerId);
+				if (!playerToUpdate) throw new PlayerNotFoundError(actionResponse.playerId);
+
 				const newPlayers = [...prevPlayers];
-				newPlayers[playerToUpdate] = {
-					...newPlayers[playerToUpdate],
+				newPlayers[playerToUpdate.index] = {
+					...newPlayers[playerToUpdate.index],
 					actionResponse: actionResponse.response,
 				};
 				return newPlayers;
