@@ -12,14 +12,14 @@ interface IInfluenceCardProps extends ImageProps {
 }
 
 const InfluenceCard: React.FC<IInfluenceCardProps> = ({ influence, enlarge = false, faceUp, onClick, ...props }) => (
-	<Image
-		alt={faceUp ? influence.toString() : "Hidden Influence"}
-		src={faceUp ? InfluenceDetails[influence].img : BlankImg}
-		htmlWidth={enlarge ? "200px" : "157px"}
-		htmlHeight={enlarge ? "280px" : "220px"}
-		onClick={onClick}
-		{...props}
-	/>
+  <Image
+    alt={faceUp ? influence.toString() : "Hidden Influence"}
+    src={faceUp ? InfluenceDetails[influence].img : BlankImg}
+    htmlWidth={enlarge ? "200px" : "157px"}
+    htmlHeight={enlarge ? "280px" : "220px"}
+    onClick={onClick}
+    {...props}
+  />
 );
 
 export default InfluenceCard;

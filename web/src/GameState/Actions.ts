@@ -10,67 +10,67 @@ type ActionFunction = (
 ) => Array<IPlayer>;
 
 export const IncomeAction: ActionFunction = (players, gameContext, getPlayerById) => {
-	const currentPlayer = getPlayerById(gameContext.playerTurnId);
-	if (!currentPlayer) throw new PlayerNotFoundError(gameContext.playerTurnId);
+  const currentPlayer = getPlayerById(gameContext.playerTurnId);
+  if (!currentPlayer) throw new PlayerNotFoundError(gameContext.playerTurnId);
 
-	const newPlayers = [...players];
-	newPlayers[currentPlayer.index] = {
-		...newPlayers[currentPlayer.index],
-		coins: newPlayers[currentPlayer.index].coins + 1,
-	};
-	return newPlayers;
+  const newPlayers = [...players];
+  newPlayers[currentPlayer.index] = {
+    ...newPlayers[currentPlayer.index],
+    coins: newPlayers[currentPlayer.index].coins + 1,
+  };
+  return newPlayers;
 };
 
 export const CoupAction: ActionFunction = (players, gameContext, getPlayerById) => {
-	const currentPlayer = getPlayerById(gameContext.playerTurnId);
-	if (!currentPlayer) throw new PlayerNotFoundError(gameContext.playerTurnId);
+  const currentPlayer = getPlayerById(gameContext.playerTurnId);
+  if (!currentPlayer) throw new PlayerNotFoundError(gameContext.playerTurnId);
 
-	const victim = getPlayerById(gameContext.victimId);
-	if (!victim) throw new PlayerNotFoundError(gameContext.victimId);
+  const victim = getPlayerById(gameContext.victimId);
+  if (!victim) throw new PlayerNotFoundError(gameContext.victimId);
 
-	const newPlayers = [...players];
+  const newPlayers = [...players];
 
-	// performer loses 7 coins
-	newPlayers[currentPlayer.index] = {
-		...newPlayers[currentPlayer.index],
-		coins: newPlayers[currentPlayer.index].coins - 7,
-	};
+  // performer loses 7 coins
+  newPlayers[currentPlayer.index] = {
+    ...newPlayers[currentPlayer.index],
+    coins: newPlayers[currentPlayer.index].coins - 7,
+  };
 
-	const influenceToKillIndex = newPlayers[victim.index].influences.findIndex(
-		(influence) => influence.type === gameContext.killedInfluence && !influence.isDead,
-	);
+  const influenceToKillIndex = newPlayers[victim.index].influences.findIndex(
+    (influence) => influence.type === gameContext.killedInfluence && !influence.isDead,
+  );
 
-	// victim's chosen influence to kill
-	newPlayers[victim.index] = {
-		...newPlayers[victim.index],
-		influences: newPlayers[victim.index].influences.map((influence, index) => {
-			if (index === influenceToKillIndex) {
-				return {
-					...influence,
-					isDead: true,
-				};
-			}
-			return influence;
-		}),
-	};
+  // victim's chosen influence to kill
+  newPlayers[victim.index] = {
+    ...newPlayers[victim.index],
+    influences: newPlayers[victim.index].influences.map((influence, index) => {
+      if (index === influenceToKillIndex) {
+        return {
+          ...influence,
+          isDead: true,
+        };
+      }
+      return influence;
+    }),
+  };
 
-	return newPlayers;
+  return newPlayers;
 };
 
 export const TaxAction: ActionFunction = (players, gameContext, getPlayerById) => {
-	const performer = getPlayerById(gameContext.performerId);
-	if (!performer) throw new PlayerNotFoundError(gameContext.performerId);
+  const performer = getPlayerById(gameContext.performerId);
+  if (!performer) throw new PlayerNotFoundError(gameContext.performerId);
 
-	const newPlayers = players.map((p) => ({
-		...p,
-		actionResponse: null,
-	}));
+  const newPlayers = players.map((p) => ({
+    ...p,
+    actionResponse: null,
+  }));
 
-	// performer loses 7 coins
-	newPlayers[performer.index] = {
-		...newPlayers[performer.index],
-		coins: newPlayers[performer.index].coins + 3,
-	};
+  // performer loses 7 coins
+  newPlayers[performer.index] = {
+    ...newPlayers[performer.index],
+    coins: newPlayers[performer.index].coins + 3,
+  };
 
-	return newPlayers;
+  return newPlayers;
 };

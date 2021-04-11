@@ -12,8 +12,8 @@ const httpServer = createServer(app);
 const io: Server = require("socket.io")(httpServer);
 
 app.use((req, res, next) => {
-	req.rooms = io.sockets.adapter.rooms;
-	next();
+  req.rooms = io.sockets.adapter.rooms;
+  next();
 });
 app.use("/api", ApiRoutes);
 
@@ -22,8 +22,8 @@ app.use(staticFiles(path.join(__dirname, "/")));
 app.get(["/", "/room/*"], (_, res) => res.sendFile(path.join(__dirname, "/index.html")));
 
 initRooms()
-	.then(() => {
-		initializeSocketEvents(io);
-		httpServer.listen(process.env.PORT ?? 4000, () => console.log(`Listening on port ${process.env.PORT ?? 4000}`));
-	})
-	.catch((err) => console.error(err));
+  .then(() => {
+    initializeSocketEvents(io);
+    httpServer.listen(process.env.PORT ?? 4000, () => console.log(`Listening on port ${process.env.PORT ?? 4000}`));
+  })
+  .catch((err) => console.error(err));

@@ -20,45 +20,45 @@ type LobbyRouteParamsType = {
 }
 
 const Layout: React.FC = () => (
-	<BrowserRouter>
-		<Switch>
-			<Route
-				path="/room/:roomCode"
-				render={({ location, match }: RouteComponentProps<LobbyRouteParamsType>) => {
-					// if the player joining doesn't have a name set, render the player name page instead
-					if (localStorage.getItem("playerName")) {
-						return (
-							<DeckContextProvider>
-								<PlayersContextProvider>
-									<GameStateContextProvider>
-										<Lobby
-											newRoom={(location.state as LobbyRouteStateType)?.newRoom}
-											roomCode={match.params.roomCode}
-										/>
-									</GameStateContextProvider>
-								</PlayersContextProvider>
-							</DeckContextProvider>
-						);
-					}
-					return (
-						<PlayerName
-							newRoom={(location.state as LobbyRouteStateType)?.newRoom}
-							roomCode={match.params.roomCode}
-						/>
-					);
-				}}
-			/>
-			<Route
-				path="/"
-				render={({ location }) => (
-					<Home invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode} />
-				)}
-			/>
-			<Route path="*">
-				<Redirect to="/" />
-			</Route>
-		</Switch>
-	</BrowserRouter>
+  <BrowserRouter>
+    <Switch>
+      <Route
+        path="/room/:roomCode"
+        render={({ location, match }: RouteComponentProps<LobbyRouteParamsType>) => {
+          // if the player joining doesn't have a name set, render the player name page instead
+          if (localStorage.getItem("playerName")) {
+            return (
+              <DeckContextProvider>
+                <PlayersContextProvider>
+                  <GameStateContextProvider>
+                    <Lobby
+                      newRoom={(location.state as LobbyRouteStateType)?.newRoom}
+                      roomCode={match.params.roomCode}
+                    />
+                  </GameStateContextProvider>
+                </PlayersContextProvider>
+              </DeckContextProvider>
+            );
+          }
+          return (
+            <PlayerName
+              newRoom={(location.state as LobbyRouteStateType)?.newRoom}
+              roomCode={match.params.roomCode}
+            />
+          );
+        }}
+      />
+      <Route
+        path="/"
+        render={({ location }) => (
+          <Home invalidRoomCode={(location.state as HomeRouteStateType)?.invalidRoomCode} />
+        )}
+      />
+      <Route path="*">
+        <Redirect to="/" />
+      </Route>
+    </Switch>
+  </BrowserRouter>
 );
 
 export default Layout;

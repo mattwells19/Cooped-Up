@@ -1,6 +1,4 @@
 {
-	"javascript.format.enable": true,
-	"eslint.format.enable": true,
-	"editor.insertSpaces": false,
-	"editor.detectIndentation": false
+  "javascript.format.enable": true,
+  "eslint.format.enable": true
 }

@@ -1,18 +1,18 @@
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import {
-	Alert,
-	AlertIcon,
-	Button,
-	Center,
-	Collapse,
-	Divider,
-	HStack,
-	PinInput,
-	PinInputField,
-	Text,
-	VStack,
-	useToast,
+  Alert,
+  AlertIcon,
+  Button,
+  Center,
+  Collapse,
+  Divider,
+  HStack,
+  PinInput,
+  PinInputField,
+  Text,
+  VStack,
+  useToast,
 } from "@chakra-ui/react";
 import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
@@ -23,101 +23,101 @@ interface ILobbyProps {
 }
 
 const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
-	const history = useHistory();
-	const toast = useToast();
-	useDocTitle("Home");
-	const [error, setError] = React.useState<boolean>(false);
+  const history = useHistory();
+  const toast = useToast();
+  useDocTitle("Home");
+  const [error, setError] = React.useState<boolean>(false);
 
-	async function handleJoinRoom(roomCode: string) {
-		const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
+  async function handleJoinRoom(roomCode: string) {
+    const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
 
-		if (validRoom) history.push(`/room/${roomCode.toUpperCase()}`);
-		else setError(true);
-	}
+    if (validRoom) history.push(`/room/${roomCode.toUpperCase()}`);
+    else setError(true);
+  }
 
-	function handleRoomCodeChange(code: string) {
-		if (error && code.length !== 4) setError(false);
-		else if (code.length === 4) handleJoinRoom(code);
-	}
+  function handleRoomCodeChange(code: string) {
+    if (error && code.length !== 4) setError(false);
+    else if (code.length === 4) handleJoinRoom(code);
+  }
 
-	async function handleNewRoom() {
-		const roomCode = await get<string>("newRoom");
+  async function handleNewRoom() {
+    const roomCode = await get<string>("newRoom");
 
-		history.push({
-			pathname: `/room/${roomCode}`,
-			state: {
-				newRoom: true,
-			},
-		});
-	}
+    history.push({
+      pathname: `/room/${roomCode}`,
+      state: {
+        newRoom: true,
+      },
+    });
+  }
 
-	React.useEffect(() => {
-		if (invalidRoomCode) {
-			toast({
-				title: "The room you tried to join doesn't exist.",
-				description: "Double check you have the correct room code, or start a new room.",
-				status: "error",
-				duration: 7000,
-				isClosable: true,
-				position: "top-right",
-			});
-			history.push({
-				state: {
-					invalidRoomCode: undefined,
-				},
-			});
-		}
-	}, []);
+  React.useEffect(() => {
+    if (invalidRoomCode) {
+      toast({
+        title: "The room you tried to join doesn't exist.",
+        description: "Double check you have the correct room code, or start a new room.",
+        status: "error",
+        duration: 7000,
+        isClosable: true,
+        position: "top-right",
+      });
+      history.push({
+        state: {
+          invalidRoomCode: undefined,
+        },
+      });
+    }
+  }, []);
 
-	return (
-		<>
-			<Header>Cooped Up</Header>
-			<Center marginY="10" marginX="auto" maxWidth="lg">
-				<VStack spacing={10}>
-					<Text paddingX="4" fontSize="large">
+  return (
+    <>
+      <Header>Cooped Up</Header>
+      <Center marginY="10" marginX="auto" maxWidth="lg">
+        <VStack spacing={10}>
+          <Text paddingX="4" fontSize="large">
             So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends,
             but you can&apos;t because the virus is still at large. What better way to connect with your friends
             than with a little bit of deception!&nbsp;
-						<Text fontWeight="bold" as="span">Cooped Up</Text>
+            <Text fontWeight="bold" as="span">Cooped Up</Text>
             &nbsp;is based on the popular board game Coup.
-					</Text>
-					<Text>🚧 Still in development. 🚧</Text>
-					<Divider />
-					<VStack spacing={4}>
-						<Text>Already have a room code? Type/paste it here.</Text>
-						<HStack>
-							<PinInput
-								autoFocus
-								onChange={handleRoomCodeChange}
-								isInvalid={error}
-								size="lg"
-								type="alphanumeric"
-							>
-								<PinInputField aria-label="Room code, first letter." />
-								<PinInputField aria-label="Room code, second letter." />
-								<PinInputField aria-label="Room code, third letter." />
-								<PinInputField aria-label="Room code, last letter." />
-							</PinInput>
-						</HStack>
-						<Collapse in={error} animateOpacity>
-							<Alert status="warning" width="sm">
-								<AlertIcon />
+          </Text>
+          <Text>🚧 Still in development. 🚧</Text>
+          <Divider />
+          <VStack spacing={4}>
+            <Text>Already have a room code? Type/paste it here.</Text>
+            <HStack>
+              <PinInput
+                autoFocus
+                onChange={handleRoomCodeChange}
+                isInvalid={error}
+                size="lg"
+                type="alphanumeric"
+              >
+                <PinInputField aria-label="Room code, first letter." />
+                <PinInputField aria-label="Room code, second letter." />
+                <PinInputField aria-label="Room code, third letter." />
+                <PinInputField aria-label="Room code, last letter." />
+              </PinInput>
+            </HStack>
+            <Collapse in={error} animateOpacity>
+              <Alert status="warning" width="sm">
+                <AlertIcon />
                 There is no room with that room code. Try a different code or start a new room.
-							</Alert>
-						</Collapse>
-					</VStack>
-					<HStack width="100%">
-						<Divider />
-						<Text>or</Text>
-						<Divider />
-					</HStack>
-					<Button onClick={handleNewRoom} size="lg">
+              </Alert>
+            </Collapse>
+          </VStack>
+          <HStack width="100%">
+            <Divider />
+            <Text>or</Text>
+            <Divider />
+          </HStack>
+          <Button onClick={handleNewRoom} size="lg">
             Start a New Room
-					</Button>
-				</VStack>
-			</Center>
-		</>
-	);
+          </Button>
+        </VStack>
+      </Center>
+    </>
+  );
 };
 
 export default Home;
