@@ -81,6 +81,7 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
 						<Text fontWeight="bold" as="span">Cooped Up</Text>
             &nbsp;is based on the popular board game Coup.
 					</Text>
+					<Text>🚧 Still in development. 🚧</Text>
 					<Divider />
 					<VStack spacing={4}>
 						<Text>Already have a room code? Type/paste it here.</Text>
@@ -92,10 +93,10 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
 								size="lg"
 								type="alphanumeric"
 							>
-								<PinInputField />
-								<PinInputField />
-								<PinInputField />
-								<PinInputField />
+								<PinInputField aria-label="Room code, first letter." />
+								<PinInputField aria-label="Room code, second letter." />
+								<PinInputField aria-label="Room code, third letter." />
+								<PinInputField aria-label="Room code, last letter." />
 							</PinInput>
 						</HStack>
 						<Collapse in={error} animateOpacity>

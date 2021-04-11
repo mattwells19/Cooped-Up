@@ -86,7 +86,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
                 Leave Lobby
 							</Button>
 							<Button
-								disabled={players.length < 3 || players.length > 8}
+								disabled={players.length < 3 || players.length > 6}
 								onClick={() => handleStartGame()}
 								size="lg"
 							>
@@ -95,7 +95,7 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
 						</ButtonGroup>
 						<Center>
 							{players.length < 3 && <FormHelperText>Need at least 3 players to start the game.</FormHelperText>}
-							{players.length > 8 && <FormHelperText>Can only support a maximum of 8 players.</FormHelperText>}
+							{players.length > 6 && <FormHelperText>Can only support a maximum of 6 players.</FormHelperText>}
 						</Center>
 					</FormControl>
 				</VStack>
