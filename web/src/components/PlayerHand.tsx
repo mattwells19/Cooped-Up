@@ -19,7 +19,8 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, player }) => 
         <InfluenceCard
           key={`${player.name}-${type}-${useId()}`}
           influence={type}
-          faceUp={isCurrentPlayer || isDead}
+          faceUp={Boolean(isCurrentPlayer)}
+          isDead={isDead}
           enlarge={isCurrentPlayer}
         />
       ))}

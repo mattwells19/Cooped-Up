@@ -13,6 +13,7 @@
   "rules": {
     "indent": ["error", 2, { "SwitchCase": 1, "ObjectExpression": 1, "ArrayExpression": 1, "ImportDeclaration": 1 }],
     "quotes": ["error", "double"],
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "max-len": ["error", 120]
   }
 }
