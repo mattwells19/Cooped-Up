@@ -73,7 +73,14 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       >
         Income
       </WrappedButton>
-      <WrappedButton variant="outline" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton
+        actionPayload={{
+          action: Actions.Aid,
+          victimId: null,
+        }}
+        variant="outline"
+        disabled={currentPlayer.coins >= 10}
+      >
         Foreign Aid
       </WrappedButton>
       <WrappedButton

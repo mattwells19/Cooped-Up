@@ -74,3 +74,21 @@ export const TaxAction: ActionFunction = (players, gameContext, getPlayerById) =
 
   return newPlayers;
 };
+
+export const AidAction: ActionFunction = (players, gameContext, getPlayerById) => {
+  const performer = getPlayerById(gameContext.performerId);
+  if (!performer) throw new PlayerNotFoundError(gameContext.performerId);
+
+  const newPlayers = players.map((p) => ({
+    ...p,
+    actionResponse: null,
+  }));
+
+  // performer loses 7 coins
+  newPlayers[performer.index] = {
+    ...newPlayers[performer.index],
+    coins: newPlayers[performer.index].coins + 2,
+  };
+
+  return newPlayers;
+};

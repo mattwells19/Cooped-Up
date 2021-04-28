@@ -1,6 +1,6 @@
 import { Actions, IPlayer } from "@contexts/GameStateContext";
 import type { IActionToastProps } from "@hooks/useActionToast";
-import { CoupAction, IncomeAction, TaxAction } from "./Actions";
+import { AidAction, CoupAction, IncomeAction, TaxAction } from "./Actions";
 import type { ICurrentGameState } from "./types";
 import type { Dispatch, SetStateAction } from "react";
 import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
@@ -48,6 +48,17 @@ export default function processPerformAction(
       return {
         performerName: performer.name,
         variant: Actions.Tax,
+      };
+    }
+    case Actions.Aid: {
+      setPlayers((prevPlayers) => AidAction(prevPlayers, currentGameState.context, getPlayerById));
+      const performer = getPlayerById(currentGameState.context.performerId)?.player;
+
+      if (!performer) throw new PlayerNotFoundError(currentGameState.context.performerId);
+
+      return {
+        performerName: performer.name,
+        variant: Actions.Aid,
       };
     }
     default:

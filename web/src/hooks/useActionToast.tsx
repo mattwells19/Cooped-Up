@@ -8,6 +8,7 @@ export type IActionToastProps =
   | { variant: Actions.Coup; performerName: string; victimName: string; lostInfluence: Influence }
   | { variant: Actions.Income; performerName: string; victimName?: never; lostInfluence?: never }
   | { variant: Actions.Tax; performerName: string; victimName?: never; lostInfluence?: never }
+  | { variant: Actions.Aid; performerName: string; victimName?: never; lostInfluence?: never }
   | { variant: "Challenge"; performerName?: never; victimName: string; lostInfluence: Influence };
 
 const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, victimName, lostInfluence }) => {
@@ -32,6 +33,8 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
         {variant === Actions.Coup && <AxeIcon width={iconSize} />}
         {/* TODO: Needs Graphic */}
         {variant === Actions.Tax && <CoinIcon width={iconSize} />}
+        {/* TODO: Needs Graphic */}
+        {variant === Actions.Aid && <CoinIcon width={iconSize} />}
         {variant === "Challenge" && <ChallengeIcon width={iconSize} />}
       </Center>
       <Box fontSize="large">
@@ -49,6 +52,14 @@ const ActionToast: React.FC<IActionToastProps> = ({ performerName, variant, vict
               {performerName}
             </Text>
             &nbsp;must have royalty in their blood as they have collected tax from the peasants.
+          </Text>
+        )}
+        {variant === Actions.Aid && (
+          <Text>
+            <Text as="span" fontWeight="bold">
+              {performerName}
+            </Text>
+            &nbsp;has gotten away with foreign aid! A very generous group of Dukes indeed.
           </Text>
         )}
         {variant === Actions.Coup && (

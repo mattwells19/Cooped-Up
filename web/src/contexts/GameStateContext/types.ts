@@ -30,7 +30,7 @@ export interface IPlayer {
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
-  actionResponse: "PASS" | "CHALLENGE" | null;
+  actionResponse: "PASS" | "CHALLENGE" | "BLOCK" | null;
 }
 
 export interface IGameStateContext extends IGameStateMachineContext {

@@ -80,7 +80,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.off(IncomingSocketActions.UpdatePlayerActionResponse);
     socket.on(
       IncomingSocketActions.UpdatePlayerActionResponse,
-      (actionResponse: { playerId: string; response: "PASS" | "CHALLENGE" }) => {
+      (actionResponse: { playerId: string; response: "PASS" | "CHALLENGE" | "BLOCK" }) => {
         setPlayers((prevPlayers) => {
           const playerToUpdate = getPlayerById(actionResponse.playerId);
           if (!playerToUpdate) throw new PlayerNotFoundError(actionResponse.playerId);
@@ -102,6 +102,12 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
         // we know it exists because of the 'some' above
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         challengerId: players.find((p) => p.actionResponse === "CHALLENGE")!.id,
+      });
+    } else if (players.some((p) => p.actionResponse === "BLOCK")) {
+      sendGameStateEvent("BLOCK", {
+        // we know it exists because of the 'some' above
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        challengerId: players.find((p) => p.actionResponse === "BLOCK")!.id,
       });
     }
   }, [players]);
