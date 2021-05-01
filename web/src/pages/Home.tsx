@@ -75,13 +75,13 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
       <Center marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
           <Text paddingX="4" fontSize="large">
-            So you&apos;re all cooped up at home with nothing to do. You want to hang out with friends, but you
-            can&apos;t because the virus is still at large. What better way to connect with your friends than with a
-            little bit of deception!&nbsp;
+            {`So you're all cooped up at home with nothing to do. You want to hang out with friends, but you\
+            can't because the virus is still at large. What better way to connect with your friends than with a\
+            little bit of deception! `}
             <Text fontWeight="bold" as="span">
               Cooped Up
             </Text>
-            &nbsp;is based on the popular board game Coup.
+            {" is based on the popular board game Coup."}
           </Text>
           <Text>🚧 Still in development. 🚧</Text>
           <Divider />

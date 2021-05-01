@@ -11,6 +11,7 @@ export const enum Actions {
   Income = "collect income",
   Aid = "collect foreign aid",
   Coup = "coup",
+  Block = "block",
 }
 
 export interface IGameState {
@@ -37,7 +38,7 @@ export interface IGameStateContext extends IGameStateMachineContext {
   currentPlayerId: string;
   turn: string;
   handleGameEvent: (newGameState: IGameState) => void;
-  handleActionResponse: (newGameState: "PASS" | "CHALLENGE") => void;
+  handleActionResponse: (newGameState: "PASS" | "CHALLENGE" | "BLOCK") => void;
   handleStartGame: () => void;
 }
 

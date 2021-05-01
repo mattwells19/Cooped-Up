@@ -13,4 +13,5 @@ export const ActionDetails: Record<Actions, IActionDetails> = {
   [Actions.Income]: { blockable: null, challengable: false },
   [Actions.Steal]: { blockable: ["Captain", "Ambassador"], challengable: true },
   [Actions.Tax]: { blockable: null, challengable: true },
+  [Actions.Block]: { blockable: null, challengable: true },
 };

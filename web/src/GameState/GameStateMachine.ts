@@ -7,10 +7,11 @@ export interface IGameStateMachineContext {
   performerId: string;
   gameStarted: boolean;
   victimId: string;
+  challengerId: string;
+  blockerId: string;
   killedInfluence: Influence | undefined;
   challengeFailed: boolean | undefined;
-  challengerId: string | undefined;
-  blockerId: string | undefined;
+  blockSuccessful: boolean | undefined;
 }
 
 export type GameStateMachineEvent =
@@ -19,6 +20,7 @@ export type GameStateMachineEvent =
   | { type: "CHALLENGE"; challengerId: string }
   | { type: "COMPLETE"; nextPlayerTurnId: string }
   | { type: "FAILED" }
+  | { type: "CHALLENGE_BLOCK_FAILED"; nextPlayerTurnId: string }
   | { type: "PASS"; killedInfluence: Influence | undefined }
   | { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
   | { type: "START"; playerTurnId: string };
@@ -29,6 +31,7 @@ export type GameStateMachineState =
   | { value: "propose_action"; context: IGameStateMachineContext }
   | { value: "perform_action"; context: IGameStateMachineContext }
   | { value: "blocked"; context: IGameStateMachineContext }
+  | { value: "challenge_block"; context: IGameStateMachineContext }
   | { value: "challenged"; context: IGameStateMachineContext };
 
 const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
@@ -40,10 +43,11 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     gameStarted: false,
     performerId: "",
     victimId: "",
+    challengerId: "",
+    blockerId: "",
     killedInfluence: undefined,
     challengeFailed: undefined,
-    challengerId: undefined,
-    blockerId: undefined,
+    blockSuccessful: undefined,
   },
   states: {
     pregame: {
@@ -67,6 +71,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
         challengeFailed: undefined,
         challengerId: undefined,
         blockerId: undefined,
+        blockSuccessful: undefined,
       })),
       on: {
         ACTION: {
@@ -113,8 +118,41 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     },
     blocked: {
       on: {
-        COMPLETE: "idle",
-        CHALLENGE: "challenged",
+        PASS: {
+          actions: assign({
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            blockSuccessful: (_, _event) => true,
+          }),
+        },
+        COMPLETE: {
+          target: "idle",
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
+        },
+        CHALLENGE: {
+          target: "challenge_block",
+          actions: assign({
+            challengerId: (_, event) => event.challengerId,
+          }),
+        },
+      },
+    },
+    challenge_block: {
+      on: {
+        COMPLETE: "perform_action",
+        CHALLENGE_BLOCK_FAILED: {
+          target: "idle",
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
+        },
+        LOSE_INFLUENCE: {
+          actions: assign((_, event) => ({
+            killedInfluence: event.killedInfluence,
+            challengeFailed: event.challengeFailed,
+          })),
+        },
       },
     },
     challenged: {

@@ -7,6 +7,7 @@ export interface IPlayersContext {
   getPlayerById: (playerId: string) => IFindPlayerByIdResponse;
   getPlayersByIds: (playerIds: Array<string>) => Array<IFindPlayerByIdResponse>;
   getNextPlayerTurnId: (playerTurnId: string) => string;
+  resetAllActionResponse: () => void;
 }
 
 export type IFindPlayerByIdResponse =

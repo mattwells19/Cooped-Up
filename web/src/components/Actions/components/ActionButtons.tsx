@@ -24,7 +24,9 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
   const WrappedButton: React.FC<IWrappedButtonProps> = ({ actionPayload, children, disabled, ...buttonProps }) => (
     <WrapItem>
       <Button
-        disabled={!isTurn || disabled}
+        // every button when eventually have an actionPayload or onClick.
+        // this is temporary to prevent a tester from crashing the app.
+        disabled={!isTurn || (!actionPayload && !buttonProps.onClick) || disabled}
         onClick={() =>
           handleGameEvent({
             event: "ACTION",

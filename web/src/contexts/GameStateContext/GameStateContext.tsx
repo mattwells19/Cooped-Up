@@ -46,7 +46,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.emit(OutgoingSocketActions.UpdateGameState, newGameState);
   }
 
-  function handleActionResponse(response: "PASS" | "CHALLENGE") {
+  function handleActionResponse(response: "PASS" | "CHALLENGE" | "BLOCK") {
     socket.emit(OutgoingSocketActions.ProposeActionResponse, response);
   }
 
@@ -107,7 +107,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
       sendGameStateEvent("BLOCK", {
         // we know it exists because of the 'some' above
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        challengerId: players.find((p) => p.actionResponse === "BLOCK")!.id,
+        blockerId: players.find((p) => p.actionResponse === "BLOCK")!.id,
       });
     }
   }, [players]);
