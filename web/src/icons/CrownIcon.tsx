@@ -9,7 +9,7 @@ const CrownIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => (
     </g>
     <defs>
       <clipPath id="clip0">
-      <rect width="180" height="151" fill="white"/>
+        <rect width="180" height="151" fill="white"/>
       </clipPath>
     </defs>
   </svg>
