@@ -67,10 +67,10 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
         action: null,
         performerId: "",
         victimId: "",
+        challengerId: "",
+        blockerId: "",
         killedInfluence: undefined,
         challengeFailed: undefined,
-        challengerId: undefined,
-        blockerId: undefined,
         blockSuccessful: undefined,
       })),
       on: {

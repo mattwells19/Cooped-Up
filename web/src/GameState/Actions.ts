@@ -84,7 +84,7 @@ export const AidAction: ActionFunction = (players, gameContext, getPlayerById) =
     actionResponse: null,
   }));
 
-  // performer loses 7 coins
+  // performer receives 2 coins
   newPlayers[performer.index] = {
     ...newPlayers[performer.index],
     coins: newPlayers[performer.index].coins + 2,
