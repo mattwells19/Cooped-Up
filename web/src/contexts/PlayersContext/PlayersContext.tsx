@@ -47,6 +47,16 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
     return players[currentPlayer.index === players.length - 1 ? 0 : currentPlayer.index + 1].id;
   }
 
+  /**
+   * Resets all player's action response to null
+   */
+  function resetAllActionResponse(): void {
+    setPlayers((prevPlayers) => prevPlayers.map((player) => ({
+      ...player,
+      actionResponse: null,
+    })));
+  }
+
   return (
     <PlayersContext.Provider
       value={{
@@ -55,6 +65,7 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
         getPlayerById,
         getPlayersByIds,
         getNextPlayerTurnId,
+        resetAllActionResponse,
       }}
     >
       {children}

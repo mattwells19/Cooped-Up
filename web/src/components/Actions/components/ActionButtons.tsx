@@ -24,7 +24,9 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
   const WrappedButton: React.FC<IWrappedButtonProps> = ({ actionPayload, children, disabled, ...buttonProps }) => (
     <WrapItem>
       <Button
-        disabled={!isTurn || disabled}
+        // every button will eventually have an actionPayload or onClick.
+        // this is temporary to prevent a tester from crashing the app.
+        disabled={!isTurn || (!actionPayload && !buttonProps.onClick) || disabled}
         onClick={() =>
           handleGameEvent({
             event: "ACTION",
@@ -73,7 +75,14 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       >
         Income
       </WrappedButton>
-      <WrappedButton variant="outline" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton
+        actionPayload={{
+          action: Actions.Aid,
+          victimId: null,
+        }}
+        variant="outline"
+        disabled={currentPlayer.coins >= 10}
+      >
         Foreign Aid
       </WrappedButton>
       <WrappedButton

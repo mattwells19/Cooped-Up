@@ -6,7 +6,7 @@ import { InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
 
 interface IChallengedModal {
-  actionInfluences: Array<Influence>;
+  actionInfluences: Readonly<Array<Influence>>;
   performer: IPlayer;
   challengeFailed: boolean;
   challenger: IPlayer;
@@ -83,11 +83,11 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
                 <Text as="span" fontWeight="bold">
                   {challenger.name}
                 </Text>
-                &nbsp;has challenged that&nbsp;
+                {" has challenged that "}
                 <Text as="span" fontWeight="bold">
                   {performer.name}
                 </Text>
-                &nbsp;has a&nbsp;
+                {" has a "}
                 {actionInfluences.map((influence, i) => (
                   <Text key={influence} as="span" color={InfluenceDetails[influence].color} fontWeight="bold">
                     {`${influence}${i < actionInfluences.length - 1 ? ", " : ""}`}
@@ -100,7 +100,7 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
           {stage >= Stages.result && (
             <CustomBox>
               <Text fontSize="larger">
-                The challenge has&nbsp;
+                {"The challenge has "}
                 <Text
                   as="span"
                   color={challengeFailed ? "red.300" : "green.300"}

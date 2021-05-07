@@ -5,7 +5,7 @@ import { IncomingSocketActions, IPlayer, OutgoingSocketActions, ISocketAuth } fr
 export default function initializeSocketEvents(io: Server): void {
   io.on(IncomingSocketActions.Connection, async (socket: Socket) => {
     // can't specify auth object structure so using type assertion to make typescript happy
-    const { roomCode, playerName }: ISocketAuth = socket.handshake.auth as ISocketAuth;
+    const { roomCode, playerName } = socket.handshake.auth as ISocketAuth;
     if (!roomCode) throw Error("No room code was provided.");
 
     try {
@@ -25,7 +25,7 @@ export default function initializeSocketEvents(io: Server): void {
       io.to(roomCode).emit(OutgoingSocketActions.GameStateUpdate, newGameState);
     });
 
-    socket.on(IncomingSocketActions.ProposeActionResponse, (response: "PASS" | "CHALLENGE") => {
+    socket.on(IncomingSocketActions.ProposeActionResponse, (response: "PASS" | "CHALLENGE" | "BLOCK") => {
       io.to(roomCode).emit(OutgoingSocketActions.UpdatePlayerActionResponse, {
         playerId: socket.id,
         response,
