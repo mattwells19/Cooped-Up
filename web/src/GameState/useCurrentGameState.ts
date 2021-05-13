@@ -92,6 +92,7 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
         processProposeAction(currentGameState, sendGameStateEvent, setPlayers, getPlayerById);
         break;
       case currentGameState.matches("perform_action"): {
+        // TODO: Seems to be an issue with getNextPlayerTurnId using stale state after processing a Coup action
         const actionToastProps = processPerformAction(currentGameState, setPlayers, getPlayerById);
         actionToast(actionToastProps);
         sendGameStateEvent("COMPLETE", {

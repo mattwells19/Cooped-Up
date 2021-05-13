@@ -44,7 +44,17 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
     const currentPlayer = getPlayerById(playerTurnId);
     if (!currentPlayer) throw new PlayerNotFoundError(playerTurnId);
 
-    return players[currentPlayer.index === players.length - 1 ? 0 : currentPlayer.index + 1].id;
+    let nextPlayer: IPlayer;
+    let nextPlayerIndex = currentPlayer.index; 
+
+    do {
+      nextPlayerIndex += 1;
+      if (nextPlayerIndex >= players.length) nextPlayerIndex = 0;
+
+      nextPlayer = players[nextPlayerIndex];
+    } while(nextPlayer.influences.every(i => i.isDead));
+
+    return nextPlayer.id;
   }
 
   /**
