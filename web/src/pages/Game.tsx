@@ -28,7 +28,7 @@ const Game: React.FC = () => {
         </Wrap>
         <HStack bottom="20" position="absolute" spacing="60px" width="100%" justifyContent="center">
           <PlayerHand player={currentPlayer} isCurrentPlayer />
-          <Actions otherPlayers={otherPlayers.filter((player) => player.influences.some((i) => !i.isDead))} />
+          <Actions otherPlayers={otherPlayers} />
         </HStack>
       </Box>
       <GameModalChooser />
