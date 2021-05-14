@@ -50,7 +50,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
               },
             });
           }}
-          players={otherPlayers}
+          players={otherPlayers.filter((player) => player.influences.some((i) => !i.isDead))}
           {...commonStyles}
         />
       )}

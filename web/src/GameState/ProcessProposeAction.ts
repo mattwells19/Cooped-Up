@@ -33,11 +33,19 @@ export default function processProposeAction(
         const performer = getPlayerById(currentGameState.context.performerId);
         if (!performer) throw new PlayerNotFoundError(currentGameState.context.performerId);
 
-        const newPlayers = [...prevPlayers];
-        newPlayers[performer.index] = {
-          ...newPlayers[performer.index],
-          actionResponse: "PASS",
-        };
+        const playersWhoCanChallenge = prevPlayers
+          .filter((player) => player.influences.some((i) => !i.isDead) && player.id !== performer.player.id)
+          .map((player) => player.id);
+
+        const newPlayers = prevPlayers.map((player) => {
+          if (playersWhoCanChallenge.includes(player.id)) return player;
+          else
+            return {
+              ...player,
+              actionResponse: "PASS" as const,
+            };
+        });
+
         return newPlayers;
       });
       break;

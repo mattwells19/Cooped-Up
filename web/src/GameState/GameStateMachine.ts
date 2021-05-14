@@ -82,6 +82,11 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
             victimId: event.victimId,
           })),
         },
+        COMPLETE: {
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
+        },
       },
     },
     propose_action: {

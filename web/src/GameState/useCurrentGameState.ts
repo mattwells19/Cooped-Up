@@ -27,8 +27,23 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
   useEffect(() => {
     switch (true) {
       case currentGameState.matches("pregame"):
-      case currentGameState.matches("idle"):
         break;
+      case currentGameState.matches("idle"): {
+        // extra check to make sure the new current player didn't lose their last influence last turn
+        const currentPlayer = getPlayerById(currentGameState.context.playerTurnId)?.player;
+        if (!currentPlayer) throw new PlayerNotFoundError(currentGameState.context.playerTurnId);
+
+        // once the game starts influences aren't distributed yet so this would run indefinitely
+        if (currentPlayer.influences.length > 0 && currentPlayer.influences.every((i) => i.isDead)) {
+          console.log(currentPlayer.influences);
+
+          sendGameStateEvent("COMPLETE", {
+            nextPlayerTurnId: getNextPlayerTurnId(currentGameState.context.playerTurnId),
+          });
+        }
+
+        break;
+      }
       case currentGameState.matches("challenged"): {
         // challenge result will be undefined until the loser of the challenge selects their influence to lose
         const challengeResult = processChallenge(currentGameState, players, getPlayersByIds, deck);
