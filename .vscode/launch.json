@@ -4,11 +4,9 @@
       "console": "integratedTerminal",
       "name": "Start Socket Server",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "restart": true,
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "yarn",
       "args": ["start"],
       "type": "node",
       "cwd": "${workspaceFolder}/server"
@@ -17,11 +15,9 @@
       "console": "integratedTerminal",
       "name": "Start Web Client",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "restart": true,
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "yarn",
       "args": ["start"],
       "type": "node",
       "cwd": "${workspaceFolder}/web"
@@ -30,12 +26,10 @@
       "console": "integratedTerminal",
       "name": "Start Project",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "restart": true,
-      "runtimeExecutable": "pnpm",
-      "args": ["-r", "start"],
+      "runtimeExecutable": "yarn",
+      "args": ["start"],
       "type": "node",
       "cwd": "${workspaceFolder}"
     }
