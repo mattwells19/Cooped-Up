@@ -92,3 +92,30 @@ export const AidAction: ActionFunction = (players, gameContext, getPlayerById) =
 
   return newPlayers;
 };
+
+export const StealAction: ActionFunction = (players, gameContext, getPlayerById) => {
+  const currentPlayer = getPlayerById(gameContext.playerTurnId);
+  if (!currentPlayer) throw new PlayerNotFoundError(gameContext.playerTurnId);
+
+  const victim = getPlayerById(gameContext.victimId);
+  if (!victim) throw new PlayerNotFoundError(gameContext.victimId);
+
+  const newPlayers = players.map((p) => ({
+    ...p,
+    actionResponse: null,
+  }));
+
+  // performer gains 2 coins
+  newPlayers[currentPlayer.index] = {
+    ...newPlayers[currentPlayer.index],
+    coins: newPlayers[currentPlayer.index].coins + 2,
+  };
+
+  // victim loses 2 coins
+  newPlayers[victim.index] = {
+    ...newPlayers[victim.index],
+    coins: newPlayers[victim.index].coins - 2,
+  };
+
+  return newPlayers;
+};

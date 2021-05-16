@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import * as Rooms from "./rooms";
-import { IncomingSocketActions, IPlayer, OutgoingSocketActions, ISocketAuth } from "./types";
+import { IncomingSocketActions, IPlayer, OutgoingSocketActions, ISocketAuth, IActionResponse } from "./types";
 
 export default function initializeSocketEvents(io: Server): void {
   io.on(IncomingSocketActions.Connection, async (socket: Socket) => {
@@ -25,7 +25,7 @@ export default function initializeSocketEvents(io: Server): void {
       io.to(roomCode).emit(OutgoingSocketActions.GameStateUpdate, newGameState);
     });
 
-    socket.on(IncomingSocketActions.ProposeActionResponse, (response: "PASS" | "CHALLENGE" | "BLOCK") => {
+    socket.on(IncomingSocketActions.ProposeActionResponse, (response: IActionResponse) => {
       io.to(roomCode).emit(OutgoingSocketActions.UpdatePlayerActionResponse, {
         playerId: socket.id,
         response,

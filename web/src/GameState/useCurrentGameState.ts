@@ -12,14 +12,8 @@ import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import { Actions } from "@contexts/GameStateContext";
 
 export default function useCurrentGameState(): [ICurrentGameState, ISendGameStateUpdate] {
-  const {
-    players,
-    setPlayers,
-    getNextPlayerTurnId,
-    getPlayerById,
-    getPlayersByIds,
-    resetAllActionResponse,
-  } = usePlayers();
+  const { players, setPlayers, getNextPlayerTurnId, getPlayerById, getPlayersByIds, resetAllActionResponse } =
+    usePlayers();
   const { deck, setDeck } = useDeck();
   const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const actionToast = useActionToast();
@@ -91,15 +85,22 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
             nextPlayerTurnId: getNextPlayerTurnId(currentGameState.context.playerTurnId),
           });
         } else {
-          const blocker = getPlayerById(currentGameState.context.blockerId ?? "");
-          if (!blocker) throw new PlayerNotFoundError(currentGameState.context.blockerId ?? "undefined");
+          // the blocker isn't going to challenge themselves so automatically set their response to PASS
+          setPlayers((prevPlayers) => {
+            const blocker = getPlayerById(currentGameState.context.blockerId);
+            if (!blocker) throw new PlayerNotFoundError(currentGameState.context.blockerId);
 
-          setPlayers((prevPlayers) =>
-            prevPlayers.map((player, index) => ({
+            const playersWhoCanChallenge = prevPlayers
+              .filter((player) => player.influences.some((i) => !i.isDead) && player.id !== blocker.player.id)
+              .map((player) => player.id);
+
+            const newPlayers = prevPlayers.map((player) => ({
               ...player,
-              actionResponse: index === blocker.index ? ("PASS" as const) : null,
-            })),
-          );
+              actionResponse: playersWhoCanChallenge.includes(player.id) ? null : { type: "PASS" as const },
+            }));
+
+            return newPlayers;
+          });
         }
         break;
       }

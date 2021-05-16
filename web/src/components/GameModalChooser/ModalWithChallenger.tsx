@@ -1,16 +1,16 @@
 import ChallengedModal from "@components/Modals/ChallengedModal";
 import LoseInfluenceModal from "@components/Modals/LoseInfluenceModal";
 import WaitingForActionModal from "@components/Modals/WaitingForActionModal";
-import type { Actions, IGameState, IPlayer } from "@contexts/GameStateContext";
+import type { Actions, IGameState, Influence, IPlayer } from "@contexts/GameStateContext";
 import { ActionDetails } from "@utils/ActionUtils";
-import { getInfluencesFromAction, wasValidAction } from "@utils/InfluenceUtils";
+import { getInfluenceFromAction, wasValidAction } from "@utils/InfluenceUtils";
 import * as React from "react";
 
 interface IModalWithChallengerProps {
   currentPlayer: IPlayer;
   performer: IPlayer;
   challenger: IPlayer;
-  blocker?: IPlayer;
+  blockDetails: { blocker: IPlayer | undefined, blockingInfluence: Influence | undefined };
   action: Actions;
   handleGameEvent: (newGameState: IGameState) => void;
 }
@@ -19,11 +19,12 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
   currentPlayer,
   performer,
   challenger,
-  blocker,
+  blockDetails,
   action,
   handleGameEvent,
 }) => {
   const [challengeResult, setChallengeResult] = React.useState<"success" | "failed" | null>(null);
+  const { blocker, blockingInfluence } = blockDetails;
 
   React.useEffect(() => {
     setChallengeResult(null);
@@ -81,7 +82,7 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
         />
       );
     }
-  } else if (blocker) {
+  } else if (blocker && blockingInfluence) {
     // determine result when challenging someone who is trying to block an action
     const challengeFailed = blocker.influences
       .filter((influence) => !influence.isDead)
@@ -91,8 +92,7 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
       <ChallengedModal
         performer={blocker}
         challenger={challenger}
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        actionInfluences={ActionDetails[action].blockable!}
+        challengedInfluence={blockingInfluence}
         challengeFailed={challengeFailed}
         onDone={() => setChallengeResult(challengeFailed ? "failed" : "success")}
       />
@@ -103,11 +103,14 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
       .filter((influence) => !influence.isDead)
       .some((influence) => wasValidAction(influence.type, action));
 
+    const challengedAction = getInfluenceFromAction(action);
+    if (!challengedAction) throw new Error(`A non-challengable action was challenged: ${challengedAction}.`);
+
     return (
       <ChallengedModal
         performer={performer}
         challenger={challenger}
-        actionInfluences={getInfluencesFromAction(action)}
+        challengedInfluence={challengedAction}
         challengeFailed={challengeFailed}
         onDone={() => setChallengeResult(challengeFailed ? "failed" : "success")}
       />

@@ -2,7 +2,7 @@ import type { Influence, IPlayer } from "@contexts/GameStateContext";
 import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
 import type { IActionToastProps } from "@hooks/useActionToast";
 import { ActionDetails } from "@utils/ActionUtils";
-import { getInfluencesFromAction } from "@utils/InfluenceUtils";
+import { getInfluenceFromAction } from "@utils/InfluenceUtils";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { ICurrentGameState } from "./types";
 
@@ -53,14 +53,16 @@ export function processChallenge(
     if (gameStateContext.challengeFailed) {
       const action = gameStateContext.action;
       if (!action) throw new Error("Action cannot be null when challenging.");
-      const possibleInfluences = getInfluencesFromAction(action);
+      const validInfluence = getInfluenceFromAction(action);
 
-      const [{ type: revealedInfluence }] = winner.player.influences.filter(
-        (influence) => possibleInfluences.indexOf(influence.type) !== -1,
-      );
+      const influenceToReveal = winner.player.influences.find((influence) => validInfluence === influence.type);
+      if (!influenceToReveal)
+        throw new Error(
+          `The chosen influence as a result of the failed challenge is not in the losers hand: ${influenceToReveal}.`,
+        );
 
       const influenceToTradeIndex = newPlayers[winner.index].influences.findIndex(
-        (influence) => influence.type === revealedInfluence && !influence.isDead,
+        (influence) => influence.type === influenceToReveal.type && !influence.isDead,
       );
 
       newPlayers[winner.index] = {

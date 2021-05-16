@@ -10,13 +10,14 @@ export interface IGameStateMachineContext {
   challengerId: string;
   blockerId: string;
   killedInfluence: Influence | undefined;
+  blockingInfluence: Influence | undefined;
   challengeFailed: boolean | undefined;
   blockSuccessful: boolean | undefined;
 }
 
 export type GameStateMachineEvent =
   | { type: "ACTION"; action: Actions; performerId: string; victimId: string }
-  | { type: "BLOCK"; blockerId: string }
+  | { type: "BLOCK"; blockerId: string; blockingInfluence: Influence }
   | { type: "CHALLENGE"; challengerId: string }
   | { type: "COMPLETE"; nextPlayerTurnId: string }
   | { type: "FAILED" }
@@ -46,6 +47,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     challengerId: "",
     blockerId: "",
     killedInfluence: undefined,
+    blockingInfluence: undefined,
     challengeFailed: undefined,
     blockSuccessful: undefined,
   },
@@ -70,6 +72,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
         challengerId: "",
         blockerId: "",
         killedInfluence: undefined,
+        blockingInfluence: undefined,
         challengeFailed: undefined,
         blockSuccessful: undefined,
       })),
@@ -95,6 +98,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           target: "blocked",
           actions: assign({
             blockerId: (_, event) => event.blockerId,
+            blockingInfluence: (_, event) => event.blockingInfluence,
           }),
         },
         CHALLENGE: {

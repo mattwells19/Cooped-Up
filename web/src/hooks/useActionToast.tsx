@@ -46,6 +46,8 @@ const ActionToast: React.FC<IActionToastProps> = ({
         {variant === "Challenge" && <ChallengeIcon width={iconSize} />}
         {/* TODO: Needs Graphic */}
         {variant === Actions.Block && <CoinIcon width={iconSize} />}
+        {/* TODO: Needs Graphic */}
+        {variant === Actions.Steal && <CoinIcon width={iconSize} />}
       </Center>
       <Box fontSize="large">
         {variant === Actions.Income && (
@@ -107,6 +109,18 @@ const ActionToast: React.FC<IActionToastProps> = ({
               .
             </Text>
           </>
+        )}
+        {variant === Actions.Steal && (
+          <Text>
+            <Text as="span" fontWeight="bold">
+              {performerName}
+            </Text>
+            {" has stolen coin from "}
+            <Text as="span" fontWeight="bold">
+              {victimName}
+            </Text>
+            !
+          </Text>
         )}
         {variant === "Challenge" && (
           <Text marginTop="3">
