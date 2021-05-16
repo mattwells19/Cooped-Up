@@ -19,9 +19,8 @@ jobs:
         with:
           node-version: 12
 
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
+      - name: "Run yarn install"
+        run: "yarn install"
 
       - name: Run Lint for Server
         uses: wearerequired/lint-action@v1
@@ -43,9 +42,8 @@ jobs:
         with:
           node-version: 12
 
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
+      - name: "Run yarn install"
+        run: "yarn install"
 
       - name: Run Lint for Web
         uses: wearerequired/lint-action@v1
@@ -62,13 +60,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
-
-      - uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: build
+      - name: "Run yarn install and build project"
+        run: "yarn install && yarn build"
 
       - name: Upload build folder as artifact
         uses: actions/upload-artifact@v2
