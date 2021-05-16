@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "web:start": "yarn workspace web start",
+    "server:start": "yarn workspace server start",
+    "start": "concurrently --kill-others-on-fail \"yarn server:start\"  \"yarn web:start\"",
+    "web:build": "yarn workspace web build",
+    "server:build": "yarn workspace server build",
+    "build": "concurrently --kill-others-on-fail \"yarn server:build\"  \"yarn web:build\"",
+    "web:lint": "yarn workspace web lint",
+    "server:lint": "yarn workspace server lint",
+    "lint": "concurrently --kill-others-on-fail \"yarn server:lint\"  \"yarn web:lint\""
+  },
+  "dependencies": {
+    "concurrently": "^6.1.0"
+  }
+}

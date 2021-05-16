@@ -1,4 +1,6 @@
 {
+  "name": "web",
+  "version": "1.0.0",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",

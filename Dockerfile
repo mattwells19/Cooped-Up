@@ -1,26 +1,28 @@
-FROM node:current-alpine
-
-RUN npm i -g pnpm
+#
+# Stage for building the project
+#
+FROM node:current-alpine AS build
 
 WORKDIR /usr/app
 
-# Copy over pnpm files
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Copy over source code for each project
+# Copy over project files
+COPY yarn.lock package.json ./
 COPY ./server ./server
 COPY ./web ./web
 
-# Install packages for all projects
-RUN pnpm i
+# Install packages for all projects and build workspaces
+RUN yarn install && yarn build
 
-# Run the build command for each project
-RUN pnpm -r run build
 
-# Remove project folders after build
-RUN rm -r ./server ./web
+#
+# Stage for starting the container
+#
+FROM node:current-alpine AS run
 
-# Install dependencies for final build
+# Copy build output from 'build' stage
+COPY --from=build /usr/app/build /usr/app
+
+# Install needed dependecies for prod
 WORKDIR /usr/app/build
 RUN npm install --only=prod
 

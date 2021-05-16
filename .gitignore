@@ -1,5 +1,5 @@
 .snowpack
 build
 node_modules
-lint_results
 data.json
+yarn-error.log
