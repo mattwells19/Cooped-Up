@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, ButtonGroup, Text, VStack, Image, Box } from "@chakra-ui/react";
+import { Button, ButtonGroup, Text, VStack, Image, Box, Tooltip } from "@chakra-ui/react";
 import type { Actions, IActionResponse, Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { getInfluenceFromAction, InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
@@ -32,6 +32,7 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
         <Box position="absolute" left="50%" top="25%" transform="translateX(-50%) rotate(10deg)" zIndex="1401">
           <Image
             key={influence}
+            // Wouldn't be here if both of these were null so non-null assertion should be safe
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             src={InfluenceDetails[blockingInfluence ?? influence!].img}
             htmlWidth="200px"
@@ -108,14 +109,15 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
             {(!blocker && (!victim || currentPlayer.id === victim.id)) && blockable && (
               <ButtonGroup isAttached width="36">
                 {blockable.map((inf) => (
-                  <Button
-                    key={inf}
-                    width="full"
-                    onClick={() => handleClose({ type: "BLOCK", influence: inf })}
-                    colorScheme={InfluenceDetails[inf].colorScheme}
-                  >
-                    Block
-                  </Button>
+                  <Tooltip hasArrow label={`Block using ${inf}.`} key={inf}>
+                    <Button
+                      width="full"
+                      onClick={() => handleClose({ type: "BLOCK", influence: inf })}
+                      colorScheme={InfluenceDetails[inf].colorScheme}
+                    >
+                      Block
+                    </Button>
+                  </Tooltip>
                 ))}
               </ButtonGroup>
             )}
