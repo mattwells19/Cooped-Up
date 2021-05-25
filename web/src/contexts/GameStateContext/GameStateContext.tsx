@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import useCurrentGameState from "@GameState/useCurrentGameState";
 import {
+  IActionResponse,
   IGameState,
   IGameStateContext,
   IncomingSocketActions,
@@ -46,7 +47,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.emit(OutgoingSocketActions.UpdateGameState, newGameState);
   }
 
-  function handleActionResponse(response: "PASS" | "CHALLENGE" | "BLOCK") {
+  function handleActionResponse(response: IActionResponse) {
     socket.emit(OutgoingSocketActions.ProposeActionResponse, response);
   }
 
@@ -80,7 +81,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.off(IncomingSocketActions.UpdatePlayerActionResponse);
     socket.on(
       IncomingSocketActions.UpdatePlayerActionResponse,
-      (actionResponse: { playerId: string; response: "PASS" | "CHALLENGE" | "BLOCK" }) => {
+      (actionResponse: { playerId: string; response: IActionResponse }) => {
         setPlayers((prevPlayers) => {
           const playerToUpdate = getPlayerById(actionResponse.playerId);
           if (!playerToUpdate) throw new PlayerNotFoundError(actionResponse.playerId);
@@ -92,23 +93,22 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
           };
           return newPlayers;
         });
+
+        if (actionResponse.response.type === "CHALLENGE") {
+          sendGameStateEvent("CHALLENGE", {
+            challengerId: actionResponse.playerId,
+          });
+        } else if (actionResponse.response.type === "BLOCK") {
+          sendGameStateEvent("BLOCK", {
+            blockerId: actionResponse.playerId,
+            blockingInfluence: actionResponse.response.influence,
+          });
+        }
       },
     );
 
-    if (players.every((p) => p.actionResponse === "PASS")) {
+    if (players.every((p) => p.actionResponse && p.actionResponse.type === "PASS")) {
       sendGameStateEvent("PASS");
-    } else if (players.some((p) => p.actionResponse === "CHALLENGE")) {
-      sendGameStateEvent("CHALLENGE", {
-        // we know it exists because of the 'some' above
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        challengerId: players.find((p) => p.actionResponse === "CHALLENGE")!.id,
-      });
-    } else if (players.some((p) => p.actionResponse === "BLOCK")) {
-      sendGameStateEvent("BLOCK", {
-        // we know it exists because of the 'some' above
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        blockerId: players.find((p) => p.actionResponse === "BLOCK")!.id,
-      });
     }
   }, [players]);
 

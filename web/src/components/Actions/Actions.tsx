@@ -11,12 +11,19 @@ interface IActionsProps {
 const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
   const { handleGameEvent, currentPlayerId, turn } = useGameState();
   const isTurn = currentPlayerId.localeCompare(turn) === 0;
-  const [showPlayerSelect, setShowPlayerSelect] = React.useState<boolean>(false);
+  const [playerSelectableAction, setPlayerSelectableAction] = React.useState<InfluenceActions | null>(null);
 
   const getActionsText = () => {
-    if (showPlayerSelect) return "Choose a player to coup.";
-    if (isTurn) return "It's your turn! Pick an action.";
-    return "It's not your turn.";
+    if (playerSelectableAction) {
+      switch(playerSelectableAction) {
+        case InfluenceActions.Steal:
+          return "Choose a player to steal from.";
+        default:
+          return `Choose a player to ${playerSelectableAction}.`;
+      }
+    }
+    else if (isTurn) return "It's your turn! Pick an action.";
+    else return "It's not your turn.";
   };
 
   const commonStyles = {
@@ -36,19 +43,21 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
       <Text fontSize="lg" alignSelf="flex-start">
         {getActionsText()}
       </Text>
-      {!showPlayerSelect && <ActionButtons handleShowPlayerList={() => setShowPlayerSelect(true)} {...commonStyles} />}
-      {showPlayerSelect && (
+      {!playerSelectableAction && (
+        <ActionButtons handleShowPlayerList={(action) => setPlayerSelectableAction(action)} {...commonStyles} />
+      )}
+      {playerSelectableAction && (
         <PlayerSelect
           onSelection={(victimId: string) => {
-            setShowPlayerSelect(false);
             handleGameEvent({
               event: "ACTION",
               eventPayload: {
-                action: InfluenceActions.Coup,
+                action: playerSelectableAction,
                 performerId: currentPlayerId,
                 victimId,
               },
             });
+            setPlayerSelectableAction(null);
           }}
           players={otherPlayers.filter((player) => player.influences.some((i) => !i.isDead))}
           {...commonStyles}

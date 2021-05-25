@@ -1,27 +1,45 @@
 import * as React from "react";
-import { Button, ButtonGroup, Text, VStack, Image, Box } from "@chakra-ui/react";
-import type { Actions, IPlayer } from "@contexts/GameStateContext/types";
-import { getInfluencesFromAction, InfluenceDetails } from "@utils/InfluenceUtils";
+import { Button, ButtonGroup, Text, VStack, Image, Box, Tooltip } from "@chakra-ui/react";
+import type { Actions, IActionResponse, Influence, IPlayer } from "@contexts/GameStateContext/types";
+import { getInfluenceFromAction, InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
 import { ActionDetails } from "@utils/ActionUtils";
 
 interface IActionProposedModal {
-  handleClose: (response: "PASS" | "CHALLENGE" | "BLOCK") => void;
-  performer: IPlayer;
   action: Actions;
-  blocker?: IPlayer;
+  blockDetails: { blocker: IPlayer | undefined, blockingInfluence: Influence | undefined };
+  currentPlayer: IPlayer;
+  performer: IPlayer;
+  victim?: IPlayer;
+  handleClose: (response: IActionResponse) => void;
 }
 
-const ActionProposedModal: React.FC<IActionProposedModal> = ({ action, blocker, performer, handleClose }) => {
-  const influences = getInfluencesFromAction(action);
+const ActionProposedModal: React.FC<IActionProposedModal> = ({
+  action,
+  blockDetails,
+  currentPlayer,
+  performer,
+  victim,
+  handleClose
+}) => {
+  const influence = getInfluenceFromAction(action);
   const { blockable, challengable } = ActionDetails[action];
+  const { blocker, blockingInfluence } = blockDetails;
+
   return (
     <>
-      <Box position="absolute" left="50%" top="25%" transform="translateX(-50%) rotate(10deg)" zIndex="1401">
-        {influences.map((influence) => (
-          <Image key={influence} src={InfluenceDetails[influence].img} htmlWidth="200px" htmlHeight="280px" />
-        ))}
-      </Box>
+      {(blockingInfluence || influence) && (
+        <Box position="absolute" left="50%" top="25%" transform="translateX(-50%) rotate(10deg)" zIndex="1401">
+          <Image
+            key={influence}
+            // Wouldn't be here if both of these were null so non-null assertion should be safe
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            src={InfluenceDetails[blockingInfluence ?? influence!].img}
+            htmlWidth="200px"
+            htmlHeight="280px"
+          />
+        </Box>
+      )}
       <BaseModal>
         <VStack spacing="4" margin="10">
           {!blocker && (
@@ -32,7 +50,7 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({ action, blocker, 
               {` is trying to ${action}.`}
             </Text>
           )}
-          {blocker && (
+          {blocker && blockingInfluence && (
             <Text fontSize="large" textAlign="center">
               <Text as="span" fontSize="large" fontWeight="bold">
                 {blocker.name}
@@ -41,26 +59,30 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({ action, blocker, 
               <Text as="span" fontSize="large" fontWeight="bold">
                 {performer.name}
               </Text>
-              {` from performing ${action}.`}
+              {` from performing ${action} using a(n) `}
+              <Text as="span" fontSize="large" fontWeight="bold" color={InfluenceDetails[blockingInfluence].color}>
+                {blockingInfluence}
+              </Text>
+              .
             </Text>
           )}
-          {influences.length > 0  && (
-            <Text fontSize="large" textAlign="center">
-              This is an action that can only be performed by:
-            </Text>
+          {!blocker && influence && (
+            <>
+              <Text fontSize="large" textAlign="center">
+                This is an action that can only be performed by:
+              </Text>
+              <Text
+                key={influence}
+                fontSize="large"
+                textAlign="center"
+                fontWeight="bold"
+                color={InfluenceDetails[influence].color}
+              >
+                {influence}
+              </Text>
+            </>
           )}
-          {influences.map((influence) => (
-            <Text
-              key={influence}
-              fontSize="large"
-              textAlign="center"
-              fontWeight="bold"
-              color={InfluenceDetails[influence].color}
-            >
-              {influence}
-            </Text>
-          ))}
-          {blockable && (
+          {blockable && !blocker && (
             <>
               <Text fontSize="large" textAlign="center">
                 Only these influences can block this action:
@@ -80,21 +102,26 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({ action, blocker, 
           )}
           <ButtonGroup paddingTop="4">
             {(challengable || blocker) && (
-              <Button onClick={() => handleClose("CHALLENGE")} width="36">
+              <Button onClick={() => handleClose({ type: "CHALLENGE" })} width="36">
                 Challenge
               </Button>
             )}
-            {(blockable && !blocker) && (
-              <Button
-                onClick={() => handleClose("BLOCK")}
-                width="36"
-                colorScheme={InfluenceDetails[blockable[0]].colorScheme}
-                bgGradient={`linear(to-r, ${blockable.map((inf) => InfluenceDetails[inf].color).join(", ")})`}
-              >
-                Block
-              </Button>
+            {(!blocker && (!victim || currentPlayer.id === victim.id)) && blockable && (
+              <ButtonGroup isAttached width="36">
+                {blockable.map((inf) => (
+                  <Tooltip hasArrow label={`Block using ${inf}.`} key={inf}>
+                    <Button
+                      width="full"
+                      onClick={() => handleClose({ type: "BLOCK", influence: inf })}
+                      colorScheme={InfluenceDetails[inf].colorScheme}
+                    >
+                      Block
+                    </Button>
+                  </Tooltip>
+                ))}
+              </ButtonGroup>
             )}
-            <Button onClick={() => handleClose("PASS")} variant="outline" width="36">
+            <Button onClick={() => handleClose({ type: "PASS" })} variant="outline" width="36">
               Pass
             </Button>
           </ButtonGroup>

@@ -15,6 +15,7 @@ const GameModalChooser: React.FC = () => {
     currentPlayerId,
     performerId,
     victimId,
+    blockingInfluence,
     handleGameEvent,
     handleActionResponse,
   } = useGameState();
@@ -36,19 +37,15 @@ const GameModalChooser: React.FC = () => {
 
   if (challenger) 
     return (
-      <ModalWithChallenger {...{action, challenger, blocker, handleGameEvent, currentPlayer, performer}} />
+      <ModalWithChallenger
+        action={action}
+        challenger={challenger}
+        blockDetails={{ blocker, blockingInfluence }}
+        handleGameEvent={handleGameEvent}
+        currentPlayer={currentPlayer}
+        performer={performer}
+      />
     );
-
-  // allow chance to challenge a block on an action
-  if (blocker) {
-    return currentPlayer.actionResponse === "PASS" ? (
-      // player decided not to challenge
-      <WaitingForActionModal messaging={["You have chosen to pass.", "Waiting for all players to pass/challenge..."]} />
-    ) : (
-      // player given the option to challenge
-      <ActionProposedModal action={action} blocker={blocker} performer={performer} handleClose={handleActionResponse} />
-    );
-  }
 
   // Determine which modal to show during a coup.
   if (action === Actions.Coup && victim) {
@@ -76,12 +73,19 @@ const GameModalChooser: React.FC = () => {
 
   // every other action can be blocked/challenged
   if (action !== Actions.Coup && action !== Actions.Income) {
-    return currentPlayer.actionResponse === "PASS" ? (
+    return currentPlayer.actionResponse && currentPlayer.actionResponse.type === "PASS" ? (
       // player decided not to challenge
       <WaitingForActionModal messaging={["You have chosen to pass.", "Waiting for all players to pass/challenge..."]} />
     ) : (
       // player given the option to challenge
-      <ActionProposedModal action={action} performer={performer} handleClose={handleActionResponse} />
+      <ActionProposedModal
+        action={action}
+        blockDetails={{ blocker, blockingInfluence }}
+        currentPlayer={currentPlayer}
+        performer={performer}
+        victim={victim}
+        handleClose={handleActionResponse}
+      />
     );
   }
 

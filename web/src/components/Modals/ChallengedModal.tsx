@@ -6,7 +6,7 @@ import { InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
 
 interface IChallengedModal {
-  actionInfluences: Readonly<Array<Influence>>;
+  challengedInfluence: Influence;
   performer: IPlayer;
   challengeFailed: boolean;
   challenger: IPlayer;
@@ -47,7 +47,7 @@ const enum Stages {
 }
 
 const ChallengedModal: React.FC<IChallengedModal> = ({
-  actionInfluences,
+  challengedInfluence,
   performer,
   challenger,
   challengeFailed,
@@ -87,12 +87,15 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
                 <Text as="span" fontWeight="bold">
                   {performer.name}
                 </Text>
-                {" has a "}
-                {actionInfluences.map((influence, i) => (
-                  <Text key={influence} as="span" color={InfluenceDetails[influence].color} fontWeight="bold">
-                    {`${influence}${i < actionInfluences.length - 1 ? ", " : ""}`}
-                  </Text>
-                ))}
+                {" has a(n) "}
+                <Text
+                  key={challengedInfluence}
+                  as="span"
+                  color={InfluenceDetails[challengedInfluence].color}
+                  fontWeight="bold"
+                >
+                  {challengedInfluence}
+                </Text>
                 !
               </Text>
             </CustomBox>

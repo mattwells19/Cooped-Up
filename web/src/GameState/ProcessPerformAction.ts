@@ -1,6 +1,6 @@
 import { Actions, IPlayer } from "@contexts/GameStateContext";
 import type { IActionToastProps } from "@hooks/useActionToast";
-import { AidAction, CoupAction, IncomeAction, TaxAction } from "./Actions";
+import { AidAction, CoupAction, IncomeAction, StealAction, TaxAction } from "./Actions";
 import type { ICurrentGameState } from "./types";
 import type { Dispatch, SetStateAction } from "react";
 import type { IFindPlayerByIdResponse } from "@contexts/PlayersContext";
@@ -59,6 +59,21 @@ export default function processPerformAction(
       return {
         performerName: performer.name,
         variant: Actions.Aid,
+      };
+    }
+    case Actions.Steal: {
+      setPlayers((prevPlayers) => StealAction(prevPlayers, currentGameState.context, getPlayerById));
+
+      const performer = getPlayerById(currentGameState.context.performerId)?.player;
+      const victim = getPlayerById(currentGameState.context.victimId)?.player;
+
+      if (!performer) throw new PlayerNotFoundError(currentGameState.context.performerId);
+      if (!victim) throw new PlayerNotFoundError(currentGameState.context.victimId);
+
+      return {
+        performerName: performer.name,
+        victimName: victim.name,
+        variant: Actions.Steal,
       };
     }
     default:

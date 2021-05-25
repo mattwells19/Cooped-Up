@@ -26,19 +26,21 @@ export interface IPlayerInfluence {
   isDead: boolean;
 }
 
+export type IActionResponse = { type: "PASS" } | { type: "CHALLENGE" } | { type: "BLOCK"; influence: Influence };
+
 export interface IPlayer {
   id: string;
   name: string;
   coins: number;
   influences: Array<IPlayerInfluence>;
-  actionResponse: "PASS" | "CHALLENGE" | "BLOCK" | null;
+  actionResponse: IActionResponse | null;
 }
 
 export interface IGameStateContext extends IGameStateMachineContext {
   currentPlayerId: string;
   turn: string;
   handleGameEvent: (newGameState: IGameState) => void;
-  handleActionResponse: (newGameState: "PASS" | "CHALLENGE" | "BLOCK") => void;
+  handleActionResponse: (response: IActionResponse) => void;
   handleStartGame: () => void;
 }
 

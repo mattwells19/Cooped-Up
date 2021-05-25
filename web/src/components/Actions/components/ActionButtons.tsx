@@ -9,7 +9,7 @@ interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
 }
 
 interface IActionButtonsProps extends WrapProps {
-  handleShowPlayerList: () => void;
+  handleShowPlayerList: (action: Actions) => void;
 }
 
 const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ...props }) => {
@@ -56,7 +56,11 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       >
         Collect Tax
       </WrappedButton>
-      <WrappedButton colorScheme="blue" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton
+        onClick={() => handleShowPlayerList(Actions.Steal)}
+        colorScheme="blue"
+        disabled={currentPlayer.coins >= 10}
+      >
         Steal
       </WrappedButton>
       <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>
@@ -87,7 +91,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
       </WrappedButton>
       <WrappedButton
         onClick={() => {
-          if (currentPlayer.coins >= 7) handleShowPlayerList();
+          if (currentPlayer.coins >= 7) handleShowPlayerList(Actions.Coup);
         }}
         colorScheme="red"
         disabled={currentPlayer.coins < 7}

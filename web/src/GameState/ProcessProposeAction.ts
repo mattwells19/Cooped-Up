@@ -28,6 +28,7 @@ export default function processProposeAction(
       break;
     case Actions.Tax:
     case Actions.Aid:
+    case Actions.Steal:
       // the performer isn't going to challenge themselves so automatically set their response to PASS
       setPlayers((prevPlayers) => {
         const performer = getPlayerById(currentGameState.context.performerId);
@@ -42,7 +43,7 @@ export default function processProposeAction(
           else
             return {
               ...player,
-              actionResponse: "PASS" as const,
+              actionResponse: { type: "PASS" as const },
             };
         });
 
