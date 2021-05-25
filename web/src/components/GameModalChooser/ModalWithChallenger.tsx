@@ -2,7 +2,6 @@ import ChallengedModal from "@components/Modals/ChallengedModal";
 import LoseInfluenceModal from "@components/Modals/LoseInfluenceModal";
 import WaitingForActionModal from "@components/Modals/WaitingForActionModal";
 import type { Actions, IGameState, Influence, IPlayer } from "@contexts/GameStateContext";
-import { ActionDetails } from "@utils/ActionUtils";
 import { getInfluenceFromAction, wasValidAction } from "@utils/InfluenceUtils";
 import * as React from "react";
 
@@ -86,7 +85,7 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
     // determine result when challenging someone who is trying to block an action
     const challengeFailed = blocker.influences
       .filter((influence) => !influence.isDead)
-      .some((influence) => ActionDetails[action].blockable?.includes(influence.type));
+      .some((influence) => blockingInfluence === influence.type);
 
     return (
       <ChallengedModal
