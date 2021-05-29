@@ -24,6 +24,6 @@ app.get(["/", "/room/*"], (_, res) => res.sendFile(path.join(__dirname, "/index.
 initRooms()
   .then(() => {
     initializeSocketEvents(io);
-    httpServer.listen(process.env.PORT ?? 4000, () => console.log(`Listening on port ${process.env.PORT ?? 4000}`));
+    httpServer.listen(process.env.PORT ?? 4000, () => console.info(`Listening on port ${process.env.PORT ?? 4000}`));
   })
   .catch((err) => console.error(err));

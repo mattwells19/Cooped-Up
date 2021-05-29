@@ -56,12 +56,12 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   React.useEffect(() => {
     if (invalidRoomCode) {
       toast({
-        title: "The room you tried to join doesn't exist.",
         description: "Double check you have the correct room code, or start a new room.",
-        status: "error",
         duration: 7000,
         isClosable: true,
         position: "top-right",
+        status: "error",
+        title: "The room you tried to join doesn't exist.",
       });
       history.push({
         state: {
@@ -75,10 +75,10 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
     <>
       <Header
         headingProps={{
-          position: "relative",
-          width: "fit-content",
           margin: "auto",
-          transform: "translateY(10%)" // shift down so that it looks more center due to the crown
+          position: "relative",
+          transform: "translateY(10%)", // shift down so that it looks more center due to the crown
+          width: "fit-content",
         }}
       >
         Cooped Up

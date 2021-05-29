@@ -14,9 +14,8 @@ export default function initializeSocketEvents(io: Server): void {
         id: socket.id,
         name: playerName,
       };
-      const { players: playersInRoom, deck } = await Rooms.addPlayerToRoom(roomCode, playerToAdd);
+      const playersInRoom = await Rooms.addPlayerToRoom(roomCode, playerToAdd);
       io.to(roomCode).emit(OutgoingSocketActions.PlayersChanged, playersInRoom);
-      socket.emit(OutgoingSocketActions.StartingDeck, deck);
     } catch (e) {
       throw Error(`Cannot join room with code ${roomCode}`);
     }

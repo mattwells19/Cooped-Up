@@ -20,6 +20,8 @@ const slideIn = keyframes({
   "90%": {
     transform: "translateY(-5%)",
   },
+  // for some reason it thinks 100% should be before 90%
+  // eslint-disable-next-line sort-keys
   "100%": {
     transform: "translateY(0%)",
   },

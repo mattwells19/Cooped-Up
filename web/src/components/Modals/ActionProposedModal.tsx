@@ -112,7 +112,7 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
                   <Tooltip hasArrow label={`Block using ${inf}.`} key={inf}>
                     <Button
                       width="full"
-                      onClick={() => handleClose({ type: "BLOCK", influence: inf })}
+                      onClick={() => handleClose({ influence: inf, type: "BLOCK" })}
                       colorScheme={InfluenceDetails[inf].colorScheme}
                     >
                       Block

@@ -144,8 +144,8 @@ const useActionToast = (): ((props: IActionToastProps) => string | number | unde
   const toast = useToast();
   return (props: IActionToastProps) =>
     toast({
-      position: "top",
       duration: 5000,
+      position: "top",
       render: (): React.ReactNode => <ActionToast {...props} />,
     });
 };

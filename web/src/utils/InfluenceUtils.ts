@@ -10,11 +10,11 @@ export interface IInfluenceDetails {
 }
 
 export const InfluenceDetails: Record<Influence, IInfluenceDetails> = {
-  Ambassador: { img: AmbassadorImg, action: Actions.Exchange, color: "green.300", colorScheme: "green" },
-  Assassin: { img: AssassinImg, action: Actions.Assassinate, color: "green.300", colorScheme: "green" },
-  Captain: { img: CaptainImg, action: Actions.Steal, color: "blue.300", colorScheme: "blue" },
-  Contessa: { img: ContessaImg, action: null, color: "orange.300", colorScheme: "orange" },
-  Duke: { img: DukeImg, action: Actions.Tax, color: "purple.300", colorScheme: "purple" },
+  Ambassador: { action: Actions.Exchange, color: "green.300", colorScheme: "green", img: AmbassadorImg },
+  Assassin: { action: Actions.Assassinate, color: "green.300", colorScheme: "green", img: AssassinImg },
+  Captain: { action: Actions.Steal, color: "blue.300", colorScheme: "blue", img: CaptainImg },
+  Contessa: { action: null, color: "orange.300", colorScheme: "orange", img: ContessaImg },
+  Duke: { action: Actions.Tax, color: "purple.300", colorScheme: "purple", img: DukeImg },
 };
 
 export function wasValidAction(influence: Influence, action: Actions): boolean {

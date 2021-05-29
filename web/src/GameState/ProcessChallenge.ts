@@ -72,7 +72,7 @@ export function processChallenge(
             newDeck.push(influence.type);
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const newInfluence = newDeck.shift()!;
-            return { type: newInfluence, isDead: false };
+            return { isDead: false, type: newInfluence };
           }
           return influence;
         }),
@@ -81,8 +81,8 @@ export function processChallenge(
 
     return {
       actionToastProps: {
-        variant: "Challenge",
         lostInfluence: gameStateContext.killedInfluence,
+        variant: "Challenge",
         victimName: loser.player.name,
       },
       newDeck,
@@ -150,7 +150,7 @@ export function processChallengeBlock(
             newDeck.push(influence.type);
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const newInfluence = newDeck.shift()!;
-            return { type: newInfluence, isDead: false };
+            return { isDead: false, type: newInfluence };
           }
           return influence;
         }),
@@ -159,8 +159,8 @@ export function processChallengeBlock(
 
     return {
       actionToastProps: {
-        variant: "Challenge",
         lostInfluence: gameStateContext.killedInfluence,
+        variant: "Challenge",
         victimName: loser.player.name,
       },
       newDeck,

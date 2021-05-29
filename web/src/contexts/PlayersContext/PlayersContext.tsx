@@ -19,8 +19,8 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
 
     return playerIndex !== -1
       ? {
-        player: players[playerIndex],
         index: playerIndex,
+        player: players[playerIndex],
       }
       : undefined;
   }
@@ -70,12 +70,12 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
   return (
     <PlayersContext.Provider
       value={{
-        players,
-        setPlayers,
+        getNextPlayerTurnId,
         getPlayerById,
         getPlayersByIds,
-        getNextPlayerTurnId,
+        players,
         resetAllActionResponse,
+        setPlayers,
       }}
     >
       {children}

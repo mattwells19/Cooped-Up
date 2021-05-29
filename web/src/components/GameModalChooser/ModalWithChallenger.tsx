@@ -41,8 +41,8 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
       handleGameEvent({
         event: "LOSE_INFLUENCE",
         eventPayload: {
-          killedInfluence: aliveInfluences[0].type,
           challengeFailed: challengeResult === "failed",
+          killedInfluence: aliveInfluences[0].type,
         },
       });
 
@@ -62,8 +62,8 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
             handleGameEvent({
               event: "LOSE_INFLUENCE",
               eventPayload: {
-                killedInfluence: influenceToLose,
                 challengeFailed: challengeResult === "failed",
+                killedInfluence: influenceToLose,
               },
             });
           }}

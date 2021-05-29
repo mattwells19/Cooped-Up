@@ -9,6 +9,7 @@ export interface IGameStateMachineContext {
   victimId: string;
   challengerId: string;
   blockerId: string;
+  winningPlayerId: string;
   killedInfluence: Influence | undefined;
   blockingInfluence: Influence | undefined;
   challengeFailed: boolean | undefined;
@@ -19,47 +20,118 @@ export type GameStateMachineEvent =
   | { type: "ACTION"; action: Actions; performerId: string; victimId: string }
   | { type: "BLOCK"; blockerId: string; blockingInfluence: Influence }
   | { type: "CHALLENGE"; challengerId: string }
-  | { type: "COMPLETE"; nextPlayerTurnId: string }
-  | { type: "FAILED" }
   | { type: "CHALLENGE_BLOCK_FAILED"; nextPlayerTurnId: string }
-  | { type: "PASS"; killedInfluence: Influence | undefined }
+  | { type: "COMPLETE"; nextPlayerTurnId: string }
+  | { type: "END_GAME"; winningPlayerId: string }
+  | { type: "FAILED" }
   | { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
+  | { type: "PASS"; killedInfluence: Influence | undefined }
+  | { type: "PLAY_AGAIN" }
   | { type: "START"; playerTurnId: string };
 
 export type GameStateMachineState =
-  | { value: "pregame"; context: IGameStateMachineContext }
-  | { value: "idle"; context: IGameStateMachineContext }
-  | { value: "propose_action"; context: IGameStateMachineContext }
-  | { value: "perform_action"; context: IGameStateMachineContext }
   | { value: "blocked"; context: IGameStateMachineContext }
+  | { value: "challenged"; context: IGameStateMachineContext }
   | { value: "challenge_block"; context: IGameStateMachineContext }
-  | { value: "challenged"; context: IGameStateMachineContext };
+  | { value: "game_over"; context: IGameStateMachineContext }
+  | { value: "idle"; context: IGameStateMachineContext }
+  | { value: "pregame"; context: IGameStateMachineContext }
+  | { value: "perform_action"; context: IGameStateMachineContext }
+  | { value: "propose_action"; context: IGameStateMachineContext };
 
 const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
-  id: "gameState",
-  initial: "pregame",
   context: {
-    playerTurnId: "",
     action: null,
-    gameStarted: false,
-    performerId: "",
-    victimId: "",
-    challengerId: "",
+    blockSuccessful: undefined,
     blockerId: "",
-    killedInfluence: undefined,
     blockingInfluence: undefined,
     challengeFailed: undefined,
-    blockSuccessful: undefined,
+    challengerId: "",
+    gameStarted: false,
+    killedInfluence: undefined,
+    performerId: "",
+    playerTurnId: "",
+    victimId: "",
+    winningPlayerId: "",
   },
+  id: "gameState",
+  initial: "pregame",
   states: {
-    pregame: {
+    blocked: {
       on: {
-        START: {
+        CHALLENGE: {
+          actions: assign({
+            challengerId: (_, event) => event.challengerId,
+          }),
+          target: "challenge_block",
+        },
+        COMPLETE: {
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
           target: "idle",
+        },
+        PASS: {
+          actions: assign({
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            blockSuccessful: (_, _event) => true,
+          }),
+        },
+      },
+    },
+    challenge_block: {
+      on: {
+        CHALLENGE_BLOCK_FAILED: {
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
+          target: "idle",
+        },
+        COMPLETE: "perform_action",
+        LOSE_INFLUENCE: {
           actions: assign((_, event) => ({
-            playerTurnId: event.playerTurnId,
-            gameStarted: true,
+            challengeFailed: event.challengeFailed,
+            killedInfluence: event.killedInfluence,
           })),
+        },
+      },
+    },
+    challenged: {
+      on: {
+        COMPLETE: {
+          actions: assign({
+            playerTurnId: (_, event) => event.nextPlayerTurnId,
+          }),
+          target: "idle",
+        },
+        FAILED: "perform_action",
+        LOSE_INFLUENCE: {
+          actions: assign((_, event) => ({
+            challengeFailed: event.challengeFailed,
+            killedInfluence: event.killedInfluence,
+          })),
+        },
+      },
+    },
+    game_over: {
+      on: {
+        PLAY_AGAIN: {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          actions: assign((_, event) => ({
+            action: null,
+            blockSuccessful: undefined,
+            blockerId: "",
+            blockingInfluence: undefined,
+            challengeFailed: undefined,
+            challengerId: "",
+            gameStarted: false,
+            killedInfluence: undefined,
+            performerId: "",
+            playerTurnId: "",
+            victimId: "",
+            winningPlayerId: "",
+          })),
+          target: "pregame",
         },
       },
     },
@@ -67,117 +139,78 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
       entry: assign((context) => ({
         ...context,
         action: null,
-        performerId: "",
-        victimId: "",
-        challengerId: "",
+        blockSuccessful: undefined,
         blockerId: "",
-        killedInfluence: undefined,
         blockingInfluence: undefined,
         challengeFailed: undefined,
-        blockSuccessful: undefined,
+        challengerId: "",
+        killedInfluence: undefined,
+        performerId: "",
+        victimId: "",
       })),
       on: {
         ACTION: {
-          target: "propose_action",
           actions: assign((_, event) => ({
             action: event.action,
             performerId: event.performerId,
             victimId: event.victimId,
           })),
+          target: "propose_action",
         },
         COMPLETE: {
           actions: assign({
             playerTurnId: (_, event) => event.nextPlayerTurnId,
           }),
         },
-      },
-    },
-    propose_action: {
-      on: {
-        BLOCK: {
-          target: "blocked",
+        END_GAME: {
           actions: assign({
-            blockerId: (_, event) => event.blockerId,
-            blockingInfluence: (_, event) => event.blockingInfluence,
+            winningPlayerId: (_, event) => event.winningPlayerId,
           }),
-        },
-        CHALLENGE: {
-          target: "challenged",
-          actions: assign({
-            challengerId: (_, event) => event.challengerId,
-          }),
-        },
-        PASS: {
-          target: "perform_action",
-          actions: assign({
-            killedInfluence: (_, event) => event.killedInfluence,
-          }),
+          target: "game_over",
         },
       },
     },
     perform_action: {
       on: {
         COMPLETE: {
-          target: "idle",
           actions: assign({
             playerTurnId: (_, event) => event.nextPlayerTurnId,
           }),
+          target: "idle",
         },
       },
     },
-    blocked: {
+    pregame: {
       on: {
-        PASS: {
-          actions: assign({
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            blockSuccessful: (_, _event) => true,
-          }),
-        },
-        COMPLETE: {
+        START: {
+          actions: assign((_, event) => ({
+            gameStarted: true,
+            playerTurnId: event.playerTurnId,
+          })),
           target: "idle",
+        },
+      },
+    },
+    propose_action: {
+      on: {
+        BLOCK: {
           actions: assign({
-            playerTurnId: (_, event) => event.nextPlayerTurnId,
+            blockerId: (_, event) => event.blockerId,
+            blockingInfluence: (_, event) => event.blockingInfluence,
           }),
+          target: "blocked",
         },
         CHALLENGE: {
-          target: "challenge_block",
           actions: assign({
             challengerId: (_, event) => event.challengerId,
           }),
+          target: "challenged",
         },
-      },
-    },
-    challenge_block: {
-      on: {
-        COMPLETE: "perform_action",
-        CHALLENGE_BLOCK_FAILED: {
-          target: "idle",
+        PASS: {
           actions: assign({
-            playerTurnId: (_, event) => event.nextPlayerTurnId,
+            killedInfluence: (_, event) => event.killedInfluence,
           }),
-        },
-        LOSE_INFLUENCE: {
-          actions: assign((_, event) => ({
-            killedInfluence: event.killedInfluence,
-            challengeFailed: event.challengeFailed,
-          })),
-        },
-      },
-    },
-    challenged: {
-      on: {
-        FAILED: "perform_action",
-        COMPLETE: {
-          target: "idle",
-          actions: assign({
-            playerTurnId: (_, event) => event.nextPlayerTurnId,
-          }),
-        },
-        LOSE_INFLUENCE: {
-          actions: assign((_, event) => ({
-            killedInfluence: event.killedInfluence,
-            challengeFailed: event.challengeFailed,
-          })),
+          target: "perform_action",
         },
       },
     },

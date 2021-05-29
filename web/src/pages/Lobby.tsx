@@ -58,11 +58,11 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
     if (prevPlayers.length > players.length) {
       const playerLeft = prevPlayers.filter((x) => players.every((p) => p.id !== x.id))[0].name;
       toast({
-        title: `${playerLeft} has disconnected.`,
-        status: "info",
         duration: 5000,
         isClosable: false,
         position: "top-right",
+        status: "info",
+        title: `${playerLeft} has disconnected.`,
         variant: "left-accent",
       });
     }

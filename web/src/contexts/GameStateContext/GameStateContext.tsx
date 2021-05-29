@@ -14,13 +14,14 @@ import {
 import { usePlayers } from "@contexts/PlayersContext";
 import { useDeck } from "@contexts/DeckContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
+import get from "@utils/get";
 
 const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
 
 export const GameStateContextProvider: React.FC = ({ children }) => {
   const { players, setPlayers, getPlayerById } = usePlayers();
-  const { deck, setDeck } = useDeck();
+  const { setDeck } = useDeck();
   const [currentGameState, sendGameStateEvent] = useCurrentGameState();
   const { roomCode } = useParams<{ roomCode: string }>();
 
@@ -28,8 +29,8 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     () =>
       io("/", {
         auth: {
-          roomCode,
           playerName: localStorage.getItem("playerName"),
+          roomCode,
         },
         autoConnect: false,
         reconnectionAttempts: 5,
@@ -51,19 +52,21 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.emit(OutgoingSocketActions.ProposeActionResponse, response);
   }
 
-  const handleStartGame = () => {
-    const newDeck = [...deck];
+  const handleStartGame = async () => {
+    const deck = await get<Array<Influence>>(`deck?roomCode=${roomCode}`);
 
     const playerHands: Array<IPlayer> = players.map((player) => ({
       ...player,
-      influences: newDeck.splice(0, 2).map((influence) => ({ type: influence, isDead: false })),
+      actionResponse: null,
+      coins: 2,
+      influences: deck.splice(0, 2).map((influence) => ({ isDead: false, type: influence })),
     }));
 
     handleGameEvent({
+      deck,
       event: "START",
       eventPayload: { playerTurnId: playerHands[0].id },
       players: playerHands,
-      deck: newDeck,
     });
   };
 
@@ -71,8 +74,20 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.off(IncomingSocketActions.PlayersChanged);
     socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
       // only update player list if someone left once the game has started
-      if (currentGameState.context.gameStarted && playersInRoom.length < players.length) {
-        setPlayers((prevplayers) => prevplayers.filter((player) => playersInRoom.find((p) => p.id === player.id)));
+      if (currentGameState.context.gameStarted) {
+        if (playersInRoom.length < players.length) {
+          setPlayers((prevplayers) => prevplayers.filter((player) => playersInRoom.find((p) => p.id === player.id)));
+        }
+      } else {
+        setPlayers(
+          playersInRoom.map((player) => ({
+            actionResponse: null,
+            coins: 2,
+            id: player.id,
+            influences: [],
+            name: player.name,
+          })),
+        );
       }
     });
   }, [currentGameState.context.gameStarted]);
@@ -119,19 +134,19 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
       setPlayers(
         playersInRoom.map((player) => ({
-          id: player.id,
+          actionResponse: null,
           coins: 2,
+          id: player.id,
           influences: [],
           name: player.name,
-          actionResponse: null,
         })),
       );
     });
 
     socket.on(IncomingSocketActions.GameStateUpdate, handleGameStateUpdate);
 
-    socket.on(IncomingSocketActions.StartingDeck, (startinDeck: Array<Influence>) => {
-      setDeck(startinDeck);
+    socket.on(IncomingSocketActions.StartingDeck, (startingDeck: Array<Influence>) => {
+      setDeck(startingDeck);
     });
 
     // perform cleanup of socket when component is removed from the DOM
@@ -145,10 +160,10 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     <GameStateContext.Provider
       value={{
         currentPlayerId: socket.id,
-        turn: currentGameState.context.playerTurnId,
+        handleActionResponse,
         handleGameEvent,
         handleStartGame,
-        handleActionResponse,
+        turn: currentGameState.context.playerTurnId,
         ...currentGameState.context,
       }}
     >

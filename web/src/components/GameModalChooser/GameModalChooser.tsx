@@ -1,3 +1,4 @@
+import GameOverModal from "@components/Modals/GameOverModal";
 import { Actions, useGameState } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
@@ -15,6 +16,7 @@ const GameModalChooser: React.FC = () => {
     currentPlayerId,
     performerId,
     victimId,
+    winningPlayerId,
     blockingInfluence,
     handleGameEvent,
     handleActionResponse,
@@ -28,11 +30,31 @@ const GameModalChooser: React.FC = () => {
     victim,
     challenger,
     blocker,
-  ] = getPlayersByIds([currentPlayerId, performerId, victimId, challengerId, blockerId]).map((p) => p?.player);
+    winningPlayer,
+  ] = getPlayersByIds([
+    currentPlayerId,
+    performerId,
+    victimId,
+    challengerId,
+    blockerId,
+    winningPlayerId
+  ]).map((p) => p?.player);
   
   if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
-  // If there is no performer or action, then there's no modal to show.
+  if (winningPlayer) {
+    return (
+      <GameOverModal
+        onPlayAgain={() => handleGameEvent({
+          event: "PLAY_AGAIN",
+        })}
+        currentPlayer={currentPlayer}
+        winner={winningPlayer}
+      />
+    );
+  }
+
+  // If there is no performer or action, then there's no other modal to show.
   if (!performer || !action) return <></>;
 
   if (challenger) 
