@@ -4,6 +4,7 @@ import type { IPlayer } from "@contexts/GameStateContext/types";
 import BaseModal from "./BaseModal";
 import WinnerPenguin from "@images/WinnerPenguin.gif";
 import SadPenguin from "@images/SadPenguin.gif";
+import { Link } from "react-router-dom";
 
 interface IGameOverModal {
   winner: IPlayer;
@@ -23,7 +24,7 @@ const GameOverModal: React.FC<IGameOverModal> = ({ currentPlayer, winner, onPlay
       <Image src={currentPlayer.id === winner.id ? WinnerPenguin : SadPenguin} />
       <ButtonGroup paddingTop="5">
         <Button onClick={() => onPlayAgain()} width="36">Play Again</Button>
-        <Button as="a" href="/" variant="outline" width="36">Go Home</Button>
+        <Button as={Link} to="/" variant="outline" width="36">Go Home</Button>
       </ButtonGroup>
     </VStack>
   </BaseModal>
