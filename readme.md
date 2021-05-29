@@ -1,6 +1,12 @@
-# Cooped Up
+<h1 align="center">
+   <img src="./web/public/Logo.png" alt="Cooped Up Logo" width="200" />
+   <br>
+   Cooped Up
+</h1>
+<h4 align="center">A web-based version of the popular board game <a href="http://indieboardsandcards.com/index.php/our-games/coup/">Coup</a>.</h4>
+<br>
 
-A web-based version of the popular card game [Coup](http://indieboardsandcards.com/index.php/our-games/coup/).
+[![Build and Lint Project](https://github.com/mattwells19/Cooped-Up/actions/workflows/LintAndBuild.yml/badge.svg)](https://github.com/mattwells19/Cooped-Up/actions/workflows/LintAndBuild.yml)
 
 ## Project Architecture
 
