@@ -1,5 +1,5 @@
 <h1 align="center">
-   <img src="./web/public/Logo.png" width="200" />
+   <img src="./web/public/Logo.png" alt="Cooped Up Logo" width="200" />
    <br>
    Cooped Up
 </h1>
