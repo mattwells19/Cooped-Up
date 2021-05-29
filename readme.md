@@ -6,6 +6,8 @@
 <h4 align="center">A web-based version of the popular board game <a href="http://indieboardsandcards.com/index.php/our-games/coup/">Coup</a>.</h4>
 <br>
 
+[![Build and Lint Project](https://github.com/mattwells19/Cooped-Up/actions/workflows/LintAndBuild.yml/badge.svg)](https://github.com/mattwells19/Cooped-Up/actions/workflows/LintAndBuild.yml)
+
 ## Project Architecture
 
 Frontend Framework: [React](https://reactjs.org/)
