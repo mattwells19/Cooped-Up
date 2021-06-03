@@ -1,5 +1,5 @@
 import GameOverModal from "@components/Modals/GameOverModal";
-import { Actions, useGameState } from "@contexts/GameStateContext";
+import { Actions, IPlayer, useGameState } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import * as React from "react";
@@ -39,17 +39,28 @@ const GameModalChooser: React.FC = () => {
     blockerId,
     winningPlayerId
   ]).map((p) => p?.player);
-  
+
+  // This ref is used to display the winning player if they happen to leave the game
+  const winningPlayerRef = React.useRef<IPlayer | null>(null);
+
   if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
-  if (winningPlayer) {
+  React.useEffect(() => {
+    if (winningPlayer) {
+      winningPlayerRef.current = winningPlayer;
+    }
+  }, [winningPlayer]);
+
+  if (winningPlayer || winningPlayerRef.current) {
     return (
       <GameOverModal
         onPlayAgain={() => handleGameEvent({
           event: "PLAY_AGAIN",
         })}
         currentPlayer={currentPlayer}
-        winner={winningPlayer}
+        // Has to be one or the other because of the if statement above
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        winner={winningPlayer ?? winningPlayerRef.current!}
       />
     );
   }

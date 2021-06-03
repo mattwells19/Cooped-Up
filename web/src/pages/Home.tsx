@@ -27,7 +27,7 @@ interface ILobbyProps {
 const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
   const history = useHistory();
   const toast = useToast();
-  useDocTitle("Home");
+  useDocTitle();
   const [error, setError] = React.useState<boolean>(false);
 
   async function handleJoinRoom(roomCode: string) {
