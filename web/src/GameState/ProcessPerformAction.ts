@@ -23,10 +23,10 @@ export default function processPerformAction(
       if (!victim) throw new PlayerNotFoundError(currentGameState.context.victimId);
 
       return {
-        performerName: performer.name,
-        victimName: victim.name,
-        variant: Actions.Coup,
         lostInfluence: currentGameState.context.killedInfluence,
+        performerName: performer.name,
+        variant: Actions.Coup,
+        victimName: victim.name,
       };
     }
     case Actions.Income: {
@@ -72,8 +72,8 @@ export default function processPerformAction(
 
       return {
         performerName: performer.name,
-        victimName: victim.name,
         variant: Actions.Steal,
+        victimName: victim.name,
       };
     }
     default:

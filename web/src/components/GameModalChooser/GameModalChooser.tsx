@@ -1,4 +1,5 @@
-import { Actions, useGameState } from "@contexts/GameStateContext";
+import GameOverModal from "@components/Modals/GameOverModal";
+import { Actions, IPlayer, useGameState } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import * as React from "react";
@@ -15,6 +16,7 @@ const GameModalChooser: React.FC = () => {
     currentPlayerId,
     performerId,
     victimId,
+    winningPlayerId,
     blockingInfluence,
     handleGameEvent,
     handleActionResponse,
@@ -28,11 +30,42 @@ const GameModalChooser: React.FC = () => {
     victim,
     challenger,
     blocker,
-  ] = getPlayersByIds([currentPlayerId, performerId, victimId, challengerId, blockerId]).map((p) => p?.player);
-  
+    winningPlayer,
+  ] = getPlayersByIds([
+    currentPlayerId,
+    performerId,
+    victimId,
+    challengerId,
+    blockerId,
+    winningPlayerId
+  ]).map((p) => p?.player);
+
+  // This ref is used to display the winning player if they happen to leave the game
+  const winningPlayerRef = React.useRef<IPlayer | null>(null);
+
   if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
-  // If there is no performer or action, then there's no modal to show.
+  React.useEffect(() => {
+    if (winningPlayer) {
+      winningPlayerRef.current = winningPlayer;
+    }
+  }, [winningPlayer]);
+
+  if (winningPlayer || winningPlayerRef.current) {
+    return (
+      <GameOverModal
+        onPlayAgain={() => handleGameEvent({
+          event: "PLAY_AGAIN",
+        })}
+        currentPlayer={currentPlayer}
+        // Has to be one or the other because of the if statement above
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        winner={winningPlayer ?? winningPlayerRef.current!}
+      />
+    );
+  }
+
+  // If there is no performer or action, then there's no other modal to show.
   if (!performer || !action) return <></>;
 
   if (challenger) 

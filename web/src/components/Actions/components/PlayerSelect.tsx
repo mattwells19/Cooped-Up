@@ -23,15 +23,15 @@ const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, onSelection, ...p
           background: "rgba(66, 153, 225, 0.6)",
         }}
         sx={{
-          "&:not(:last-child)": {
-            borderBottom: "1px solid",
-            borderColor: "gray.800",
-          },
           "&:first-of-type": {
             borderRadius: "10px 10px 0px 0px",
           },
           "&:last-of-type": {
             borderRadius: "0px 0px 10px 10px",
+          },
+          "&:not(:last-child)": {
+            borderBottom: "1px solid",
+            borderColor: "gray.800",
           },
         }}
       >

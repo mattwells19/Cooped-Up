@@ -41,14 +41,13 @@ export interface IGameStateContext extends IGameStateMachineContext {
   turn: string;
   handleGameEvent: (newGameState: IGameState) => void;
   handleActionResponse: (response: IActionResponse) => void;
-  handleStartGame: () => void;
+  handleStartGame: () => Promise<void>;
 }
 
 export const enum IncomingSocketActions {
   PlayersChanged = "players_changed",
   UpdatePlayerActionResponse = "updatePlayerActionResponse",
   GameStateUpdate = "gameStateUpdate",
-  StartingDeck = "startingDeck",
 }
 
 export const enum OutgoingSocketActions {

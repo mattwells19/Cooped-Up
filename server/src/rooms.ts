@@ -2,7 +2,7 @@
 import * as fs from "fs";
 import { shuffle as _shuffle } from "lodash";
 import { startingDeck } from "./constants";
-import { IPlayer, IRoomValue } from "./types";
+import { Influence, IPlayer, IRoomValue } from "./types";
 
 type RoomsData = Map<string, IRoomValue>;
 
@@ -74,7 +74,7 @@ export async function removePlayer(playerId: string): Promise<Array<IPlayer> | n
   const newPlayerList = [...players].filter((p) => p.id !== playerId);
 
   if (newPlayerList.length === 0) data.delete(foundKey);
-  else data.set(foundKey, { players: newPlayerList, deck });
+  else data.set(foundKey, { deck, players: newPlayerList });
 
   await saveData(data);
   return newPlayerList;
@@ -86,18 +86,40 @@ export async function removePlayer(playerId: string): Promise<Array<IPlayer> | n
  * @param player The player to add to the room
  * @returns The updated list of players
  */
-export async function addPlayerToRoom(roomCode: string, player: IPlayer): Promise<IRoomValue> {
+export async function addPlayerToRoom(roomCode: string, player: IPlayer): Promise<Array<IPlayer>> {
   const data = await readData();
 
-  const { players, deck } = data.has(roomCode) ? data.get(roomCode)! : { players: [], deck: _shuffle(startingDeck) };
+  const { players, deck } = data.has(roomCode) ? data.get(roomCode)! : { deck: [], players: [] };
 
   const newValue: IRoomValue = {
-    players: [...players, player],
     deck,
+    players: [...players, player],
   };
 
   data.set(roomCode, newValue);
   await saveData(data);
 
-  return newValue;
+  return newValue.players;
+}
+
+/**
+ * Returns a shuffled deck for the room
+ * @param roomCode The room to get the deck for
+ * @returns The shuffled deck
+ */
+export async function getRoomDeck(roomCode: string): Promise<Array<Influence>> {
+  const data = await readData();
+
+  const roomData = data.get(roomCode);
+  if (!roomData) throw new Error(`No room with room code ${roomCode} was found.`);
+
+  const newValue: IRoomValue = {
+    ...roomData,
+    deck: _shuffle(startingDeck),
+  };
+
+  data.set(roomCode, newValue);
+  await saveData(data);
+
+  return newValue.deck;
 }

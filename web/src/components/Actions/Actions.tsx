@@ -30,12 +30,12 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
     backgroundColor: useColorModeValue("gray.200", "gray.700"),
     borderRadius: "10px",
     height: "280px",
-    width: "324px",
     sx: {
       ul: {
         height: "100%",
       },
     },
+    width: "324px",
   };
 
   return (

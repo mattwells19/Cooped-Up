@@ -1,6 +1,7 @@
 import { Router, Request } from "express";
 import { sample as _sample } from "lodash";
 import { alphabet } from "./constants";
+import * as Rooms from "./rooms";
 
 const router = Router();
 
@@ -21,6 +22,14 @@ router.get("/newRoom", (req, res) => {
   } while (rooms.has(roomCode));
 
   res.send(JSON.stringify(roomCode));
+});
+
+router.get("/deck", async (req: Request<unknown, unknown, unknown, { roomCode: string }>, res, next) => {
+  const { roomCode } = req.query;
+
+  await Rooms.getRoomDeck(roomCode)
+    .then((deck) => res.send(JSON.stringify(deck)))
+    .catch((err) => next(err));
 });
 
 export default router;

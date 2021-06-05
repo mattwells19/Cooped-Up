@@ -17,7 +17,6 @@ export const enum OutgoingSocketActions {
   PlayersChanged = "players_changed",
   GameStateUpdate = "gameStateUpdate",
   UpdatePlayerActionResponse = "updatePlayerActionResponse",
-  StartingDeck = "startingDeck",
 }
 
 export interface IPlayer {
