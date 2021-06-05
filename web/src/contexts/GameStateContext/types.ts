@@ -48,7 +48,6 @@ export const enum IncomingSocketActions {
   PlayersChanged = "players_changed",
   UpdatePlayerActionResponse = "updatePlayerActionResponse",
   GameStateUpdate = "gameStateUpdate",
-  StartingDeck = "startingDeck",
 }
 
 export const enum OutgoingSocketActions {

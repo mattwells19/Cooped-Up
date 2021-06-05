@@ -145,10 +145,6 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
 
     socket.on(IncomingSocketActions.GameStateUpdate, handleGameStateUpdate);
 
-    socket.on(IncomingSocketActions.StartingDeck, (startingDeck: Array<Influence>) => {
-      setDeck(startingDeck);
-    });
-
     // perform cleanup of socket when component is removed from the DOM
     return () => {
       socket.offAny();
