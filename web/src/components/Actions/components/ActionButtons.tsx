@@ -3,6 +3,7 @@ import * as React from "react";
 import { useGameState, Actions } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
+import { InfluenceDetails } from "@utils/InfluenceUtils";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
   actionPayload?: { action: Actions; victimId: string | null };
@@ -51,22 +52,22 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
           action: Actions.Tax,
           victimId: null,
         }}
-        colorScheme="purple"
+        colorScheme={InfluenceDetails["Duke"].colorScheme}
         disabled={currentPlayer.coins >= 10}
       >
         Collect Tax
       </WrappedButton>
       <WrappedButton
         onClick={() => handleShowPlayerList(Actions.Steal)}
-        colorScheme="blue"
+        colorScheme={InfluenceDetails["Captain"].colorScheme}
         disabled={currentPlayer.coins >= 10}
       >
         Steal
       </WrappedButton>
-      <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton colorScheme={InfluenceDetails["Assassin"].colorScheme} disabled={currentPlayer.coins >= 10}>
         Assassinate
       </WrappedButton>
-      <WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton colorScheme={InfluenceDetails["Ambassador"].colorScheme} disabled={currentPlayer.coins >= 10}>
         Exchange
       </WrappedButton>
       <WrappedButton
