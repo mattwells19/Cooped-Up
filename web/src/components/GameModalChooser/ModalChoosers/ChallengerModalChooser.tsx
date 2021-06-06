@@ -5,26 +5,27 @@ import type { Actions, IGameState, Influence, IPlayer } from "@contexts/GameStat
 import { getInfluenceFromAction, wasValidAction } from "@utils/InfluenceUtils";
 import * as React from "react";
 
-interface IModalWithChallengerProps {
+interface IChallengerModalChooserProps {
+  action: Actions;
   currentPlayer: IPlayer;
   performer: IPlayer;
   challenger: IPlayer;
   blockDetails: { blocker: IPlayer | undefined, blockingInfluence: Influence | undefined };
-  action: Actions;
   handleGameEvent: (newGameState: IGameState) => void;
 }
 
-const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
+const ChallengerModalChooser: React.FC<IChallengerModalChooserProps> = ({
+  action,
   currentPlayer,
   performer,
   challenger,
-  blockDetails,
-  action,
   handleGameEvent,
+  blockDetails,
 }) => {
-  const [challengeResult, setChallengeResult] = React.useState<"success" | "failed" | null>(null);
   const { blocker, blockingInfluence } = blockDetails;
-
+  
+  const [challengeResult, setChallengeResult] = React.useState<"success" | "failed" | null>(null);
+  
   React.useEffect(() => {
     setChallengeResult(null);
   }, [action]);
@@ -117,4 +118,4 @@ const ModalWithChallenger: React.FC<IModalWithChallengerProps> = ({
   }
 };
 
-export default ModalWithChallenger;
+export default ChallengerModalChooser;
