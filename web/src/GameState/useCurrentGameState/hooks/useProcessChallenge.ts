@@ -1,33 +1,29 @@
 import { useDeck } from "@contexts/DeckContext";
 import type { Influence, IPlayer } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
-import type { IActionToastProps } from "@hooks/useActionToast";
 import { ActionDetails } from "@utils/ActionUtils";
 import { getInfluenceFromAction } from "@utils/InfluenceUtils";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
-import type { ICurrentGameState } from "../../types";
+import type { ICurrentGameState, ISendGameStateUpdate } from "../../types";
+import useActionToast from "@hooks/useActionToast";
+import { useEffect } from "react";
 
-interface IProcessChallengeResponse {
-  actionToastProps: IActionToastProps;
-  newPlayers: Array<IPlayer>;
-  newDeck: Array<Influence>;
-}
-
-interface IUseProcessChallenge {
-  processChallenge: () => IProcessChallengeResponse | undefined;
-  processChallengeBlock: () => IProcessChallengeResponse | undefined;
-}
-
-export default function useProcessChallenge(currentGameState: ICurrentGameState): IUseProcessChallenge {
+export default function useProcessChallenge(
+  currentGameState: ICurrentGameState,
+  sendGameStateEvent: ISendGameStateUpdate,
+): void {
   const gameStateContext = currentGameState.context;
-  const { players, getPlayersByIds } = usePlayers();
-  const { deck } = useDeck();
+  const { players, setPlayers, getPlayersByIds, getNextPlayerTurnId } = usePlayers();
+  const { deck, setDeck } = useDeck();
+  const actionToast = useActionToast();
 
-  function processChallenge() {
-    if (gameStateContext.challengeFailed !== undefined) {
+  useEffect(() => {
+    if (gameStateContext.challengeFailed === undefined) return;
+
+    if (currentGameState.matches("challenged")) {
       const [performer, challenger] = getPlayersByIds([gameStateContext.performerId, gameStateContext.challengerId]);
 
-      if (!performer) throw new PlayerNotFoundError(gameStateContext.blockerId);
+      if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
       if (!challenger) throw new PlayerNotFoundError(gameStateContext.challengerId);
 
       const loser = gameStateContext.challengeFailed ? challenger : performer;
@@ -83,21 +79,21 @@ export default function useProcessChallenge(currentGameState: ICurrentGameState)
         };
       }
 
-      return {
-        actionToastProps: {
-          lostInfluence: gameStateContext.killedInfluence,
-          variant: "Challenge" as const,
-          victimName: loser.player.name,
-        },
-        newDeck,
-        newPlayers,
-      };
-    }
-    return undefined;
-  }
+      setPlayers(newPlayers);
+      setDeck(newDeck);
+      actionToast({
+        lostInfluence: gameStateContext.killedInfluence,
+        variant: "Challenge" as const,
+        victimName: loser.player.name,
+      });
 
-  function processChallengeBlock(): IProcessChallengeResponse | undefined {
-    if (gameStateContext.challengeFailed !== undefined) {
+      if (gameStateContext.challengeFailed) sendGameStateEvent("FAILED");
+      else {
+        sendGameStateEvent("COMPLETE", {
+          nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
+        });
+      }
+    } else if (currentGameState.matches("challenge_block")) {
       const [blocker, challenger] = getPlayersByIds([gameStateContext.blockerId, gameStateContext.challengerId]);
 
       if (!blocker) throw new PlayerNotFoundError(gameStateContext.blockerId);
@@ -154,18 +150,19 @@ export default function useProcessChallenge(currentGameState: ICurrentGameState)
         };
       }
 
-      return {
-        actionToastProps: {
-          lostInfluence: gameStateContext.killedInfluence,
-          variant: "Challenge",
-          victimName: loser.player.name,
-        },
-        newDeck,
-        newPlayers,
-      };
-    }
-    return undefined;
-  }
+      setPlayers(newPlayers);
+      setDeck(newDeck);
+      actionToast({
+        lostInfluence: gameStateContext.killedInfluence,
+        variant: "Challenge",
+        victimName: loser.player.name,
+      });
 
-  return { processChallenge, processChallengeBlock };
+      if (gameStateContext.challengeFailed)
+        sendGameStateEvent("CHALLENGE_BLOCK_FAILED", {
+          nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
+        });
+      else sendGameStateEvent("COMPLETE");
+    }
+  }, [currentGameState.value, gameStateContext.challengeFailed]);
 }

@@ -1,20 +1,19 @@
 import { Actions } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
+import { useEffect } from "react";
 import type { ICurrentGameState, ISendGameStateUpdate } from "../../types";
-
-interface IUseProcessProposeAction {
-  processProposeAction: () => void;
-}
 
 export default function useProcessProposeAction(
   currentGameState: ICurrentGameState,
   sendGameStateEvent: ISendGameStateUpdate,
-): IUseProcessProposeAction {
+): void {
   const gameStateContext = currentGameState.context;
   const { setPlayers, getPlayerById } = usePlayers();
 
-  function processProposeAction(): void {
+  useEffect(() => {
+    if (!currentGameState.matches("propose_action")) return;
+
     switch (gameStateContext.action) {
       case Actions.Coup: {
         const victim = getPlayerById(gameStateContext.victimId)?.player;
@@ -58,7 +57,5 @@ export default function useProcessProposeAction(
       default:
         throw new Error(`The action ${gameStateContext.action} either does not exist or is not implemented yet.`);
     }
-  }
-
-  return { processProposeAction };
+  }, [currentGameState.value]);
 }

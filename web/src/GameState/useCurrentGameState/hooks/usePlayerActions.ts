@@ -4,17 +4,17 @@ import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { IGameStateMachineContext } from "../../GameStateMachine";
 
 interface IUsePlayerActions {
-  performIncomeAction: () => void;
-  performCoupAction: () => void;
-  performTaxAction: () => void;
-  performAidAction: () => void;
-  performStealAction: () => void;
+  performIncomeAction: (players: Array<IPlayer>) => Array<IPlayer>;
+  performCoupAction: (players: Array<IPlayer>) => Array<IPlayer>;
+  performTaxAction: (players: Array<IPlayer>) => Array<IPlayer>;
+  performAidAction: (players: Array<IPlayer>) => Array<IPlayer>;
+  performStealAction: (players: Array<IPlayer>) => Array<IPlayer>;
 }
 
 export default function usePlayerActions(gameStateContext: IGameStateMachineContext): IUsePlayerActions {
-  const { setPlayers, getPlayerById } = usePlayers();
+  const { getPlayerById } = usePlayers();
 
-  function IncomeAction(players: Array<IPlayer>) {
+  function IncomeAction(players: Array<IPlayer>): Array<IPlayer> {
     const currentPlayer = getPlayerById(gameStateContext.playerTurnId);
     if (!currentPlayer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
 
@@ -23,10 +23,11 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
       ...newPlayers[currentPlayer.index],
       coins: newPlayers[currentPlayer.index].coins + 1,
     };
+
     return newPlayers;
   }
 
-  function CoupAction(players: Array<IPlayer>) {
+  function CoupAction(players: Array<IPlayer>): Array<IPlayer> {
     const currentPlayer = getPlayerById(gameStateContext.playerTurnId);
     if (!currentPlayer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
 
@@ -62,7 +63,7 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
     return newPlayers;
   }
 
-  function TaxAction(players: Array<IPlayer>) {
+  function TaxAction(players: Array<IPlayer>): Array<IPlayer> {
     const performer = getPlayerById(gameStateContext.performerId);
     if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
 
@@ -80,7 +81,7 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
     return newPlayers;
   }
 
-  function AidAction(players: Array<IPlayer>) {
+  function AidAction(players: Array<IPlayer>): Array<IPlayer> {
     const performer = getPlayerById(gameStateContext.performerId);
     if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
 
@@ -98,7 +99,7 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
     return newPlayers;
   }
 
-  function StealAction(players: Array<IPlayer>) {
+  function StealAction(players: Array<IPlayer>): Array<IPlayer> {
     const currentPlayer = getPlayerById(gameStateContext.playerTurnId);
     if (!currentPlayer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
 
@@ -126,10 +127,10 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
   }
 
   return {
-    performAidAction: () => setPlayers((prevPlayers) => StealAction(prevPlayers)),
-    performCoupAction: () => setPlayers((prevPlayers) => CoupAction(prevPlayers)),
-    performIncomeAction: () => setPlayers((prevPlayers) => AidAction(prevPlayers)),
-    performStealAction: () => setPlayers((prevPlayers) => TaxAction(prevPlayers)),
-    performTaxAction: () => setPlayers((prevPlayers) => IncomeAction(prevPlayers)),
+    performAidAction: AidAction,
+    performCoupAction: CoupAction,
+    performIncomeAction: IncomeAction,
+    performStealAction: StealAction,
+    performTaxAction: TaxAction,
   };
 }
