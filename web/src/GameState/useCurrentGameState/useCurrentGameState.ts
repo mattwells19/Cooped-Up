@@ -1,22 +1,25 @@
 import useActionToast from "@hooks/useActionToast";
 import { useEffect } from "react";
 import { useMachine } from "@xstate/react";
-import GameStateMachine from "./GameStateMachine";
-import type { ICurrentGameState, ISendGameStateUpdate } from "./types";
-import processProposeAction from "./ProcessProposeAction";
-import processPerformAction from "./ProcessPerformAction";
-import { processChallenge, processChallengeBlock } from "./ProcessChallenge";
+import GameStateMachine from "../GameStateMachine";
+import type { ICurrentGameState, ISendGameStateUpdate } from "../types";
+import useProcessProposeAction from "./hooks/useProcessProposeAction";
+import useProcessPerformAction from "./hooks/useProcessPerformAction";
 import { usePlayers } from "@contexts/PlayersContext";
 import { useDeck } from "@contexts/DeckContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import { Actions } from "@contexts/GameStateContext";
+import useProcessChallenge from "./hooks/useProcessChallenge";
 
 export default function useCurrentGameState(): [ICurrentGameState, ISendGameStateUpdate] {
-  const { players, setPlayers, getNextPlayerTurnId, getPlayerById, getPlayersByIds, resetAllActionResponse } =
-    usePlayers();
-  const { deck, setDeck } = useDeck();
+  const { players, setPlayers, getPlayerById, getNextPlayerTurnId, resetAllActionResponse } = usePlayers();
+  const { setDeck } = useDeck();
   const [currentGameState, sendGameStateEvent] = useMachine(GameStateMachine);
   const actionToast = useActionToast();
+
+  const { processChallenge, processChallengeBlock } = useProcessChallenge(currentGameState);
+  const { processProposeAction } = useProcessProposeAction(currentGameState, sendGameStateEvent);
+  const { processPerformAction } = useProcessPerformAction(currentGameState);
 
   useEffect(() => {
     switch (true) {
@@ -55,7 +58,7 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
       }
       case currentGameState.matches("challenged"): {
         // challenge result will be undefined until the loser of the challenge selects their influence to lose
-        const challengeResult = processChallenge(currentGameState, players, getPlayersByIds, deck);
+        const challengeResult = processChallenge();
 
         if (challengeResult) {
           setPlayers(challengeResult.newPlayers);
@@ -73,7 +76,7 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
       }
       case currentGameState.matches("challenge_block"): {
         // challenge result will be undefined until the loser of the challenge selects their influence to lose
-        const challengeResult = processChallengeBlock(currentGameState, players, getPlayersByIds, deck);
+        const challengeResult = processChallengeBlock();
 
         if (challengeResult) {
           setPlayers(challengeResult.newPlayers);
@@ -120,10 +123,10 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
         break;
       }
       case currentGameState.matches("propose_action"):
-        processProposeAction(currentGameState, sendGameStateEvent, setPlayers, getPlayerById);
+        processProposeAction();
         break;
       case currentGameState.matches("perform_action"): {
-        const actionToastProps = processPerformAction(currentGameState, setPlayers, getPlayerById);
+        const actionToastProps = processPerformAction();
         actionToast(actionToastProps);
         sendGameStateEvent("COMPLETE", {
           nextPlayerTurnId: getNextPlayerTurnId(currentGameState.context.playerTurnId),

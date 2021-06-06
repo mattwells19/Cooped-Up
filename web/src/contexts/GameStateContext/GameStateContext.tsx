@@ -38,21 +38,21 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     [roomCode],
   );
 
-  function handleGameStateUpdate(newGameState: IGameState) {
+  const handleGameStateUpdate = React.useCallback((newGameState: IGameState) => {
     sendGameStateEvent(newGameState.event, newGameState.eventPayload);
     if (newGameState.players) setPlayers(newGameState.players);
     if (newGameState.deck) setDeck(newGameState.deck);
-  }
+  }, [sendGameStateEvent, setPlayers, setDeck]);
 
-  function handleGameEvent(newGameState: IGameState) {
+  const handleGameEvent = React.useCallback((newGameState: IGameState) => {
     socket.emit(OutgoingSocketActions.UpdateGameState, newGameState);
-  }
+  }, [socket]);
 
-  function handleActionResponse(response: IActionResponse) {
+  const handleActionResponse = React.useCallback((response: IActionResponse) => {
     socket.emit(OutgoingSocketActions.ProposeActionResponse, response);
-  }
+  }, [socket]);
 
-  const handleStartGame = async () => {
+  const handleStartGame = React.useCallback(async () => {
     const deck = await get<Array<Influence>>(`deck?roomCode=${roomCode}`);
 
     const playerHands: Array<IPlayer> = players.map((player) => ({
@@ -68,7 +68,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
       eventPayload: { playerTurnId: playerHands[0].id },
       players: playerHands,
     });
-  };
+  }, [players, handleGameEvent]);
 
   React.useEffect(() => {
     socket.off(IncomingSocketActions.PlayersChanged);
