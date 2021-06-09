@@ -1,8 +1,6 @@
 import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react";
 import * as React from "react";
 import { useGameState, Actions } from "@contexts/GameStateContext";
-import { usePlayers } from "@contexts/PlayersContext";
-import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
@@ -14,13 +12,9 @@ interface IActionButtonsProps extends WrapProps {
 }
 
 const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ...props }) => {
-  const { handleGameEvent, currentPlayerId, turn } = useGameState();
-  const { getPlayerById } = usePlayers();
+  const { handleGameEvent, currentPlayer, currentPlayerTurn } = useGameState();
 
-  const currentPlayer = getPlayerById(currentPlayerId)?.player;
-  if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
-
-  const isTurn = currentPlayerId.localeCompare(turn) === 0;
+  const isTurn = currentPlayer.id.localeCompare(currentPlayerTurn.id) === 0;
 
   const WrappedButton: React.FC<IWrappedButtonProps> = ({ actionPayload, children, disabled, ...buttonProps }) => (
     <WrapItem>
@@ -33,7 +27,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
             event: "ACTION",
             eventPayload: {
               ...actionPayload,
-              performerId: currentPlayerId,
+              performerId: currentPlayerTurn.id,
             },
           })
         }

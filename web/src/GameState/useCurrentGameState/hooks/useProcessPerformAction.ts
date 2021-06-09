@@ -1,36 +1,35 @@
 import { Actions } from "@contexts/GameStateContext";
 import type { IActionToastProps } from "@hooks/useActionToast";
 import usePlayerActions from "./usePlayerActions";
-import type { ICurrentGameState, ISendGameStateUpdate } from "../../types";
+import type { ICurrentGameState, IGameStateRoles, ISendGameStateUpdate } from "../../types";
 import { usePlayers } from "@contexts/PlayersContext";
-import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import useActionToast from "@hooks/useActionToast";
 import { useEffect } from "react";
 
 export default function useProcessPerformAction(
   currentGameState: ICurrentGameState,
   sendGameStateEvent: ISendGameStateUpdate,
+  { performer, victim }: IGameStateRoles,
 ): void {
   const gameStateContext = currentGameState.context;
-  const { setPlayers, getPlayerById, getNextPlayerTurnId } = usePlayers();
+  const { setPlayers, getNextPlayerTurnId } = usePlayers();
   const actionToast = useActionToast();
   const { performAidAction, performCoupAction, performIncomeAction, performStealAction, performTaxAction } =
-    usePlayerActions(gameStateContext);
+    usePlayerActions(gameStateContext, performer, victim);
 
   useEffect(() => {
     if (!currentGameState.matches("perform_action")) return;
 
     const processAction = (): IActionToastProps => {
+      if (!performer) throw new Error(`No performer found when performing ${gameStateContext.action}.`);
+
       switch (gameStateContext.action) {
         case Actions.Coup: {
           if (!gameStateContext.killedInfluence) throw new Error("No influence was selected to eliminate.");
 
           setPlayers((prevPlayers) => performCoupAction(prevPlayers));
-          const performer = getPlayerById(gameStateContext.performerId)?.player;
-          const victim = getPlayerById(gameStateContext.victimId)?.player;
 
-          if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
-          if (!victim) throw new PlayerNotFoundError(gameStateContext.victimId);
+          if (!victim) throw new Error("No victim found when performing Coup.");
 
           return {
             lostInfluence: gameStateContext.killedInfluence,
@@ -42,9 +41,6 @@ export default function useProcessPerformAction(
         case Actions.Income: {
           setPlayers((prevPlayers) => performIncomeAction(prevPlayers));
 
-          const performer = getPlayerById(gameStateContext.playerTurnId)?.player;
-          if (!performer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
-
           return {
             performerName: performer.name,
             variant: Actions.Income,
@@ -52,9 +48,6 @@ export default function useProcessPerformAction(
         }
         case Actions.Tax: {
           setPlayers((prevPlayers) => performTaxAction(prevPlayers));
-
-          const performer = getPlayerById(gameStateContext.performerId)?.player;
-          if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
 
           return {
             performerName: performer.name,
@@ -64,9 +57,6 @@ export default function useProcessPerformAction(
         case Actions.Aid: {
           setPlayers((prevPlayers) => performAidAction(prevPlayers));
 
-          const performer = getPlayerById(gameStateContext.performerId)?.player;
-          if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
-
           return {
             performerName: performer.name,
             variant: Actions.Aid,
@@ -75,11 +65,7 @@ export default function useProcessPerformAction(
         case Actions.Steal: {
           setPlayers((prevPlayers) => performStealAction(prevPlayers));
 
-          const performer = getPlayerById(gameStateContext.performerId)?.player;
-          const victim = getPlayerById(gameStateContext.victimId)?.player;
-
-          if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
-          if (!victim) throw new PlayerNotFoundError(gameStateContext.victimId);
+          if (!victim) throw new Error("No victim found when performing Steal.");
 
           return {
             performerName: performer.name,

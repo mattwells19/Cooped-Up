@@ -9,8 +9,8 @@ interface IActionsProps {
 }
 
 const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
-  const { handleGameEvent, currentPlayerId, turn } = useGameState();
-  const isTurn = currentPlayerId.localeCompare(turn) === 0;
+  const { handleGameEvent, currentPlayer, currentPlayerTurn } = useGameState();
+  const isTurn = currentPlayer.id.localeCompare(currentPlayerTurn.id) === 0;
   const [playerSelectableAction, setPlayerSelectableAction] = React.useState<InfluenceActions | null>(null);
 
   const getActionsText = () => {
@@ -53,7 +53,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
               event: "ACTION",
               eventPayload: {
                 action: playerSelectableAction,
-                performerId: currentPlayerId,
+                performerId: currentPlayerTurn.id,
                 victimId,
               },
             });

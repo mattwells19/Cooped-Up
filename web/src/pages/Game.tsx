@@ -5,16 +5,11 @@ import PlayerHand from "@components/PlayerHand";
 import Actions from "@components/Actions/Actions";
 import GameModalChooser from "@components/GameModalChooser";
 import { usePlayers } from "@contexts/PlayersContext";
-import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 
 const Game: React.FC = () => {
-  const { currentPlayerId } = useGameState();
-  const { players, getPlayerById } = usePlayers();
-
-  const currentPlayer = getPlayerById(currentPlayerId)?.player;
-  if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
-
-  const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayerId) !== 0);
+  const { currentPlayer } = useGameState();
+  const { players } = usePlayers();
+  const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayer.id) !== 0);
 
   return (
     <>

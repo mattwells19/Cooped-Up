@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext";
-import type { IFindPlayerByIdResponse, IPlayersContext } from "./types";
+import type { IPlayersContext } from "./types";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 
 const PlayersContext = React.createContext<IPlayersContext | undefined>(undefined);
@@ -14,15 +14,8 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
    * @param playerId The id of the player being looked up.
    * @returns The player object and player index as an object.
    */
-  function getPlayerById(playerId: string): IFindPlayerByIdResponse {
-    const playerIndex = players.findIndex((p) => p.id.localeCompare(playerId) === 0);
-
-    return playerIndex !== -1
-      ? {
-        index: playerIndex,
-        player: players[playerIndex],
-      }
-      : undefined;
+  function getPlayerById(playerId: string): IPlayer | undefined {
+    return players.find((p) => p.id.localeCompare(playerId) === 0);
   }
 
   /**
@@ -31,7 +24,7 @@ export const PlayersContextProvider: React.FC = ({ children }) => {
    * @param playerIds The array of player ids being looked up.
    * @returns An array containing each found player object and player index as an object.
    */
-  function getPlayersByIds(playerIds: Array<string>): Array<IFindPlayerByIdResponse> {
+  function getPlayersByIds(playerIds: Array<string>): Array<IPlayer | undefined> {
     return playerIds.map((playerId) => getPlayerById(playerId));
   }
 

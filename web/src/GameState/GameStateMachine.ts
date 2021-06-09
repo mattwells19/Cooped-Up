@@ -1,20 +1,25 @@
 import { assign, createMachine } from "xstate";
 import type { Actions, Influence } from "@contexts/GameStateContext";
 
-export interface IGameStateMachineContext {
-  playerTurnId: string;
-  action: Actions | null;
-  performerId: string;
-  gameStarted: boolean;
-  victimId: string;
-  challengerId: string;
+export interface IGameStateMachineContextPlayerIds {
   blockerId: string;
+  challengerId: string;
+  playerTurnId: string;
+  performerId: string;
+  victimId: string;
   winningPlayerId: string;
+}
+
+export interface IGameStateMachineContextMetadata {
+  action: Actions | null;
+  gameStarted: boolean;
   killedInfluence: Influence | undefined;
   blockingInfluence: Influence | undefined;
   challengeFailed: boolean | undefined;
   blockSuccessful: boolean | undefined;
 }
+
+export type IGameStateMachineContext = IGameStateMachineContextPlayerIds & IGameStateMachineContextMetadata;
 
 export type GameStateMachineEvent =
   | { type: "ACTION"; action: Actions; performerId: string; victimId: string }

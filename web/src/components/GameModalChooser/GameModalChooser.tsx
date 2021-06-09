@@ -1,7 +1,5 @@
 import GameOverModal from "@components/Modals/GameOverModal";
 import { IPlayer, useGameState } from "@contexts/GameStateContext";
-import { usePlayers } from "@contexts/PlayersContext";
-import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import * as React from "react";
 import ActionModalChooser from "./ModalChoosers/ActionModalChooser";
 import ChallengerModalChooser from "./ModalChoosers/ChallengerModalChooser";
@@ -9,39 +7,19 @@ import ChallengerModalChooser from "./ModalChoosers/ChallengerModalChooser";
 const GameModalChooser: React.FC = () => {
   const {
     action,
-    blockerId,
-    challengerId,
-    currentPlayerId,
-    performerId,
-    victimId,
-    winningPlayerId,
+    blocker,
+    challenger,
+    currentPlayer,
+    performer,
+    victim,
+    winningPlayer,
     handleGameEvent,
     handleActionResponse,
     blockingInfluence,
   } = useGameState();
 
-  const { getPlayersByIds } = usePlayers();
-
-  const [
-    blocker,
-    currentPlayer,
-    performer,
-    challenger,
-    victim,
-    winningPlayer,
-  ] = getPlayersByIds([
-    blockerId,
-    currentPlayerId,
-    performerId,
-    challengerId,
-    victimId,
-    winningPlayerId
-  ]).map((p) => p?.player);
-
   // This ref is used to display the winning player if they happen to leave the game
   const winningPlayerRef = React.useRef<IPlayer | null>(null);
-
-  if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
 
   React.useEffect(() => {
     if (winningPlayer) {

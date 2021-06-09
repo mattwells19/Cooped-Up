@@ -3,17 +3,17 @@ import type { Influence, IPlayer } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import { ActionDetails } from "@utils/ActionUtils";
 import { getInfluenceFromAction } from "@utils/InfluenceUtils";
-import PlayerNotFoundError from "@utils/PlayerNotFoundError";
-import type { ICurrentGameState, ISendGameStateUpdate } from "../../types";
+import type { ICurrentGameState, IGameStateRoles, ISendGameStateUpdate } from "../../types";
 import useActionToast from "@hooks/useActionToast";
 import { useEffect } from "react";
 
 export default function useProcessChallenge(
   currentGameState: ICurrentGameState,
   sendGameStateEvent: ISendGameStateUpdate,
+  { blocker, performer, challenger }: IGameStateRoles,
 ): void {
   const gameStateContext = currentGameState.context;
-  const { players, setPlayers, getPlayersByIds, getNextPlayerTurnId } = usePlayers();
+  const { players, setPlayers, getNextPlayerTurnId } = usePlayers();
   const { deck, setDeck } = useDeck();
   const actionToast = useActionToast();
 
@@ -21,10 +21,8 @@ export default function useProcessChallenge(
     if (gameStateContext.challengeFailed === undefined) return;
 
     if (currentGameState.matches("challenged")) {
-      const [performer, challenger] = getPlayersByIds([gameStateContext.performerId, gameStateContext.challengerId]);
-
-      if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
-      if (!challenger) throw new PlayerNotFoundError(gameStateContext.challengerId);
+      if (!performer) throw new Error("No performer found when processing challenge.");
+      if (!challenger) throw new Error("No challenger found when processing challenge.");
 
       const loser = gameStateContext.challengeFailed ? challenger : performer;
       const winner = gameStateContext.challengeFailed ? performer : challenger;
@@ -55,7 +53,7 @@ export default function useProcessChallenge(
         if (!action) throw new Error("Action cannot be null when challenging.");
         const validInfluence = getInfluenceFromAction(action);
 
-        const influenceToReveal = winner.player.influences.find((influence) => validInfluence === influence.type);
+        const influenceToReveal = winner.influences.find((influence) => validInfluence === influence.type);
         if (!influenceToReveal)
           throw new Error(
             `The chosen influence as a result of the failed challenge is not in the losers hand: ${influenceToReveal}.`,
@@ -84,7 +82,7 @@ export default function useProcessChallenge(
       actionToast({
         lostInfluence: gameStateContext.killedInfluence,
         variant: "Challenge" as const,
-        victimName: loser.player.name,
+        victimName: loser.name,
       });
 
       if (gameStateContext.challengeFailed) sendGameStateEvent("FAILED");
@@ -94,10 +92,8 @@ export default function useProcessChallenge(
         });
       }
     } else if (currentGameState.matches("challenge_block")) {
-      const [blocker, challenger] = getPlayersByIds([gameStateContext.blockerId, gameStateContext.challengerId]);
-
-      if (!blocker) throw new PlayerNotFoundError(gameStateContext.blockerId);
-      if (!challenger) throw new PlayerNotFoundError(gameStateContext.challengerId);
+      if (!blocker) throw new Error("No blocker found when processing challenge.");
+      if (!challenger) throw new Error("No challenger found when processing challenge.");
 
       const loser = gameStateContext.challengeFailed ? challenger : blocker;
       const winner = gameStateContext.challengeFailed ? blocker : challenger;
@@ -128,7 +124,7 @@ export default function useProcessChallenge(
         if (!action) throw new Error("Action cannot be null when challenging.");
         const possibleInfluences = ActionDetails[action].blockable ?? [];
 
-        const [{ type: revealedInfluence }] = winner.player.influences.filter(
+        const [{ type: revealedInfluence }] = winner.influences.filter(
           (influence) => possibleInfluences.indexOf(influence.type) !== -1,
         );
 
@@ -155,7 +151,7 @@ export default function useProcessChallenge(
       actionToast({
         lostInfluence: gameStateContext.killedInfluence,
         variant: "Challenge",
-        victimName: loser.player.name,
+        victimName: loser.name,
       });
 
       if (gameStateContext.challengeFailed)

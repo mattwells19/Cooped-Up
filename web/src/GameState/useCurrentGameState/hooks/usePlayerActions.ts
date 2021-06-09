@@ -1,5 +1,4 @@
 import type { IPlayer } from "@contexts/GameStateContext";
-import { usePlayers } from "@contexts/PlayersContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import type { IGameStateMachineContext } from "../../GameStateMachine";
 
@@ -11,35 +10,33 @@ interface IUsePlayerActions {
   performStealAction: (players: Array<IPlayer>) => Array<IPlayer>;
 }
 
-export default function usePlayerActions(gameStateContext: IGameStateMachineContext): IUsePlayerActions {
-  const { getPlayerById } = usePlayers();
-
+export default function usePlayerActions(
+  gameStateContext: IGameStateMachineContext,
+  performer: IPlayer | undefined,
+  victim: IPlayer | undefined,
+): IUsePlayerActions {
   function IncomeAction(players: Array<IPlayer>): Array<IPlayer> {
-    const currentPlayer = getPlayerById(gameStateContext.playerTurnId);
-    if (!currentPlayer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
+    if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
 
     const newPlayers = [...players];
-    newPlayers[currentPlayer.index] = {
-      ...newPlayers[currentPlayer.index],
-      coins: newPlayers[currentPlayer.index].coins + 1,
+    newPlayers[performer.index] = {
+      ...newPlayers[performer.index],
+      coins: newPlayers[performer.index].coins + 1,
     };
 
     return newPlayers;
   }
 
   function CoupAction(players: Array<IPlayer>): Array<IPlayer> {
-    const currentPlayer = getPlayerById(gameStateContext.playerTurnId);
-    if (!currentPlayer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
-
-    const victim = getPlayerById(gameStateContext.victimId);
+    if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
     if (!victim) throw new PlayerNotFoundError(gameStateContext.victimId);
 
     const newPlayers = [...players];
 
     // performer loses 7 coins
-    newPlayers[currentPlayer.index] = {
-      ...newPlayers[currentPlayer.index],
-      coins: newPlayers[currentPlayer.index].coins - 7,
+    newPlayers[performer.index] = {
+      ...newPlayers[performer.index],
+      coins: newPlayers[performer.index].coins - 7,
     };
 
     const influenceToKillIndex = newPlayers[victim.index].influences.findIndex(
@@ -64,7 +61,6 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
   }
 
   function TaxAction(players: Array<IPlayer>): Array<IPlayer> {
-    const performer = getPlayerById(gameStateContext.performerId);
     if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
 
     const newPlayers = players.map((p) => ({
@@ -82,7 +78,6 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
   }
 
   function AidAction(players: Array<IPlayer>): Array<IPlayer> {
-    const performer = getPlayerById(gameStateContext.performerId);
     if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
 
     const newPlayers = players.map((p) => ({
@@ -100,10 +95,7 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
   }
 
   function StealAction(players: Array<IPlayer>): Array<IPlayer> {
-    const currentPlayer = getPlayerById(gameStateContext.playerTurnId);
-    if (!currentPlayer) throw new PlayerNotFoundError(gameStateContext.playerTurnId);
-
-    const victim = getPlayerById(gameStateContext.victimId);
+    if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
     if (!victim) throw new PlayerNotFoundError(gameStateContext.victimId);
 
     const newPlayers = players.map((p) => ({
@@ -112,9 +104,9 @@ export default function usePlayerActions(gameStateContext: IGameStateMachineCont
     }));
 
     // performer gains 2 coins
-    newPlayers[currentPlayer.index] = {
-      ...newPlayers[currentPlayer.index],
-      coins: newPlayers[currentPlayer.index].coins + 2,
+    newPlayers[performer.index] = {
+      ...newPlayers[performer.index],
+      coins: newPlayers[performer.index].coins + 2,
     };
 
     // victim loses 2 coins
