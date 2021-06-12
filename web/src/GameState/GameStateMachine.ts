@@ -92,7 +92,18 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "idle",
         },
-        COMPLETE: "perform_action",
+        COMPLETE: {
+          actions: assign((context) => ({
+            ...context,
+            blockSuccessful: undefined,
+            blockerId: "",
+            blockingInfluence: undefined,
+            challengeFailed: undefined,
+            challengerId: "",
+            killedInfluence: undefined,
+          })),
+          target: "perform_action",
+        },
         LOSE_INFLUENCE: {
           actions: assign((_, event) => ({
             challengeFailed: event.challengeFailed,
@@ -182,6 +193,11 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
             playerTurnId: (_, event) => event.nextPlayerTurnId,
           }),
           target: "idle",
+        },
+        PASS: {
+          actions: assign({
+            killedInfluence: (_, event) => event.killedInfluence,
+          }),
         },
       },
     },

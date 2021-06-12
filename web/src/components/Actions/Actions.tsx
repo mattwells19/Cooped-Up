@@ -50,6 +50,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
         <ActionButtons
           onAction={(action: InfluenceActions) => {
             switch(action) {
+              case InfluenceActions.Assassinate:
               case InfluenceActions.Coup:
               case InfluenceActions.Steal:
                 setPlayerSelectableAction(action);

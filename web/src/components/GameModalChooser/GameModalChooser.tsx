@@ -16,6 +16,7 @@ const GameModalChooser: React.FC = () => {
     handleGameEvent,
     handleActionResponse,
     blockingInfluence,
+    killedInfluence,
   } = useGameState();
 
   // This ref is used to display the winning player if they happen to leave the game
@@ -61,6 +62,7 @@ const GameModalChooser: React.FC = () => {
           blockDetails={{ blocker, blockingInfluence }}
           handleGameEvent={handleGameEvent}
           handleActionResponse={handleActionResponse}
+          killedInfluence={killedInfluence}
         />
       );
     }

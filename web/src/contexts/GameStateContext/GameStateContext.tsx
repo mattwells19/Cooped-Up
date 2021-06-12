@@ -125,10 +125,6 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
         }
       },
     );
-
-    if (players.every((p) => p.actionResponse && p.actionResponse.type === "PASS")) {
-      sendGameStateEvent("PASS");
-    }
   }, [players]);
 
   // put socket listeners in useEffect so it only registers on render

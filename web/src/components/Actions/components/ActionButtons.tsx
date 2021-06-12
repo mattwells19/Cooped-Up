@@ -50,7 +50,11 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
       >
         Steal
       </WrappedButton>
-      <WrappedButton colorScheme={InfluenceDetails["Assassin"].colorScheme} disabled={coinCount >= 10}>
+      <WrappedButton
+        action={Actions.Assassinate}
+        colorScheme={InfluenceDetails["Assassin"].colorScheme}
+        disabled={coinCount >= 10 || coinCount < 3}
+      >
         Assassinate
       </WrappedButton>
       <WrappedButton colorScheme={InfluenceDetails["Ambassador"].colorScheme} disabled={coinCount >= 10}>
