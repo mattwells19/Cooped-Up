@@ -13,7 +13,7 @@ export type ISendGameStateUpdate = (
 export interface IGameStateRoles {
   blocker: IPlayer | undefined;
   challenger: IPlayer | undefined;
-  currentPlayerTurn: IPlayer;
+  currentPlayerTurn: IPlayer | undefined;
   performer: IPlayer | undefined;
   victim: IPlayer | undefined;
   winningPlayer: IPlayer | undefined;

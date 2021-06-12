@@ -19,6 +19,7 @@ export default function useProcessBlock(
 
       if (gameStateContext.blockSuccessful) {
         if (!performer) throw new Error("No performer found when processing successful block.");
+        if (!currentPlayerTurn) throw new Error("No one's turn when processing successful block.");
 
         actionToast({
           blockerName: blocker.name,

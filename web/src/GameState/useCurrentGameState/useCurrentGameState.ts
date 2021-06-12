@@ -24,14 +24,7 @@ export default function useCurrentGameState(): [ICurrentGameState, ISendGameStat
   const gameStateRoles: IGameStateRoles = {
     blocker,
     challenger,
-    currentPlayerTurn: currentPlayerTurn ?? {
-      actionResponse: null,
-      coins: 0,
-      id: "",
-      index: -1,
-      influences: [],
-      name: "DefaultEmptyPlayer",
-    },
+    currentPlayerTurn,
     performer,
     victim,
     winningPlayer,

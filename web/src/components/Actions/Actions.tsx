@@ -10,6 +10,9 @@ interface IActionsProps {
 
 const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
   const { handleGameEvent, currentPlayer, currentPlayerTurn } = useGameState();
+
+  if (!currentPlayerTurn) throw new Error("No player turn when rendering Actions.");
+
   const isTurn = currentPlayer.id.localeCompare(currentPlayerTurn.id) === 0;
   const [playerSelectableAction, setPlayerSelectableAction] = React.useState<InfluenceActions | null>(null);
 
@@ -44,7 +47,27 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
         {getActionsText()}
       </Text>
       {!playerSelectableAction && (
-        <ActionButtons handleShowPlayerList={(action) => setPlayerSelectableAction(action)} {...commonStyles} />
+        <ActionButtons
+          onAction={(action: InfluenceActions) => {
+            switch(action) {
+              case InfluenceActions.Coup:
+              case InfluenceActions.Steal:
+                setPlayerSelectableAction(action);
+                break;
+              default:
+                handleGameEvent({
+                  event: "ACTION",
+                  eventPayload: {
+                    action,
+                    performerId: currentPlayerTurn.id,
+                  },
+                });
+            }
+          }}
+          coinCount={currentPlayer.coins}
+          isTurn={currentPlayer.id.localeCompare(currentPlayerTurn.id) === 0}
+          {...commonStyles}
+        />
       )}
       {playerSelectableAction && (
         <PlayerSelect

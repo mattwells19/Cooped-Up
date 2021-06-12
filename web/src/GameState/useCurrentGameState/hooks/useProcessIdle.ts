@@ -16,6 +16,8 @@ export default function useProcessIdle(
         prev.map((player) => (player.influences.length > 0 ? { ...player, influences: [] } : player)),
       );
     } else if (currentGameState.matches("idle")) {
+      if (!currentPlayerTurn) throw new Error("No player turn was set while idling.");
+
       // once the game starts influences aren't distributed yet so this would run indefinitely
       if (currentPlayerTurn.influences.length > 0) {
         const playersStillAlive = players.filter((player) => player.influences.some((influence) => !influence.isDead));
