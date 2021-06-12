@@ -5,13 +5,13 @@ import { AmbassadorImg, AssassinImg, CaptainImg, ContessaImg, DukeImg } from "@i
 export interface IInfluenceDetails {
   img: string;
   action: Actions | null;
-  color: string;
+  color: ThemeTypings["colors"];
   colorScheme: ThemeTypings["colorSchemes"];
 }
 
 export const InfluenceDetails: Record<Influence, IInfluenceDetails> = {
   Ambassador: { action: Actions.Exchange, color: "green.300", colorScheme: "green", img: AmbassadorImg },
-  Assassin: { action: Actions.Assassinate, color: "green.300", colorScheme: "green", img: AssassinImg },
+  Assassin: { action: Actions.Assassinate, color: "gray.300", colorScheme: "gray", img: AssassinImg },
   Captain: { action: Actions.Steal, color: "blue.300", colorScheme: "blue", img: CaptainImg },
   Contessa: { action: null, color: "orange.300", colorScheme: "orange", img: ContessaImg },
   Duke: { action: Actions.Tax, color: "purple.300", colorScheme: "purple", img: DukeImg },

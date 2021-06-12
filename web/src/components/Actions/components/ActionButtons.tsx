@@ -1,41 +1,31 @@
 import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react";
 import * as React from "react";
-import { useGameState, Actions } from "@contexts/GameStateContext";
-import { usePlayers } from "@contexts/PlayersContext";
-import PlayerNotFoundError from "@utils/PlayerNotFoundError";
+import { Actions } from "@contexts/GameStateContext";
+import { InfluenceDetails } from "@utils/InfluenceUtils";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
-  actionPayload?: { action: Actions; victimId: string | null };
+  action?: Actions;
 }
 
 interface IActionButtonsProps extends WrapProps {
-  handleShowPlayerList: (action: Actions) => void;
+  onAction: (action: Actions) => void;
+  isTurn: boolean;
+  coinCount: number;
 }
 
-const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ...props }) => {
-  const { handleGameEvent, currentPlayerId, turn } = useGameState();
-  const { getPlayerById } = usePlayers();
-
-  const currentPlayer = getPlayerById(currentPlayerId)?.player;
-  if (!currentPlayer) throw new PlayerNotFoundError(currentPlayerId);
-
-  const isTurn = currentPlayerId.localeCompare(turn) === 0;
-
-  const WrappedButton: React.FC<IWrappedButtonProps> = ({ actionPayload, children, disabled, ...buttonProps }) => (
+const ActionButtons: React.FC<IActionButtonsProps> = ({
+  coinCount,
+  onAction,
+  isTurn,
+  ...props
+}) => {
+  const WrappedButton: React.FC<IWrappedButtonProps> = ({ action, children, disabled, ...buttonProps }) => (
     <WrapItem>
       <Button
         // every button will eventually have an actionPayload or onClick.
         // this is temporary to prevent a tester from crashing the app.
-        disabled={!isTurn || (!actionPayload && !buttonProps.onClick) || disabled}
-        onClick={() =>
-          handleGameEvent({
-            event: "ACTION",
-            eventPayload: {
-              ...actionPayload,
-              performerId: currentPlayerId,
-            },
-          })
-        }
+        disabled={!isTurn || !action || disabled}
+        onClick={() => action ? onAction(action) : null}
         width="130px"
         {...buttonProps}
       >
@@ -47,54 +37,43 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({ handleShowPlayerList, ..
   return (
     <Wrap align="center" justify="space-evenly" padding="3" {...props}>
       <WrappedButton
-        actionPayload={{
-          action: Actions.Tax,
-          victimId: null,
-        }}
-        colorScheme="purple"
-        disabled={currentPlayer.coins >= 10}
+        action={Actions.Tax}
+        colorScheme={InfluenceDetails["Duke"].colorScheme}
+        disabled={coinCount >= 10}
       >
         Collect Tax
       </WrappedButton>
       <WrappedButton
-        onClick={() => handleShowPlayerList(Actions.Steal)}
-        colorScheme="blue"
-        disabled={currentPlayer.coins >= 10}
+        action={Actions.Steal}
+        colorScheme={InfluenceDetails["Captain"].colorScheme}
+        disabled={coinCount >= 10}
       >
         Steal
       </WrappedButton>
-      <WrappedButton colorScheme="gray" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton colorScheme={InfluenceDetails["Assassin"].colorScheme} disabled={coinCount >= 10}>
         Assassinate
       </WrappedButton>
-      <WrappedButton colorScheme="green" disabled={currentPlayer.coins >= 10}>
+      <WrappedButton colorScheme={InfluenceDetails["Ambassador"].colorScheme} disabled={coinCount >= 10}>
         Exchange
       </WrappedButton>
       <WrappedButton
-        actionPayload={{
-          action: Actions.Income,
-          victimId: null,
-        }}
-        disabled={currentPlayer.coins >= 10}
+        action={Actions.Income}
+        disabled={coinCount >= 10}
         variant="outline"
       >
         Income
       </WrappedButton>
       <WrappedButton
-        actionPayload={{
-          action: Actions.Aid,
-          victimId: null,
-        }}
+        action={Actions.Aid}
         variant="outline"
-        disabled={currentPlayer.coins >= 10}
+        disabled={coinCount >= 10}
       >
         Foreign Aid
       </WrappedButton>
       <WrappedButton
-        onClick={() => {
-          if (currentPlayer.coins >= 7) handleShowPlayerList(Actions.Coup);
-        }}
+        action={coinCount >= 7 ? Actions.Coup : undefined}
         colorScheme="red"
-        disabled={currentPlayer.coins < 7}
+        disabled={coinCount < 7}
       >
         Coup
       </WrappedButton>

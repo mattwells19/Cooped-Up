@@ -15,14 +15,15 @@ import { usePlayers } from "@contexts/PlayersContext";
 import { useDeck } from "@contexts/DeckContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
 import get from "@utils/get";
+import { Box, Spinner } from "@chakra-ui/react";
 
-const GameStateContext = React.createContext<IGameStateContext | undefined>(undefined);
+const GameStateContext = React.createContext<IGameStateContext | null | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
 
 export const GameStateContextProvider: React.FC = ({ children }) => {
   const { players, setPlayers, getPlayerById } = usePlayers();
   const { setDeck } = useDeck();
-  const [currentGameState, sendGameStateEvent] = useCurrentGameState();
+  const [currentGameState, sendGameStateEvent, gameStateRoles] = useCurrentGameState();
   const { roomCode } = useParams<{ roomCode: string }>();
 
   const socket = React.useMemo(
@@ -38,21 +39,23 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
     [roomCode],
   );
 
-  function handleGameStateUpdate(newGameState: IGameState) {
+  const currentPlayer = React.useMemo<IPlayer | undefined>(() => getPlayerById(socket.id), [socket.id, getPlayerById]);
+
+  const handleGameStateUpdate = React.useCallback((newGameState: IGameState) => {
     sendGameStateEvent(newGameState.event, newGameState.eventPayload);
     if (newGameState.players) setPlayers(newGameState.players);
     if (newGameState.deck) setDeck(newGameState.deck);
-  }
+  }, [sendGameStateEvent, setPlayers, setDeck]);
 
-  function handleGameEvent(newGameState: IGameState) {
+  const handleGameEvent = React.useCallback((newGameState: IGameState) => {
     socket.emit(OutgoingSocketActions.UpdateGameState, newGameState);
-  }
+  }, [socket]);
 
-  function handleActionResponse(response: IActionResponse) {
+  const handleActionResponse = React.useCallback((response: IActionResponse) => {
     socket.emit(OutgoingSocketActions.ProposeActionResponse, response);
-  }
+  }, [socket]);
 
-  const handleStartGame = async () => {
+  const handleStartGame = React.useCallback(async () => {
     const deck = await get<Array<Influence>>(`deck?roomCode=${roomCode}`);
 
     const playerHands: Array<IPlayer> = players.map((player) => ({
@@ -68,7 +71,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
       eventPayload: { playerTurnId: playerHands[0].id },
       players: playerHands,
     });
-  };
+  }, [players, handleGameEvent]);
 
   React.useEffect(() => {
     socket.off(IncomingSocketActions.PlayersChanged);
@@ -80,10 +83,11 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
         }
       } else {
         setPlayers(
-          playersInRoom.map((player) => ({
+          playersInRoom.map((player, index) => ({
             actionResponse: null,
             coins: 2,
             id: player.id,
+            index,
             influences: [],
             name: player.name,
           })),
@@ -133,10 +137,11 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
 
     socket.on(IncomingSocketActions.PlayersChanged, (playersInRoom: Array<Pick<IPlayer, "id" | "name">>) => {
       setPlayers(
-        playersInRoom.map((player) => ({
+        playersInRoom.map((player, index) => ({
           actionResponse: null,
           coins: 2,
           id: player.id,
+          index,
           influences: [],
           name: player.name,
         })),
@@ -154,16 +159,25 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
 
   return (
     <GameStateContext.Provider
-      value={{
-        currentPlayerId: socket.id,
+      value={currentPlayer ? {
+        action: currentGameState.context.action,
+        blockSuccessful: currentGameState.context.blockSuccessful,
+        blockingInfluence: currentGameState.context.blockingInfluence,
+        challengeFailed: currentGameState.context.challengeFailed,
+        currentPlayer,
+        gameStarted: currentGameState.context.gameStarted,
         handleActionResponse,
         handleGameEvent,
         handleStartGame,
-        turn: currentGameState.context.playerTurnId,
-        ...currentGameState.context,
-      }}
+        killedInfluence: currentGameState.context.killedInfluence,
+        ...gameStateRoles,
+      } : null}
     >
-      {children}
+      {currentPlayer ? children : (
+        <Box display="grid" placeItems="center" width="full" height="100vh">
+          <Spinner thickness="6px" size="xl" />
+        </Box>
+      )}
     </GameStateContext.Provider>
   );
 };

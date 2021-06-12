@@ -50,7 +50,7 @@ module.exports = {
     /* ... */
   },
   devOptions: {
-    /* ... */
+    open: "none",
   },
   buildOptions: {
     clean: false, // prevents the build directory from being deleted between builds

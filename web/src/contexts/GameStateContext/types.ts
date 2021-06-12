@@ -1,5 +1,6 @@
 import type { SingleOrArray, SCXML, EventData, Event } from "xstate";
-import type { GameStateMachineEvent, IGameStateMachineContext } from "@GameState/GameStateMachine";
+import type { GameStateMachineEvent, IGameStateMachineContextMetadata } from "@GameState/GameStateMachine";
+import type { IGameStateRoles } from "@GameState/types";
 
 export type Influence = "Duke" | "Captain" | "Ambassador" | "Contessa" | "Assassin";
 
@@ -29,6 +30,7 @@ export interface IPlayerInfluence {
 export type IActionResponse = { type: "PASS" } | { type: "CHALLENGE" } | { type: "BLOCK"; influence: Influence };
 
 export interface IPlayer {
+  index: number;
   id: string;
   name: string;
   coins: number;
@@ -36,9 +38,8 @@ export interface IPlayer {
   actionResponse: IActionResponse | null;
 }
 
-export interface IGameStateContext extends IGameStateMachineContext {
-  currentPlayerId: string;
-  turn: string;
+export interface IGameStateContext extends IGameStateRoles, IGameStateMachineContextMetadata {
+  currentPlayer: IPlayer;
   handleGameEvent: (newGameState: IGameState) => void;
   handleActionResponse: (response: IActionResponse) => void;
   handleStartGame: () => Promise<void>;
