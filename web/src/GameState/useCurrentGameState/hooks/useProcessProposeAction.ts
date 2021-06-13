@@ -9,14 +9,7 @@ export default function useProcessProposeAction(
   { performer }: IGameStateRoles,
 ): void {
   const gameStateContext = currentGameState.context;
-  const { players, setPlayers, resetAllActionResponse } = usePlayers();
-
-  useEffect(() => {
-    if (currentGameState.matches("propose_action") && players.every((p) => p.actionResponse?.type === "PASS")) {
-      resetAllActionResponse();
-      sendGameStateEvent("PASS");
-    }
-  }, [players]);
+  const { setPlayers } = usePlayers();
 
   useEffect(() => {
     if (currentGameState.matches("propose_action")) {

@@ -10,15 +10,8 @@ export default function useProcessBlock(
   { blocker, performer, currentPlayerTurn }: IGameStateRoles,
 ): void {
   const gameStateContext = currentGameState.context;
-  const { players, setPlayers, getNextPlayerTurnId, resetAllActionResponse } = usePlayers();
+  const { setPlayers, getNextPlayerTurnId, resetAllActionResponse } = usePlayers();
   const actionToast = useActionToast();
-
-  useEffect(() => {
-    if (currentGameState.matches("blocked") && players.every((p) => p.actionResponse?.type === "PASS")) {
-      resetAllActionResponse();
-      sendGameStateEvent("PASS");
-    }
-  }, [players]);
 
   useEffect(() => {
     if (currentGameState.matches("blocked")) {

@@ -21,7 +21,7 @@ const GameStateContext = React.createContext<IGameStateContext | null | undefine
 GameStateContext.displayName = "GameStateContext";
 
 export const GameStateContextProvider: React.FC = ({ children }) => {
-  const { players, setPlayers, getPlayerById } = usePlayers();
+  const { players, setPlayers, getPlayerById, resetAllActionResponse } = usePlayers();
   const { setDeck } = useDeck();
   const [currentGameState, sendGameStateEvent, gameStateRoles] = useCurrentGameState();
   const { roomCode } = useParams<{ roomCode: string }>();
@@ -125,6 +125,11 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
         }
       },
     );
+
+    if (players.every((p) => p.actionResponse && p.actionResponse.type === "PASS")) {
+      resetAllActionResponse();
+      sendGameStateEvent("PASS");
+    }
   }, [players]);
 
   // put socket listeners in useEffect so it only registers on render

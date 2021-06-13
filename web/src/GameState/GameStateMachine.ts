@@ -79,10 +79,10 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           target: "idle",
         },
         PASS: {
-          actions: assign({
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            blockSuccessful: (_, _event) => true,
-          }),
+          actions: assign((context) => ({
+            ...context,
+            blockSuccessful: true,
+          })),
         },
       },
     },
@@ -142,8 +142,8 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     game_over: {
       on: {
         PLAY_AGAIN: {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          actions: assign((_, event) => ({
+          actions: assign((context) => ({
+            ...context,
             action: null,
             blockSuccessful: undefined,
             blockerId: "",
@@ -237,12 +237,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "challenged",
         },
-        PASS: {
-          actions: assign({
-            killedInfluence: (_, event) => event.killedInfluence,
-          }),
-          target: "perform_action",
-        },
+        PASS: "perform_action",
       },
     },
   },
