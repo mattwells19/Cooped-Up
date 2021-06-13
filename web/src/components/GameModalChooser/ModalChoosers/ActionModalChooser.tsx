@@ -82,11 +82,7 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   }
 
   else if (action !== Actions.Coup && action !== Actions.Income) {
-    return currentPlayer.actionResponse && currentPlayer.actionResponse.type === "PASS" ? (
-      // player decided not to challenge
-      <WaitingForActionModal messaging={["You have chosen to pass.", "Waiting for all players to pass/challenge..."]} />
-    ) : (
-      // player given the option to challenge
+    return (
       <ActionProposedModal
         action={action}
         blockDetails={{ blocker, blockingInfluence }}
@@ -94,6 +90,7 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
         performer={performer}
         victim={victim}
         handleClose={handleActionResponse}
+        hasPassed={currentPlayer.actionResponse?.type === "PASS"}
       />
     );
   }

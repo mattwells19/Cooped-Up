@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, ButtonGroup, Text, VStack, Image, Box, Tooltip } from "@chakra-ui/react";
+import { Button, ButtonGroup, Text, VStack, Image, Box, Tooltip, Divider } from "@chakra-ui/react";
 import type { Actions, IActionResponse, Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { getInfluenceFromAction, InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
@@ -12,6 +12,7 @@ interface IActionProposedModal {
   performer: IPlayer;
   victim?: IPlayer;
   handleClose: (response: IActionResponse) => void;
+  hasPassed: boolean;
 }
 
 const ActionProposedModal: React.FC<IActionProposedModal> = ({
@@ -20,7 +21,8 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
   currentPlayer,
   performer,
   victim,
-  handleClose
+  handleClose,
+  hasPassed,
 }) => {
   const influence = getInfluenceFromAction(action);
   const { blockable, challengable } = ActionDetails[action];
@@ -104,31 +106,43 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
               ))}
             </>
           )}
-          <ButtonGroup paddingTop="4">
-            {(challengable || blocker) && (
-              <Button onClick={() => handleClose({ type: "CHALLENGE" })} width="36">
-                Challenge
+          <Divider />
+          {hasPassed ? (
+            <>
+              <Text fontSize="large" textAlign="center">
+                You have chosen to pass.
+              </Text>
+              <Text fontSize="large" textAlign="center">
+                Waiting for all players to pass/challenge...
+              </Text>
+            </>
+          ) : (
+            <ButtonGroup paddingTop="4">
+              {(challengable || blocker) && (
+                <Button onClick={() => handleClose({ type: "CHALLENGE" })} width="36">
+                  Challenge
+                </Button>
+              )}
+              {(!blocker && (!victim || currentPlayer.id === victim.id)) && blockable && (
+                <ButtonGroup isAttached width="36">
+                  {blockable.map((inf) => (
+                    <Tooltip hasArrow label={`Block using ${inf}.`} key={inf}>
+                      <Button
+                        width="full"
+                        onClick={() => handleClose({ influence: inf, type: "BLOCK" })}
+                        colorScheme={InfluenceDetails[inf].colorScheme}
+                      >
+                        Block
+                      </Button>
+                    </Tooltip>
+                  ))}
+                </ButtonGroup>
+              )}
+              <Button onClick={() => handleClose({ type: "PASS" })} variant="outline" width="36">
+                Pass
               </Button>
-            )}
-            {(!blocker && (!victim || currentPlayer.id === victim.id)) && blockable && (
-              <ButtonGroup isAttached width="36">
-                {blockable.map((inf) => (
-                  <Tooltip hasArrow label={`Block using ${inf}.`} key={inf}>
-                    <Button
-                      width="full"
-                      onClick={() => handleClose({ influence: inf, type: "BLOCK" })}
-                      colorScheme={InfluenceDetails[inf].colorScheme}
-                    >
-                      Block
-                    </Button>
-                  </Tooltip>
-                ))}
-              </ButtonGroup>
-            )}
-            <Button onClick={() => handleClose({ type: "PASS" })} variant="outline" width="36">
-              Pass
-            </Button>
-          </ButtonGroup>
+            </ButtonGroup>
+          )}
         </VStack>
       </BaseModal>
     </>
