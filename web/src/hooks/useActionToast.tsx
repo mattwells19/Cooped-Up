@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Center, CloseButton, Text, useToast, useToken } from "@chakra-ui/react";
-import { AxeIcon, ChallengeIcon, CoinIcon } from "@icons";
+import { AxeIcon, ChallengeIcon, CoinIcon, AssassinIcon } from "@icons";
 import { Actions, Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 
@@ -48,6 +48,7 @@ const ActionToast: React.FC<IActionToastProps> = ({
         {variant === Actions.Block && <CoinIcon width={iconSize} />}
         {/* TODO: Needs Graphic */}
         {variant === Actions.Steal && <CoinIcon width={iconSize} />}
+        {variant === Actions.Assassinate && <AssassinIcon width={iconSize} />}
       </Center>
       <Box fontSize="large">
         {variant === Actions.Income && (
@@ -118,6 +119,23 @@ const ActionToast: React.FC<IActionToastProps> = ({
             {" has stolen coin from "}
             <Text as="span" fontWeight="bold">
               {victimName}
+            </Text>
+            !
+          </Text>
+        )}
+        {variant === Actions.Assassinate && (
+          <Text>
+            <Text as="span" fontWeight="bold">
+              {performerName}
+            </Text>
+            {" has assassinated "}
+            <Text as="span" fontWeight="bold">
+              {victimName}
+            </Text>
+            {" who lost their "}
+            {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+            <Text as="span" fontWeight="bold" color={InfluenceDetails[lostInfluence!].color}>
+              {lostInfluence}
             </Text>
             !
           </Text>

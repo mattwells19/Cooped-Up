@@ -11,9 +11,7 @@ interface IActionsProps {
 const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
   const { handleGameEvent, currentPlayer, currentPlayerTurn } = useGameState();
 
-  if (!currentPlayerTurn) throw new Error("No player turn when rendering Actions.");
-
-  const isTurn = currentPlayer.id.localeCompare(currentPlayerTurn.id) === 0;
+  const isTurn = currentPlayer.id.localeCompare(currentPlayerTurn?.id ?? "") === 0;
   const [playerSelectableAction, setPlayerSelectableAction] = React.useState<InfluenceActions | null>(null);
 
   const getActionsText = () => {
@@ -50,6 +48,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
         <ActionButtons
           onAction={(action: InfluenceActions) => {
             switch(action) {
+              case InfluenceActions.Assassinate:
               case InfluenceActions.Coup:
               case InfluenceActions.Steal:
                 setPlayerSelectableAction(action);
@@ -59,13 +58,13 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
                   event: "ACTION",
                   eventPayload: {
                     action,
-                    performerId: currentPlayerTurn.id,
+                    performerId: currentPlayerTurn?.id,
                   },
                 });
             }
           }}
           coinCount={currentPlayer.coins}
-          isTurn={currentPlayer.id.localeCompare(currentPlayerTurn.id) === 0}
+          isTurn={isTurn}
           {...commonStyles}
         />
       )}
@@ -76,7 +75,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
               event: "ACTION",
               eventPayload: {
                 action: playerSelectableAction,
-                performerId: currentPlayerTurn.id,
+                performerId: currentPlayerTurn?.id,
                 victimId,
               },
             });

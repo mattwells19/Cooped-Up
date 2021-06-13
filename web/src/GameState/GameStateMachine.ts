@@ -34,15 +34,17 @@ export type GameStateMachineEvent =
   | { type: "PLAY_AGAIN" }
   | { type: "START"; playerTurnId: string };
 
-export type GameStateMachineState =
-  | { value: "blocked"; context: IGameStateMachineContext }
-  | { value: "challenged"; context: IGameStateMachineContext }
-  | { value: "challenge_block"; context: IGameStateMachineContext }
-  | { value: "game_over"; context: IGameStateMachineContext }
-  | { value: "idle"; context: IGameStateMachineContext }
-  | { value: "pregame"; context: IGameStateMachineContext }
-  | { value: "perform_action"; context: IGameStateMachineContext }
-  | { value: "propose_action"; context: IGameStateMachineContext };
+export type GameStateMachineStateOptions =
+  | "blocked"
+  | "challenged"
+  | "challenge_block"
+  | "game_over"
+  | "idle"
+  | "pregame"
+  | "perform_action"
+  | "propose_action";
+
+export type GameStateMachineState = { value: GameStateMachineStateOptions; context: IGameStateMachineContext };
 
 const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
   context: {
@@ -77,10 +79,10 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           target: "idle",
         },
         PASS: {
-          actions: assign({
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            blockSuccessful: (_, _event) => true,
-          }),
+          actions: assign((context) => ({
+            ...context,
+            blockSuccessful: true,
+          })),
         },
       },
     },
@@ -92,7 +94,18 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "idle",
         },
-        COMPLETE: "perform_action",
+        COMPLETE: {
+          actions: assign((context) => ({
+            ...context,
+            blockSuccessful: undefined,
+            blockerId: "",
+            blockingInfluence: undefined,
+            challengeFailed: undefined,
+            challengerId: "",
+            killedInfluence: undefined,
+          })),
+          target: "perform_action",
+        },
         LOSE_INFLUENCE: {
           actions: assign((_, event) => ({
             challengeFailed: event.challengeFailed,
@@ -109,7 +122,15 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "idle",
         },
-        FAILED: "perform_action",
+        FAILED: {
+          actions: assign((context) => ({
+            ...context,
+            challengeFailed: undefined,
+            challengerId: "",
+            killedInfluence: undefined,
+          })),
+          target: "perform_action",
+        },
         LOSE_INFLUENCE: {
           actions: assign((_, event) => ({
             challengeFailed: event.challengeFailed,
@@ -121,8 +142,8 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     game_over: {
       on: {
         PLAY_AGAIN: {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          actions: assign((_, event) => ({
+          actions: assign((context) => ({
+            ...context,
             action: null,
             blockSuccessful: undefined,
             blockerId: "",
@@ -183,6 +204,11 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "idle",
         },
+        PASS: {
+          actions: assign({
+            killedInfluence: (_, event) => event.killedInfluence,
+          }),
+        },
       },
     },
     pregame: {
@@ -211,12 +237,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "challenged",
         },
-        PASS: {
-          actions: assign({
-            killedInfluence: (_, event) => event.killedInfluence,
-          }),
-          target: "perform_action",
-        },
+        PASS: "perform_action",
       },
     },
   },

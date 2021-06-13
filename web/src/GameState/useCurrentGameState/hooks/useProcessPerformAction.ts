@@ -14,29 +14,36 @@ export default function useProcessPerformAction(
   const gameStateContext = currentGameState.context;
   const { setPlayers, getNextPlayerTurnId } = usePlayers();
   const actionToast = useActionToast();
-  const { performAidAction, performCoupAction, performIncomeAction, performStealAction, performTaxAction } =
-    usePlayerActions(gameStateContext, performer, victim);
+  const {
+    performAidAction,
+    performCoupAction,
+    performIncomeAction,
+    performStealAction,
+    performTaxAction,
+    performAssassinateAction,
+  } = usePlayerActions(gameStateContext, performer, victim);
 
   useEffect(() => {
     if (!currentGameState.matches("perform_action")) return;
 
-    const processAction = (): IActionToastProps => {
+    const processAction = (): IActionToastProps | undefined => {
       if (!performer) throw new Error(`No performer found when performing ${gameStateContext.action}.`);
 
       switch (gameStateContext.action) {
         case Actions.Coup: {
-          if (!gameStateContext.killedInfluence) throw new Error("No influence was selected to eliminate.");
+          if (gameStateContext.killedInfluence) {
+            setPlayers((prevPlayers) => performCoupAction(prevPlayers));
 
-          setPlayers((prevPlayers) => performCoupAction(prevPlayers));
+            if (!victim) throw new Error("No victim found when performing Coup.");
 
-          if (!victim) throw new Error("No victim found when performing Coup.");
-
-          return {
-            lostInfluence: gameStateContext.killedInfluence,
-            performerName: performer.name,
-            variant: Actions.Coup,
-            victimName: victim.name,
-          };
+            return {
+              lostInfluence: gameStateContext.killedInfluence,
+              performerName: performer.name,
+              variant: Actions.Coup,
+              victimName: victim.name,
+            };
+          }
+          break;
         }
         case Actions.Income: {
           setPlayers((prevPlayers) => performIncomeAction(prevPlayers));
@@ -73,15 +80,33 @@ export default function useProcessPerformAction(
             victimName: victim.name,
           };
         }
+        case Actions.Assassinate: {
+          if (gameStateContext.killedInfluence) {
+            setPlayers((prevPlayers) => performAssassinateAction(prevPlayers));
+
+            if (!victim) throw new Error("No victim found when performing assassination.");
+
+            return {
+              lostInfluence: gameStateContext.killedInfluence,
+              performerName: performer.name,
+              variant: Actions.Assassinate,
+              victimName: victim.name,
+            };
+          }
+          break;
+        }
         default:
           throw new Error(`The action ${gameStateContext.action} either does not exist or is not implemented yet.`);
       }
     };
 
     const actionToastProps = processAction();
-    actionToast(actionToastProps);
-    sendGameStateEvent("COMPLETE", {
-      nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
-    });
-  }, [currentGameState.value]);
+
+    if (actionToastProps) {
+      actionToast(actionToastProps);
+      sendGameStateEvent("COMPLETE", {
+        nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
+      });
+    }
+  }, [currentGameState.value, gameStateContext.killedInfluence]);
 }
