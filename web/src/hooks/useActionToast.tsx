@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Center, CloseButton, Text, useToast, useToken } from "@chakra-ui/react";
-import { AxeIcon, ChallengeIcon, CoinIcon } from "@icons";
+import { AxeIcon, ChallengeIcon, CoinIcon, AssassinIcon } from "@icons";
 import { Actions, Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 
@@ -48,8 +48,7 @@ const ActionToast: React.FC<IActionToastProps> = ({
         {variant === Actions.Block && <CoinIcon width={iconSize} />}
         {/* TODO: Needs Graphic */}
         {variant === Actions.Steal && <CoinIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Assassinate && <CoinIcon width={iconSize} />}
+        {variant === Actions.Assassinate && <AssassinIcon width={iconSize} />}
       </Center>
       <Box fontSize="large">
         {variant === Actions.Income && (
