@@ -8,6 +8,7 @@ const GameModalChooser: React.FC = () => {
   const {
     action,
     blocker,
+    currentStateMatches,
     challenger,
     currentPlayer,
     performer,
@@ -28,7 +29,7 @@ const GameModalChooser: React.FC = () => {
     }
   }, [winningPlayer]);
 
-  if (winningPlayer || winningPlayerRef.current) {
+  if (currentStateMatches("game_over") && (winningPlayer || winningPlayerRef.current)) {
     return (
       <GameOverModal
         onPlayAgain={() => handleGameEvent({
@@ -41,7 +42,7 @@ const GameModalChooser: React.FC = () => {
       />
     );
   } else if (performer && action) {
-    if (challenger) {
+    if ((currentStateMatches("challenged") || currentStateMatches("challenge_block")) && challenger) {
       return (
         <ChallengerModalChooser
           action={action}
@@ -56,13 +57,14 @@ const GameModalChooser: React.FC = () => {
       return (
         <ActionModalChooser
           action={action}
+          blockDetails={{ blocker, blockingInfluence }}
           currentPlayer={currentPlayer}
+          currentStateMatches={currentStateMatches}
+          handleActionResponse={handleActionResponse}
+          handleGameEvent={handleGameEvent}
+          killedInfluence={killedInfluence}
           performer={performer}
           victim={victim}
-          blockDetails={{ blocker, blockingInfluence }}
-          handleGameEvent={handleGameEvent}
-          handleActionResponse={handleActionResponse}
-          killedInfluence={killedInfluence}
         />
       );
     }

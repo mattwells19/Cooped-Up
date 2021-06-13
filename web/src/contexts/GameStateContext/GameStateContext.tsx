@@ -161,6 +161,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
         blockingInfluence: currentGameState.context.blockingInfluence,
         challengeFailed: currentGameState.context.challengeFailed,
         currentPlayer,
+        currentStateMatches: currentGameState.matches,
         gameStarted: currentGameState.context.gameStarted,
         handleActionResponse,
         handleGameEvent,

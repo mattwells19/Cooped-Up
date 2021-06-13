@@ -47,7 +47,11 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
               <Text as="span" fontSize="large" fontWeight="bold">
                 {performer.name}
               </Text>
-              {` is trying to ${action}.`}
+              {` is trying to ${action}`}
+              {victim && <Text as="span" fontSize="large" fontWeight="bold">
+                {` ${victim.name}`}
+              </Text>}
+              .
             </Text>
           )}
           {blocker && blockingInfluence && (

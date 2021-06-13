@@ -31,18 +31,19 @@ export default function useProcessPerformAction(
 
       switch (gameStateContext.action) {
         case Actions.Coup: {
-          if (!gameStateContext.killedInfluence) throw new Error("No influence was selected to eliminate.");
+          if (gameStateContext.killedInfluence) {
+            setPlayers((prevPlayers) => performCoupAction(prevPlayers));
 
-          setPlayers((prevPlayers) => performCoupAction(prevPlayers));
+            if (!victim) throw new Error("No victim found when performing Coup.");
 
-          if (!victim) throw new Error("No victim found when performing Coup.");
-
-          return {
-            lostInfluence: gameStateContext.killedInfluence,
-            performerName: performer.name,
-            variant: Actions.Coup,
-            victimName: victim.name,
-          };
+            return {
+              lostInfluence: gameStateContext.killedInfluence,
+              performerName: performer.name,
+              variant: Actions.Coup,
+              victimName: victim.name,
+            };
+          }
+          break;
         }
         case Actions.Income: {
           setPlayers((prevPlayers) => performIncomeAction(prevPlayers));
@@ -91,9 +92,8 @@ export default function useProcessPerformAction(
               variant: Actions.Assassinate,
               victimName: victim.name,
             };
-          } else {
-            return undefined;
           }
+          break;
         }
         default:
           throw new Error(`The action ${gameStateContext.action} either does not exist or is not implemented yet.`);
@@ -107,13 +107,6 @@ export default function useProcessPerformAction(
       sendGameStateEvent("COMPLETE", {
         nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
       });
-    } else {
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((prevPlayer) => ({
-          ...prevPlayer,
-          actionResponse: { type: "PASS" },
-        })),
-      );
     }
   }, [currentGameState.value, gameStateContext.killedInfluence]);
 }

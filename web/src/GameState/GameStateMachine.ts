@@ -34,15 +34,17 @@ export type GameStateMachineEvent =
   | { type: "PLAY_AGAIN" }
   | { type: "START"; playerTurnId: string };
 
-export type GameStateMachineState =
-  | { value: "blocked"; context: IGameStateMachineContext }
-  | { value: "challenged"; context: IGameStateMachineContext }
-  | { value: "challenge_block"; context: IGameStateMachineContext }
-  | { value: "game_over"; context: IGameStateMachineContext }
-  | { value: "idle"; context: IGameStateMachineContext }
-  | { value: "pregame"; context: IGameStateMachineContext }
-  | { value: "perform_action"; context: IGameStateMachineContext }
-  | { value: "propose_action"; context: IGameStateMachineContext };
+export type GameStateMachineStateOptions =
+  | "blocked"
+  | "challenged"
+  | "challenge_block"
+  | "game_over"
+  | "idle"
+  | "pregame"
+  | "perform_action"
+  | "propose_action";
+
+export type GameStateMachineState = { value: GameStateMachineStateOptions; context: IGameStateMachineContext };
 
 const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachineEvent, GameStateMachineState>({
   context: {
@@ -120,7 +122,15 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           }),
           target: "idle",
         },
-        FAILED: "perform_action",
+        FAILED: {
+          actions: assign((context) => ({
+            ...context,
+            challengeFailed: undefined,
+            challengerId: "",
+            killedInfluence: undefined,
+          })),
+          target: "perform_action",
+        },
         LOSE_INFLUENCE: {
           actions: assign((_, event) => ({
             challengeFailed: event.challengeFailed,

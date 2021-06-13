@@ -1,5 +1,6 @@
 import { Actions, IActionResponse, IGameState, Influence, IPlayer } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
+import type { GameStateMachineStateOptions } from "@GameState/GameStateMachine";
 import * as React from "react";
 import ActionProposedModal from "../../Modals/ActionProposedModal";
 import LoseInfluenceModal from "../../Modals/LoseInfluenceModal";
@@ -10,6 +11,7 @@ interface IActionModalChooserProps {
   currentPlayer: IPlayer;
   performer: IPlayer;
   victim: IPlayer | undefined;
+  currentStateMatches: (state: GameStateMachineStateOptions) => boolean;
   killedInfluence: Influence | undefined;
   blockDetails: { blocker: IPlayer | undefined, blockingInfluence: Influence | undefined };
   handleGameEvent: (newGameState: IGameState) => void;
@@ -19,6 +21,7 @@ interface IActionModalChooserProps {
 const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   action,
   currentPlayer,
+  currentStateMatches,
   performer,
   victim,
   blockDetails,
@@ -27,17 +30,28 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   handleActionResponse,
 }) => {
   const { blocker, blockingInfluence } = blockDetails;
-  const { players } = usePlayers();
+  const { getNextPlayerTurnId } = usePlayers();
 
-  const isAssassination = () => (
-    players.every((p) => p.actionResponse?.type === "PASS") && action === Actions.Assassinate && !blocker
-  );
+  // Prompt victim to choose an influence to kill
+  if (
+    currentStateMatches("perform_action")
+    && (action === Actions.Coup || action === Actions.Assassinate) 
+    && !killedInfluence && victim
+  ) {
 
-  // Determine which modal to show during a coup.
-  if ((action === Actions.Coup || isAssassination()) && !killedInfluence && victim) {
-
+    // auto-select influence if there's only one left alive
     const victimAliveInfluences = victim.influences.filter((influence) => !influence.isDead);
-    if (victimAliveInfluences.length < 2) {
+
+    // it's possible that a player being assassinated can lost a challenge and lose their last influence before
+    // processing the assassination. If that happens, just complete the action and move on.
+    if (victimAliveInfluences.length === 0) {
+      handleGameEvent({
+        event: "COMPLETE",
+        eventPayload: { nextPlayerTurnId: getNextPlayerTurnId(currentPlayer.id) },
+      });
+
+      return <></>;
+    } else if (victimAliveInfluences.length === 1) {
       handleGameEvent({
         event: "PASS",
         eventPayload: { killedInfluence: victimAliveInfluences[0].type },
@@ -46,7 +60,6 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
       return <></>;
     } else {
       return currentPlayer.id === victim.id ? (
-        // current player being coup'd
         <LoseInfluenceModal
           currentPlayer={currentPlayer}
           handleClose={(influenceToLose) =>
@@ -57,7 +70,6 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
           }
         />
       ) : (
-        // some other player being coup'd
         <WaitingForActionModal
           messaging={[
             `${performer.name} has chosen to ${action} ${victim.name}.`,
@@ -69,8 +81,7 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
 
   }
 
-  // every other action can be blocked/challenged
-  if (action !== Actions.Coup && action !== Actions.Income) {
+  else if (action !== Actions.Coup && action !== Actions.Income) {
     return currentPlayer.actionResponse && currentPlayer.actionResponse.type === "PASS" ? (
       // player decided not to challenge
       <WaitingForActionModal messaging={["You have chosen to pass.", "Waiting for all players to pass/challenge..."]} />
@@ -88,7 +99,7 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   }
 
   // handles any unforseen cases
-  return <></>;
+  else return <></>;
 };
 
 export default ActionModalChooser;

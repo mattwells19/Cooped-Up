@@ -37,7 +37,7 @@ const ChallengerModalChooser: React.FC<IChallengerModalChooserProps> = ({
     );
       
     // auto select the influence if the player has only one influence remaining
-    if (aliveInfluences.length < 2) {
+    if (aliveInfluences.length === 1) {
       setChallengeResult(null);
       handleGameEvent({
         event: "LOSE_INFLUENCE",
