@@ -1,4 +1,4 @@
-import type { IPlayer } from "@contexts/GameStateContext";
+import type { IPlayer, IPlayerInfluence } from "@contexts/GameStateContext";
 import type { State, SingleOrArray, SCXML, EventData, Event } from "xstate";
 import type { GameStateMachineEvent, GameStateMachineState, IGameStateMachineContext } from "./GameStateMachine";
 
@@ -17,4 +17,9 @@ export interface IGameStateRoles {
   performer: IPlayer | undefined;
   victim: IPlayer | undefined;
   winningPlayer: IPlayer | undefined;
+}
+
+export interface IGameStateExchangeDetails {
+  playerHand: Array<IPlayerInfluence>;
+  deck: Array<IPlayerInfluence>;
 }

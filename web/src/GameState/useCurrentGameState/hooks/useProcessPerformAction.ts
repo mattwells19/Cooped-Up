@@ -5,6 +5,7 @@ import type { ICurrentGameState, IGameStateRoles, ISendGameStateUpdate } from ".
 import { usePlayers } from "@contexts/PlayersContext";
 import useActionToast from "@hooks/useActionToast";
 import { useEffect } from "react";
+import { useDeck } from "@contexts/DeckContext";
 
 export default function useProcessPerformAction(
   currentGameState: ICurrentGameState,
@@ -13,6 +14,7 @@ export default function useProcessPerformAction(
 ): void {
   const gameStateContext = currentGameState.context;
   const { setPlayers, getNextPlayerTurnId } = usePlayers();
+  const { setDeck } = useDeck();
   const actionToast = useActionToast();
   const {
     performAidAction,
@@ -21,6 +23,7 @@ export default function useProcessPerformAction(
     performStealAction,
     performTaxAction,
     performAssassinateAction,
+    performExchangeAction,
   } = usePlayerActions(gameStateContext, performer, victim);
 
   useEffect(() => {
@@ -95,6 +98,30 @@ export default function useProcessPerformAction(
           }
           break;
         }
+        case Actions.Exchange: {
+          if (gameStateContext.exchangeDetails) {
+            setPlayers((prevPlayers) => performExchangeAction(prevPlayers));
+
+            setDeck((prevDeck) => {
+              const newDeck = [...prevDeck];
+
+              // remove the top two cards that were shown to the player
+              newDeck.splice(0, 2);
+
+              // add the deck cards to the back of the deck
+              gameStateContext.exchangeDetails?.deck.forEach((playerInfluence) => {
+                newDeck.push(playerInfluence.type);
+              });
+              return newDeck;
+            });
+
+            return {
+              performerName: performer.name,
+              variant: Actions.Exchange,
+            };
+          }
+          break;
+        }
         default:
           throw new Error(`The action ${gameStateContext.action} either does not exist or is not implemented yet.`);
       }
@@ -108,5 +135,5 @@ export default function useProcessPerformAction(
         nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
       });
     }
-  }, [currentGameState.value, gameStateContext.killedInfluence]);
+  }, [currentGameState.value, gameStateContext.killedInfluence, gameStateContext.exchangeDetails]);
 }

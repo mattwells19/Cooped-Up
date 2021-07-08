@@ -4,7 +4,7 @@ import { Actions } from "@contexts/GameStateContext";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
-  action?: Actions;
+  action: Actions;
 }
 
 interface IActionButtonsProps extends WrapProps {
@@ -22,10 +22,8 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
   const WrappedButton: React.FC<IWrappedButtonProps> = ({ action, children, disabled, ...buttonProps }) => (
     <WrapItem>
       <Button
-        // every button will eventually have an actionPayload or onClick.
-        // this is temporary to prevent a tester from crashing the app.
-        disabled={!isTurn || !action || disabled}
-        onClick={() => action ? onAction(action) : null}
+        disabled={!isTurn || disabled}
+        onClick={() => !disabled ? onAction(action) : null}
         width="130px"
         {...buttonProps}
       >
@@ -57,7 +55,11 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
       >
         Assassinate
       </WrappedButton>
-      <WrappedButton colorScheme={InfluenceDetails["Ambassador"].colorScheme} disabled={coinCount >= 10}>
+      <WrappedButton
+        action={Actions.Exchange}
+        colorScheme={InfluenceDetails["Ambassador"].colorScheme}
+        disabled={coinCount >= 10}
+      >
         Exchange
       </WrappedButton>
       <WrappedButton
@@ -75,7 +77,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
         Foreign Aid
       </WrappedButton>
       <WrappedButton
-        action={coinCount >= 7 ? Actions.Coup : undefined}
+        action={Actions.Coup}
         colorScheme="red"
         disabled={coinCount < 7}
       >

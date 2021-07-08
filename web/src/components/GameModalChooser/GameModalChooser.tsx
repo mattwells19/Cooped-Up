@@ -11,6 +11,7 @@ const GameModalChooser: React.FC = () => {
     currentStateMatches,
     challenger,
     currentPlayer,
+    exchangeDetails,
     performer,
     victim,
     winningPlayer,
@@ -60,6 +61,7 @@ const GameModalChooser: React.FC = () => {
           blockDetails={{ blocker, blockingInfluence }}
           currentPlayer={currentPlayer}
           currentStateMatches={currentStateMatches}
+          exchangeDetails={exchangeDetails}
           handleActionResponse={handleActionResponse}
           handleGameEvent={handleGameEvent}
           killedInfluence={killedInfluence}

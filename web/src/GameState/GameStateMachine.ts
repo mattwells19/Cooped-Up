@@ -1,5 +1,6 @@
 import { assign, createMachine } from "xstate";
 import type { Actions, Influence } from "@contexts/GameStateContext";
+import type { IGameStateExchangeDetails } from "./types";
 
 export interface IGameStateMachineContextPlayerIds {
   blockerId: string;
@@ -17,6 +18,7 @@ export interface IGameStateMachineContextMetadata {
   blockingInfluence: Influence | undefined;
   challengeFailed: boolean | undefined;
   blockSuccessful: boolean | undefined;
+  exchangeDetails: IGameStateExchangeDetails | undefined;
 }
 
 export type IGameStateMachineContext = IGameStateMachineContextPlayerIds & IGameStateMachineContextMetadata;
@@ -30,7 +32,7 @@ export type GameStateMachineEvent =
   | { type: "END_GAME"; winningPlayerId: string }
   | { type: "FAILED" }
   | { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
-  | { type: "PASS"; killedInfluence: Influence | undefined }
+  | { type: "PASS"; killedInfluence: Influence | undefined; exchangeDetails: IGameStateExchangeDetails }
   | { type: "PLAY_AGAIN" }
   | { type: "START"; playerTurnId: string };
 
@@ -54,6 +56,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
     blockingInfluence: undefined,
     challengeFailed: undefined,
     challengerId: "",
+    exchangeDetails: undefined,
     gameStarted: false,
     killedInfluence: undefined,
     performerId: "",
@@ -170,6 +173,7 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
         blockingInfluence: undefined,
         challengeFailed: undefined,
         challengerId: "",
+        exchangeDetails: undefined,
         killedInfluence: undefined,
         performerId: "",
         victimId: "",
@@ -205,9 +209,10 @@ const GameStateMachine = createMachine<IGameStateMachineContext, GameStateMachin
           target: "idle",
         },
         PASS: {
-          actions: assign({
-            killedInfluence: (_, event) => event.killedInfluence,
-          }),
+          actions: assign((_, event) => ({
+            exchangeDetails: event.exchangeDetails,
+            killedInfluence: event.killedInfluence,
+          })),
         },
       },
     },
