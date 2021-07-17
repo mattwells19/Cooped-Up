@@ -99,7 +99,8 @@ export default function useProcessPerformAction(
           break;
         }
         case Actions.Exchange: {
-          if (gameStateContext.exchangeDetails) {
+          const { exchangeDetails } = gameStateContext;
+          if (exchangeDetails) {
             setPlayers((prevPlayers) => performExchangeAction(prevPlayers));
 
             setDeck((prevDeck) => {
@@ -109,7 +110,7 @@ export default function useProcessPerformAction(
               newDeck.splice(0, 2);
 
               // add the deck cards to the back of the deck
-              gameStateContext.exchangeDetails?.deck.forEach((playerInfluence) => {
+              exchangeDetails.deck.forEach((playerInfluence) => {
                 newDeck.push(playerInfluence.type);
               });
               return newDeck;

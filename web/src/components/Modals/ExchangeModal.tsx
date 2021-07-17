@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Divider, HStack, Text, useToken, VStack } from "@chakra-ui/react";
+import { BoxProps, Button, Divider, HStack, Text, VStack } from "@chakra-ui/react";
 import type { IPlayer, IPlayerInfluence } from "@contexts/GameStateContext/types";
 import InfluenceCard from "../InfluenceCard";
 import BaseModal from "./BaseModal";
@@ -15,7 +15,6 @@ interface IExchangeCard extends IPlayerInfluence {
 }
 
 const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose }) => {
-  const blueBorder = useToken("colors", "blue.300");
   const { deck } = useDeck();
 
   const [deckCards, setDeckCards] = React.useState<Array<IExchangeCard>>(
@@ -65,6 +64,16 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
     handleClose(newPlayersHand, newDeckCards);
   }
 
+  const commonInfluenceCardContainerProps: BoxProps = {
+    _selected: {
+      borderColor: "teal.200",
+    },
+    border: "4px solid transparent",
+    borderRadius: "8px",
+    padding: "1",
+    transition: "transform 500ms",
+  };
+
   return (
     <BaseModal>
       <VStack spacing="4" margin="5">
@@ -84,28 +93,28 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
             {deckCards
               .map((exchangeInfluence, index) => (
                 <InfluenceCard
-                  aria-selected={exchangeInfluence.key === selectedDeckCard?.key}
+                  containerProps={{
+                    _hover: {
+                      transform: `scale(1.05) translateX(${index === 0 ? "-5px" : "5px"})`,
+                    },
+                    "aria-selected": exchangeInfluence.key === selectedDeckCard?.key,
+                    onClick: () => setSelectedDeckCard((prevSelectedDeckCard) => (
+                      prevSelectedDeckCard?.key === exchangeInfluence.key ? null : exchangeInfluence
+                    )),
+                    role: "button",
+                    ...commonInfluenceCardContainerProps,
+                  }}
                   key={exchangeInfluence.key}
+                  influence={exchangeInfluence.type}
                   enlarge
                   faceUp
-                  onClick={() => setSelectedDeckCard((prevSelectedDeckCard) => (
-                    prevSelectedDeckCard?.key === exchangeInfluence.key ? null : exchangeInfluence
-                  ))}
-                  influence={exchangeInfluence.type}
-                  _hover={{
-                    transform: `scale(1.05) translateX(${index === 0 ? "-5px" : "5px"})`,
-                  }}
-                  _selected={{
-                    boxShadow: `0px 0px 0px 3px ${blueBorder}`
-                  }}
-                  transition="transform 500ms"
-                  role="button"
+                  disableAnimation
                 />
               ))}
           </HStack>
         </VStack>
         <VStack>
-          <HStack justifyContent="space-between" width="100%">
+          <HStack justifyContent="space-between" width="full">
             <Text flex="1">Your Hand</Text>
             <Text textAlign="right" color="gray.400">Cards you&apos;ll keep.</Text>
           </HStack>
@@ -113,23 +122,23 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
             {playerCards
               .map((exchangeInfluence, index) => (
                 <InfluenceCard
-                  aria-selected={exchangeInfluence.key === selectedPlayerCard?.key}
+                  containerProps={{
+                    _hover: exchangeInfluence.isDead ? {} : {
+                      transform: `scale(1.05) translateX(${index === 0 ? "-5px" : "5px"})`,
+                    },
+                    "aria-selected": exchangeInfluence.key === selectedPlayerCard?.key,
+                    onClick: !exchangeInfluence.isDead ? () => setSelectedPlayerCard((prevSelectedPlayerCard) => (
+                      prevSelectedPlayerCard?.key === exchangeInfluence.key ? null : exchangeInfluence
+                    )) : undefined,
+                    role: exchangeInfluence.isDead ? "" : "button",
+                    ...commonInfluenceCardContainerProps,
+                  }}
                   key={exchangeInfluence.key}
-                  enlarge
-                  faceUp
-                  onClick={() => setSelectedPlayerCard((prevSelectedPlayerCard) => (
-                    prevSelectedPlayerCard?.key === exchangeInfluence.key ? null : exchangeInfluence
-                  ))}
                   isDead={exchangeInfluence.isDead}
                   influence={exchangeInfluence.type}
-                  _hover={ exchangeInfluence.isDead ? {} : {
-                    transform: `scale(1.05) translateX(${index === 0 ? "-5px" : "5px"})`,
-                  }}
-                  _selected={{
-                    boxShadow: `0px 0px 0px 3px ${blueBorder}`
-                  }}
-                  transition="transform 500ms"
-                  role={exchangeInfluence.isDead ? "" : "button"}
+                  enlarge
+                  faceUp
+                  disableAnimation
                 />
               ))}
           </HStack>

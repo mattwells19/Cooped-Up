@@ -1,11 +1,13 @@
 import * as React from "react";
-import { Box, Image, ImageProps, keyframes, useToken } from "@chakra-ui/react";
+import { Box, BoxProps, Image, ImageProps, keyframes, useToken } from "@chakra-ui/react";
 import type { Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import { BlankImg } from "@images/InfluenceImages";
 import { DeathIcon } from "@icons";
 
-interface IInfluenceCardProps extends ImageProps {
+export interface IInfluenceCardProps extends ImageProps {
+  containerProps?: Partial<BoxProps>;
+  disableAnimation?: boolean;
   faceUp: boolean;
   enlarge?: boolean;
   influence: Influence;
@@ -34,9 +36,11 @@ const growIn = keyframes({
 });
 
 const InfluenceCard: React.FC<IInfluenceCardProps> = ({
+  containerProps,
   influence,
   faceUp,
   onClick,
+  disableAnimation = false,
   enlarge = false,
   isDead = false,
   ...props 
@@ -44,7 +48,7 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
   const [iconWidthSm, iconWidthEnlarge] = useToken("sizes", ["24", "28"]);
 
   return (
-    <Box position="relative">
+    <Box position="relative" {...containerProps}>
       <Image
         alt={faceUp || isDead ? `Dead ${influence}` : "Hidden Influence"}
         src={faceUp || isDead ? InfluenceDetails[influence].img : BlankImg}
@@ -56,13 +60,19 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
       {isDead && (
         <Box
           position="absolute"
-          top="0"
-          left="0"
-          width="100%"
-          height="100%"
-          animation={`${fadeIn} 1s ease-in forwards`}
+          inset={containerProps?.padding ?? 0}
+          animation={disableAnimation ? "" : `${fadeIn} 1s ease-in`}
+          backgroundColor="rgba(0, 0, 0, 0.5)"
+          borderRadius="3px"
         >
-          <Box animation={`${growIn} 2.5s ease-in forwards`} marginX="auto" marginTop="2" width="min" opacity="0">
+          <Box
+            animation={disableAnimation ? "" : `${growIn} 2.5s ease-in`}
+            opacity={1}
+            transform="scale(1)"
+            marginX="auto"
+            marginTop="2"
+            width="min"
+          >
             <DeathIcon
               color="rgba(255, 255, 255, 0.6)"
               width={enlarge ? iconWidthEnlarge : iconWidthSm}
