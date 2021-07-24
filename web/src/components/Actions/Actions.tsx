@@ -8,19 +8,24 @@ interface IActionsProps {
   otherPlayers: Array<IPlayer>;
 }
 
+interface IPlayerSelectableAction {
+  action: InfluenceActions;
+  isPlayerValidChoice: (player: IPlayer) => boolean;
+}
+
 const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
   const { handleGameEvent, currentPlayer, currentPlayerTurn } = useGameState();
 
   const isTurn = currentPlayer.id.localeCompare(currentPlayerTurn?.id ?? "") === 0;
-  const [playerSelectableAction, setPlayerSelectableAction] = React.useState<InfluenceActions | null>(null);
+  const [playerSelectableAction, setPlayerSelectableAction] = React.useState<IPlayerSelectableAction | null>(null);
 
   const getActionsText = () => {
     if (playerSelectableAction) {
-      switch(playerSelectableAction) {
+      switch(playerSelectableAction.action) {
         case InfluenceActions.Steal:
           return "Choose a player to steal from.";
         default:
-          return `Choose a player to ${playerSelectableAction}.`;
+          return `Choose a player to ${playerSelectableAction.action}.`;
       }
     }
     else if (isTurn) return "It's your turn! Pick an action.";
@@ -39,6 +44,9 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
     width: "324px",
   };
 
+  const validPlayersToStealFrom = (p: IPlayer): boolean => p.coins > 0;
+  const validPlayersToLoseAnInfluence = (p: IPlayer): boolean => p.influences.some((i) => !i.isDead);
+
   return (
     <VStack>
       <Text fontSize="lg" alignSelf="flex-start">
@@ -50,8 +58,10 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
             switch(action) {
               case InfluenceActions.Assassinate:
               case InfluenceActions.Coup:
+                setPlayerSelectableAction({ action, isPlayerValidChoice: validPlayersToLoseAnInfluence  });
+                break;
               case InfluenceActions.Steal:
-                setPlayerSelectableAction(action);
+                setPlayerSelectableAction({ action, isPlayerValidChoice: validPlayersToStealFrom });
                 break;
               default:
                 handleGameEvent({
@@ -74,14 +84,15 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
             handleGameEvent({
               event: "ACTION",
               eventPayload: {
-                action: playerSelectableAction,
+                action: playerSelectableAction.action,
                 performerId: currentPlayerTurn?.id,
                 victimId,
               },
             });
             setPlayerSelectableAction(null);
           }}
-          players={otherPlayers.filter((player) => player.influences.some((i) => !i.isDead))}
+          isPlayerSelectable={playerSelectableAction.isPlayerValidChoice}
+          players={otherPlayers}
           {...commonStyles}
         />
       )}

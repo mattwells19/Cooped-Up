@@ -107,16 +107,19 @@ export default function usePlayerActions(
       actionResponse: null,
     }));
 
+    // if victim has less than 2 coins, you can only take what they have
+    const coinsToSteal = Math.min(victim.coins, 2);
+
     // performer gains 2 coins
     newPlayers[performer.index] = {
       ...newPlayers[performer.index],
-      coins: newPlayers[performer.index].coins + 2,
+      coins: newPlayers[performer.index].coins + coinsToSteal,
     };
 
     // victim loses 2 coins
     newPlayers[victim.index] = {
       ...newPlayers[victim.index],
-      coins: newPlayers[victim.index].coins - 2,
+      coins: newPlayers[victim.index].coins - coinsToSteal,
     };
 
     return newPlayers;
