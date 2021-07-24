@@ -12,16 +12,21 @@ const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, onSelection, ...p
     {players.map((p) => (
       <ListItem
         key={p.id}
-        onClick={() => onSelection(p.id)}
+        onClick={() => p.coins > 0 ? onSelection(p.id) : null}
+        aria-disabled={p.coins === 0}
         height={280 / players.length}
         alignItems="center"
         display="flex"
         placeContent="center"
         role="button"
         transition="background 500ms"
-        _hover={{
-          background: "rgba(66, 153, 225, 0.6)",
+        _disabled={{
+          color: "whiteAlpha.500",
+          pointerEvents: "none"
         }}
+        _hover={ p.coins > 0 ? {
+          background: "rgba(66, 153, 225, 0.6)",
+        } : {}}
         sx={{
           "&:first-of-type": {
             borderRadius: "10px 10px 0px 0px",
@@ -35,7 +40,7 @@ const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, onSelection, ...p
           },
         }}
       >
-        <Text>{p.name}</Text>
+        <Text>{`${p.name} ${p.coins === 0 ? "(No coins to steal)" : ""}`}</Text>
       </ListItem>
     ))}
   </List>
