@@ -73,13 +73,11 @@ const ChallengerModalChooser: React.FC<IChallengerModalChooserProps> = ({
     } else {
       // if current player is not the one choosing an influence to lose
       const success = challengeResult === "success";
-      const playerBeingChallenged = blocker?.name ?? performer.name;
-
       return (
         <WaitingForActionModal
           messaging={[
-            `${challenger.name}'s challenge against ${playerBeingChallenged} ${success ? "was successful" : "failed"}.`,
-            `Waiting for ${success ? playerBeingChallenged : challenger.name} to choose an Influence to lose.`,
+            `${challenger.name}'s challenge against ${performer.name} ${success ? "was successful" : "failed"}.`,
+            `Waiting for ${success ? performer.name : challenger.name} to choose an Influence to lose.`,
           ]}
         />
       );
