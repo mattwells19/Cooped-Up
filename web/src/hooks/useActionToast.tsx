@@ -134,11 +134,14 @@ const ActionToast: React.FC<IActionToastProps> = ({
             <Text as="span" fontWeight="bold">
               {victimName}
             </Text>
-            {" who lost their "}
-            {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-            <Text as="span" fontWeight="bold" color={InfluenceDetails[lostInfluence!].color}>
-              {lostInfluence}
-            </Text>
+            {lostInfluence && (
+              <>
+                {" who lost their "}
+                <Text as="span" fontWeight="bold" color={InfluenceDetails[lostInfluence].color}>
+                  {lostInfluence}
+                </Text>
+              </>
+            )}
             !
           </Text>
         )}

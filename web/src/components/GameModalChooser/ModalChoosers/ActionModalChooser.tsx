@@ -1,5 +1,4 @@
 import { Actions, IActionResponse, IGameState, Influence, IPlayer } from "@contexts/GameStateContext";
-import { usePlayers } from "@contexts/PlayersContext";
 import type { GameStateMachineStateOptions } from "@GameState/GameStateMachine";
 import type { IGameStateExchangeDetails } from "@GameState/types";
 import * as React from "react";
@@ -15,7 +14,7 @@ interface IActionModalChooserProps {
   exchangeDetails: IGameStateExchangeDetails | undefined;
   victim: IPlayer | undefined;
   currentStateMatches: (state: GameStateMachineStateOptions) => boolean;
-  killedInfluence: Influence | undefined;
+  killedInfluence: Influence | "NO_INFLUENCES_LEFT" | undefined;
   blockDetails: { blocker: IPlayer | undefined, blockingInfluence: Influence | undefined };
   handleGameEvent: (newGameState: IGameState) => void;
   handleActionResponse: (response: IActionResponse) => void;
@@ -34,7 +33,6 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   handleActionResponse,
 }) => {
   const { blocker, blockingInfluence } = blockDetails;
-  const { getNextPlayerTurnId } = usePlayers();
 
   if (
     currentStateMatches("perform_action")
@@ -74,8 +72,8 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
     // processing the assassination. If that happens, just complete the action and move on.
     if (victimAliveInfluences.length === 0) {
       handleGameEvent({
-        event: "COMPLETE",
-        eventPayload: { nextPlayerTurnId: getNextPlayerTurnId(currentPlayer.id) },
+        event: "PASS",
+        eventPayload: { killedInfluence: "NO_INFLUENCES_LEFT" },
       });
 
       return <></>;
