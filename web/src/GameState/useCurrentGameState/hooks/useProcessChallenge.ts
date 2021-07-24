@@ -24,6 +24,11 @@ export default function useProcessChallenge(
       if (!performer) throw new Error("No performer found when processing challenge.");
       if (!challenger) throw new Error("No challenger found when processing challenge.");
 
+      const killedInfluence = gameStateContext.killedInfluence;
+      if (killedInfluence === "NO_INFLUENCES_LEFT") {
+        throw new Error("Tried to use NO_INFLUENCES_LEFT during a challenge which is not allowed.");
+      }
+
       const loser = gameStateContext.challengeFailed ? challenger : performer;
       const winner = gameStateContext.challengeFailed ? performer : challenger;
 
@@ -31,7 +36,7 @@ export default function useProcessChallenge(
       const newDeck: Array<Influence> = [...deck];
 
       const influenceToKillIndex = newPlayers[loser.index].influences.findIndex(
-        (influence) => influence.type === gameStateContext.killedInfluence && !influence.isDead,
+        (influence) => influence.type === killedInfluence && !influence.isDead,
       );
 
       // victim's chosen influence to kill
@@ -80,7 +85,7 @@ export default function useProcessChallenge(
       setPlayers(newPlayers);
       setDeck(newDeck);
       actionToast({
-        lostInfluence: gameStateContext.killedInfluence,
+        lostInfluence: killedInfluence,
         variant: "Challenge" as const,
         victimName: loser.name,
       });
@@ -95,6 +100,11 @@ export default function useProcessChallenge(
       if (!blocker) throw new Error("No blocker found when processing challenge.");
       if (!challenger) throw new Error("No challenger found when processing challenge.");
 
+      const killedInfluence = gameStateContext.killedInfluence;
+      if (killedInfluence === "NO_INFLUENCES_LEFT") {
+        throw new Error("Tried to use NO_INFLUENCES_LEFT during a challenge which is not allowed.");
+      }
+
       const loser = gameStateContext.challengeFailed ? challenger : blocker;
       const winner = gameStateContext.challengeFailed ? blocker : challenger;
 
@@ -102,7 +112,7 @@ export default function useProcessChallenge(
       const newDeck = [...deck];
 
       const influenceToKillIndex = newPlayers[loser.index].influences.findIndex(
-        (influence) => influence.type === gameStateContext.killedInfluence && !influence.isDead,
+        (influence) => influence.type === killedInfluence && !influence.isDead,
       );
 
       // victim's chosen influence to kill
@@ -149,7 +159,7 @@ export default function useProcessChallenge(
       setPlayers(newPlayers);
       setDeck(newDeck);
       actionToast({
-        lostInfluence: gameStateContext.killedInfluence,
+        lostInfluence: killedInfluence,
         variant: "Challenge",
         victimName: loser.name,
       });

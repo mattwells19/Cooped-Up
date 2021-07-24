@@ -14,7 +14,7 @@ export interface IGameStateMachineContextPlayerIds {
 export interface IGameStateMachineContextMetadata {
   action: Actions | null;
   gameStarted: boolean;
-  killedInfluence: Influence | undefined;
+  killedInfluence: Influence | "NO_INFLUENCES_LEFT" | undefined;
   blockingInfluence: Influence | undefined;
   challengeFailed: boolean | undefined;
   blockSuccessful: boolean | undefined;
@@ -32,7 +32,11 @@ export type GameStateMachineEvent =
   | { type: "END_GAME"; winningPlayerId: string }
   | { type: "FAILED" }
   | { type: "LOSE_INFLUENCE"; killedInfluence: Influence; challengeFailed: boolean }
-  | { type: "PASS"; killedInfluence: Influence | undefined; exchangeDetails: IGameStateExchangeDetails }
+  | {
+      type: "PASS";
+      killedInfluence: Influence | "NO_INFLUENCES_LEFT" | undefined;
+      exchangeDetails: IGameStateExchangeDetails;
+    }
   | { type: "PLAY_AGAIN" }
   | { type: "START"; playerTurnId: string };
 

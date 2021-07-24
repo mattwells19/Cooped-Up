@@ -38,6 +38,9 @@ export default function useProcessPerformAction(
             setPlayers((prevPlayers) => performCoupAction(prevPlayers));
 
             if (!victim) throw new Error("No victim found when performing Coup.");
+            if (gameStateContext.killedInfluence === "NO_INFLUENCES_LEFT") {
+              throw new Error("Tried to coup using NO_INFLUENCES_LEFT which is not allowed.");
+            }
 
             return {
               lostInfluence: gameStateContext.killedInfluence,
@@ -89,8 +92,11 @@ export default function useProcessPerformAction(
 
             if (!victim) throw new Error("No victim found when performing assassination.");
 
+            const lostInfluence =
+              gameStateContext.killedInfluence !== "NO_INFLUENCES_LEFT" ? gameStateContext.killedInfluence : undefined;
+
             return {
-              lostInfluence: gameStateContext.killedInfluence,
+              lostInfluence,
               performerName: performer.name,
               variant: Actions.Assassinate,
               victimName: victim.name,
