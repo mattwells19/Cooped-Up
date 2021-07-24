@@ -49,6 +49,8 @@ const ActionToast: React.FC<IActionToastProps> = ({
         {/* TODO: Needs Graphic */}
         {variant === Actions.Steal && <CoinIcon width={iconSize} />}
         {variant === Actions.Assassinate && <AssassinIcon width={iconSize} />}
+        {/* TODO: Needs Graphic */}
+        {variant === Actions.Exchange && <CoinIcon width={iconSize} />}
       </Center>
       <Box fontSize="large">
         {variant === Actions.Income && (
@@ -138,6 +140,14 @@ const ActionToast: React.FC<IActionToastProps> = ({
               {lostInfluence}
             </Text>
             !
+          </Text>
+        )}
+        {variant === Actions.Exchange && (
+          <Text>
+            <Text as="span" fontWeight="bold">
+              {performerName}
+            </Text>
+            {" exchanged their cards. No one likes double Contessas."}
           </Text>
         )}
         {variant === "Challenge" && (

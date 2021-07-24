@@ -20,6 +20,7 @@ export default function useProcessProposeAction(
           break;
         case Actions.Aid:
         case Actions.Assassinate:
+        case Actions.Exchange:
         case Actions.Steal:
         case Actions.Tax:
           // the performer isn't going to challenge themselves so automatically set their response to PASS

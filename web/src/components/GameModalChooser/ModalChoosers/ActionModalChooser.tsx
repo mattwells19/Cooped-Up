@@ -1,15 +1,18 @@
 import { Actions, IActionResponse, IGameState, Influence, IPlayer } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import type { GameStateMachineStateOptions } from "@GameState/GameStateMachine";
+import type { IGameStateExchangeDetails } from "@GameState/types";
 import * as React from "react";
 import ActionProposedModal from "../../Modals/ActionProposedModal";
 import LoseInfluenceModal from "../../Modals/LoseInfluenceModal";
 import WaitingForActionModal from "../../Modals/WaitingForActionModal";
+import ExchangeModal from "@components/Modals/ExchangeModal";
 
 interface IActionModalChooserProps {
   action: Actions;
   currentPlayer: IPlayer;
   performer: IPlayer;
+  exchangeDetails: IGameStateExchangeDetails | undefined;
   victim: IPlayer | undefined;
   currentStateMatches: (state: GameStateMachineStateOptions) => boolean;
   killedInfluence: Influence | undefined;
@@ -22,6 +25,7 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   action,
   currentPlayer,
   currentStateMatches,
+  exchangeDetails,
   performer,
   victim,
   blockDetails,
@@ -32,8 +36,32 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
   const { blocker, blockingInfluence } = blockDetails;
   const { getNextPlayerTurnId } = usePlayers();
 
-  // Prompt victim to choose an influence to kill
   if (
+    currentStateMatches("perform_action")
+    && action === Actions.Exchange
+    && !exchangeDetails
+  ) {
+    return currentPlayer.id === performer.id ? (
+      <ExchangeModal
+        currentPlayer={currentPlayer}
+        handleClose={(playerHand, deck) =>
+          handleGameEvent({
+            event: "PASS",
+            eventPayload: { exchangeDetails: { deck, playerHand } },
+          })
+        }
+      />
+    ) : (
+      <WaitingForActionModal
+        messaging={[
+          `${performer.name} has chosen to ${action}.`,
+          `Waiting for ${performer.name} to choose which Influences to exchange.`,
+        ]}
+      />
+    );
+  }
+  // Prompt victim to choose an influence to kill
+  else if (
     currentStateMatches("perform_action")
     && (action === Actions.Coup || action === Actions.Assassinate) 
     && !killedInfluence && victim

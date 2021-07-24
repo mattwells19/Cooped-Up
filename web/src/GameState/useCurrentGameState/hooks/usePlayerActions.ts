@@ -11,6 +11,7 @@ interface IUsePlayerActions {
   performAidAction: IPerformPlayerAction;
   performStealAction: IPerformPlayerAction;
   performAssassinateAction: IPerformPlayerAction;
+  performExchangeAction: IPerformPlayerAction;
 }
 
 export default function usePlayerActions(
@@ -154,10 +155,25 @@ export default function usePlayerActions(
     return newPlayers.map((player) => ({ ...player, actionResponse: null }));
   }
 
+  function ExchangeAction(players: Array<IPlayer>): Array<IPlayer> {
+    if (!performer) throw new PlayerNotFoundError(gameStateContext.performerId);
+    if (!gameStateContext.exchangeDetails) throw new Error("No exchange details when performing exchange.");
+
+    const newPlayers = [...players];
+
+    newPlayers[performer.index] = {
+      ...newPlayers[performer.index],
+      influences: [...gameStateContext.exchangeDetails.playerHand],
+    };
+
+    return newPlayers;
+  }
+
   return {
     performAidAction: AidAction,
     performAssassinateAction: AssassinateAction,
     performCoupAction: CoupAction,
+    performExchangeAction: ExchangeAction,
     performIncomeAction: IncomeAction,
     performStealAction: StealAction,
     performTaxAction: TaxAction,
