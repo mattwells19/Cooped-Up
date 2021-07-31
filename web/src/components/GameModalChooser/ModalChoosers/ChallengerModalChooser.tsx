@@ -1,8 +1,10 @@
+import Bold from "@components/Bold";
 import ChallengedModal from "@components/Modals/ChallengedModal";
 import LoseInfluenceModal from "@components/Modals/LoseInfluenceModal";
 import WaitingForActionModal from "@components/Modals/WaitingForActionModal";
 import type { Actions, IGameState, Influence, IPlayer } from "@contexts/GameStateContext";
 import { getInfluenceFromAction, wasValidAction } from "@utils/InfluenceUtils";
+import { Text } from "@chakra-ui/react";
 import * as React from "react";
 
 interface IChallengerModalChooserProps {
@@ -73,13 +75,31 @@ const ChallengerModalChooser: React.FC<IChallengerModalChooserProps> = ({
     } else {
       // if current player is not the one choosing an influence to lose
       const success = challengeResult === "success";
+      const challengedPlayerName = blocker?.name ?? performer.name;
+
       return (
-        <WaitingForActionModal
-          messaging={[
-            `${challenger.name}'s challenge against ${performer.name} ${success ? "was successful" : "failed"}.`,
-            `Waiting for ${success ? performer.name : challenger.name} to choose an Influence to lose.`,
-          ]}
-        />
+        <WaitingForActionModal>
+          <Text>
+            <Bold>{challenger.name}</Bold>
+            {"'s challenge against "}
+            <Bold>{challengedPlayerName}</Bold>
+            &nbsp;
+            <Bold
+              textTransform="uppercase"
+              color={success ? "green.300" : "red.300"}
+            >
+              {success ? "succeeded" : "failed"}
+            </Bold>
+            .
+          </Text>
+          <Text>
+            {"Waiting for "}
+            <Bold>
+              {success ? challengedPlayerName : challenger.name}
+            </Bold>
+            {" to choose an Influence to lose."}
+          </Text>
+        </WaitingForActionModal>
       );
     }
   } else if (blocker && blockingInfluence) {

@@ -12,7 +12,7 @@ export const enum Actions {
   Assassinate = "assassinate",
   Tax = "collect tax",
   Steal = "steal",
-  Exchange = "exchange Influences",
+  Exchange = "exchange influences",
   Income = "collect income",
   Aid = "collect foreign aid",
   Coup = "coup",
