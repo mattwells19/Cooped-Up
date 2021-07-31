@@ -64,6 +64,7 @@ const ActionToast: React.FC<IActionToastProps> = ({
             <Bold>{blockerName}</Bold>
             {" successfully blocked "}
             <Bold>{performerName}</Bold>
+            .
           </>
         )}
         {variant === Actions.Coup && (
