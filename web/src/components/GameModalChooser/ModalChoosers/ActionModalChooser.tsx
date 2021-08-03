@@ -6,6 +6,9 @@ import ActionProposedModal from "../../Modals/ActionProposedModal";
 import LoseInfluenceModal from "../../Modals/LoseInfluenceModal";
 import WaitingForActionModal from "../../Modals/WaitingForActionModal";
 import ExchangeModal from "@components/Modals/ExchangeModal";
+import Bold from "@components/Bold";
+import { Text } from "@chakra-ui/react";
+import { ActionDetails } from "@utils/ActionUtils";
 
 interface IActionModalChooserProps {
   action: Actions;
@@ -50,12 +53,19 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
         }
       />
     ) : (
-      <WaitingForActionModal
-        messaging={[
-          `${performer.name} has chosen to ${action}.`,
-          `Waiting for ${performer.name} to choose which Influences to exchange.`,
-        ]}
-      />
+      <WaitingForActionModal>
+        <Text>
+          <Bold>{performer.name}</Bold>
+          {" has chosen to "}
+          <Bold color={ActionDetails[action].color}>{action}</Bold>
+          .
+        </Text>
+        <Text>
+          {"Waiting for "}
+          <Bold>{performer.name}</Bold>
+          {" to finish their selections."}
+        </Text>
+      </WaitingForActionModal>
     );
   }
   // Prompt victim to choose an influence to kill
@@ -96,12 +106,21 @@ const ActionModalChooser: React.FC<IActionModalChooserProps> = ({
           }
         />
       ) : (
-        <WaitingForActionModal
-          messaging={[
-            `${performer.name} has chosen to ${action} ${victim.name}.`,
-            `Waiting for ${victim.name} to choose an Influence to lose.`,
-          ]}
-        />
+        <WaitingForActionModal>
+          <Text>
+            <Bold>{performer.name}</Bold>
+            {" has chosen to "}
+            <Bold color={ActionDetails[action].color}>{action}</Bold>
+            &nbsp;
+            <Bold>{victim.name}</Bold>
+            .
+          </Text>
+          <Text>
+            {"Waiting for "}
+            <Bold>{victim.name}</Bold>
+            {" to choose an influence to lose."}
+          </Text>
+        </WaitingForActionModal>
       );
     }
 

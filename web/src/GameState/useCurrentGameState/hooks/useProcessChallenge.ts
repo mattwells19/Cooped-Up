@@ -1,5 +1,5 @@
 import { useDeck } from "@contexts/DeckContext";
-import type { Influence, IPlayer } from "@contexts/GameStateContext";
+import { Actions, Influence, IPlayer } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import { ActionDetails } from "@utils/ActionUtils";
 import { getInfluenceFromAction } from "@utils/InfluenceUtils";
@@ -97,6 +97,7 @@ export default function useProcessChallenge(
         });
       }
     } else if (currentGameState.matches("challenge_block")) {
+      if (!performer) throw new Error("No perfromer found when processing challenge.");
       if (!blocker) throw new Error("No blocker found when processing challenge.");
       if (!challenger) throw new Error("No challenger found when processing challenge.");
 
@@ -164,11 +165,16 @@ export default function useProcessChallenge(
         victimName: loser.name,
       });
 
-      if (gameStateContext.challengeFailed)
+      if (gameStateContext.challengeFailed) {
+        actionToast({
+          blockerName: blocker.name,
+          performerName: performer.name,
+          variant: Actions.Block,
+        });
         sendGameStateEvent("CHALLENGE_BLOCK_FAILED", {
           nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
         });
-      else sendGameStateEvent("COMPLETE");
+      } else sendGameStateEvent("COMPLETE");
     }
   }, [currentGameState.value, gameStateContext.challengeFailed]);
 }

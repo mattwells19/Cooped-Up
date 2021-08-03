@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Center, CloseButton, Text, useToast, useToken } from "@chakra-ui/react";
-import { AxeIcon, ChallengeIcon, CoinIcon, AssassinIcon } from "@icons";
+import { ChallengeIcon } from "@icons";
 import { Actions, Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
+import { ActionDetails } from "@utils/ActionUtils";
+import Bold from "@components/Bold";
 
 export interface IActionToastProps {
   variant: Actions | "Challenge";
@@ -21,6 +23,7 @@ const ActionToast: React.FC<IActionToastProps> = ({
 }) => {
   const { closeAll: closeAllToasts } = useToast();
   const iconSize = useToken("sizes", "40");
+  const ActionIcon = variant === "Challenge" ? ChallengeIcon : ActionDetails[variant].icon;
 
   return (
     <Box
@@ -35,138 +38,90 @@ const ActionToast: React.FC<IActionToastProps> = ({
     >
       <CloseButton marginLeft="auto" onClick={() => closeAllToasts()} />
       <Center>
-        {variant === Actions.Income && <CoinIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Coup && <AxeIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Tax && <CoinIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Aid && <CoinIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === "Challenge" && <ChallengeIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Block && <CoinIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Steal && <CoinIcon width={iconSize} />}
-        {variant === Actions.Assassinate && <AssassinIcon width={iconSize} />}
-        {/* TODO: Needs Graphic */}
-        {variant === Actions.Exchange && <CoinIcon width={iconSize} />}
+        <ActionIcon width={iconSize} />
       </Center>
-      <Box fontSize="large">
+      <Text fontSize="large">
         {variant === Actions.Income && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
+          <>
+            <Bold>{performerName}</Bold>
             {" took income which is only performed by mere peasants."}
-          </Text>
+          </>
         )}
         {variant === Actions.Tax && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
+          <>
+            <Bold>{performerName}</Bold>
             {" must have royalty in their blood as they have collected tax from the peasants."}
-          </Text>
+          </>
         )}
         {variant === Actions.Aid && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
+          <>
+            <Bold>{performerName}</Bold>
             {" has gotten away with foreign aid! A very generous group of Dukes indeed."}
-          </Text>
+          </>
         )}
         {variant === Actions.Block && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {blockerName}
-            </Text>
+          <>
+            <Bold>{blockerName}</Bold>
             {" successfully blocked "}
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
-          </Text>
+            <Bold>{performerName}</Bold>
+            .
+          </>
         )}
         {variant === Actions.Coup && (
           <>
-            <Text>
-              <Text as="span" fontWeight="bold">
-                {performerName}
-              </Text>
-              {" coup'd "}
-              <Text as="span" fontWeight="bold">
-                {victimName}
-              </Text>
-              !
-            </Text>
-            <Text marginTop="3">
-              <Text as="span" fontWeight="bold">
-                {victimName}
-              </Text>
-              {" lost their "}
-              {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-              <Text as="span" fontWeight="bold" color={InfluenceDetails[lostInfluence!].color}>
-                {lostInfluence}
-              </Text>
-              .
-            </Text>
+            <Bold>{performerName}</Bold>
+            {" coup'd "}
+            <Bold>{victimName}</Bold>
+            {" who lost their "}
+            {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+            <Bold color={InfluenceDetails[lostInfluence!].color}>
+              {lostInfluence}
+            </Bold>
+            !
           </>
         )}
         {variant === Actions.Steal && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
+          <>
+            <Bold>{performerName}</Bold>
             {" has stolen coin from "}
-            <Text as="span" fontWeight="bold">
-              {victimName}
-            </Text>
+            <Bold>{victimName}</Bold>
             !
-          </Text>
+          </>
         )}
         {variant === Actions.Assassinate && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
+          <>
+            <Bold>{performerName}</Bold>
             {" has assassinated "}
-            <Text as="span" fontWeight="bold">
-              {victimName}
-            </Text>
+            <Bold>{victimName}</Bold>
             {lostInfluence && (
               <>
                 {" who lost their "}
-                <Text as="span" fontWeight="bold" color={InfluenceDetails[lostInfluence].color}>
+                <Bold color={InfluenceDetails[lostInfluence].color}>
                   {lostInfluence}
-                </Text>
+                </Bold>
               </>
             )}
             !
-          </Text>
+          </>
         )}
         {variant === Actions.Exchange && (
-          <Text>
-            <Text as="span" fontWeight="bold">
-              {performerName}
-            </Text>
+          <>
+            <Bold>{performerName}</Bold>
             {" exchanged their cards. No one likes double Contessas."}
-          </Text>
+          </>
         )}
         {variant === "Challenge" && (
-          <Text marginTop="3">
-            <Text as="span" fontWeight="bold">
-              {victimName}
-            </Text>
+          <>
+            <Bold display="inline-block" marginTop="3">{victimName}</Bold>
             {" lost their "}
             {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-            <Text as="span" fontWeight="bold" color={InfluenceDetails[lostInfluence!].color}>
+            <Bold color={InfluenceDetails[lostInfluence!].color}>
               {lostInfluence}
-            </Text>
+            </Bold>
             .
-          </Text>
+          </>
         )}
-      </Box>
+      </Text>
     </Box>
   );
 };
