@@ -1,13 +1,13 @@
 import React from "react";
 import { Box, Center, CloseButton, Text, useToast, useToken } from "@chakra-ui/react";
 import { ChallengeIcon } from "@icons";
-import { Actions, Influence } from "@contexts/GameStateContext/types";
+import { Actions, CounterActions, Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import { ActionDetails } from "@utils/ActionUtils";
 import Bold from "@components/Bold";
 
 export interface IActionToastProps {
-  variant: Actions | "Challenge";
+  variant: Actions | CounterActions | "Challenge";
   performerName?: string;
   victimName?: string;
   blockerName?: string;
@@ -23,7 +23,9 @@ const ActionToast: React.FC<IActionToastProps> = ({
 }) => {
   const { closeAll: closeAllToasts } = useToast();
   const iconSize = useToken("sizes", "40");
-  const ActionIcon = variant === "Challenge" ? ChallengeIcon : ActionDetails[variant].icon;
+
+  // TODO Fix icon mapping
+  const ActionIcon = variant === "Challenge" ? ChallengeIcon : ActionDetails[Actions.Aid].icon;
 
   return (
     <Box
@@ -59,7 +61,11 @@ const ActionToast: React.FC<IActionToastProps> = ({
             {" has gotten away with foreign aid! A very generous group of Dukes indeed."}
           </>
         )}
-        {variant === Actions.Block && (
+        {(
+          variant === CounterActions.BlockSteal
+          || variant === CounterActions.BlockAssassination
+          || variant === CounterActions.BlockAid
+        ) && (
           <>
             <Bold>{blockerName}</Bold>
             {" successfully blocked "}

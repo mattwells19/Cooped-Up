@@ -16,7 +16,12 @@ export const enum Actions {
   Income = "collect income",
   Aid = "collect foreign aid",
   Coup = "coup",
-  Block = "block",
+}
+
+export const enum CounterActions {
+  BlockAssassination = "block assassination",
+  BlockSteal = "block steal",
+  BlockAid = "block foreign aid",
 }
 
 export interface IGameState {

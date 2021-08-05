@@ -33,5 +33,4 @@ export const ActionDetails: Record<Actions, IActionDetails> = {
     icon: CoinIcon,
   },
   [Actions.Tax]: { blockable: null, challengable: true, color: InfluenceDetails["Duke"].color, icon: CoinIcon },
-  [Actions.Block]: { blockable: null, challengable: true, color: "pink.300", icon: CoinIcon },
 };

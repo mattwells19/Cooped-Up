@@ -1,11 +1,12 @@
 import { useDeck } from "@contexts/DeckContext";
-import { Actions, Influence, IPlayer } from "@contexts/GameStateContext";
+import type { Influence, IPlayer } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import { ActionDetails } from "@utils/ActionUtils";
 import { getInfluenceFromAction } from "@utils/InfluenceUtils";
 import type { ICurrentGameState, IGameStateRoles, ISendGameStateUpdate } from "../../types";
 import useActionToast from "@hooks/useActionToast";
 import { useEffect } from "react";
+import { getCounterActionFromAction } from "@utils/CounterActionUtils";
 
 export default function useProcessChallenge(
   currentGameState: ICurrentGameState,
@@ -97,6 +98,8 @@ export default function useProcessChallenge(
         });
       }
     } else if (currentGameState.matches("challenge_block")) {
+      const action = gameStateContext.action;
+      if (!action) throw new Error("No action when processing challenge.");
       if (!performer) throw new Error("No perfromer found when processing challenge.");
       if (!blocker) throw new Error("No blocker found when processing challenge.");
       if (!challenger) throw new Error("No challenger found when processing challenge.");
@@ -166,10 +169,13 @@ export default function useProcessChallenge(
       });
 
       if (gameStateContext.challengeFailed) {
+        const counterAction = getCounterActionFromAction(action);
+        if (!counterAction) throw new Error(`No counter action for ${action}.`);
+
         actionToast({
           blockerName: blocker.name,
           performerName: performer.name,
-          variant: Actions.Block,
+          variant: counterAction,
         });
         sendGameStateEvent("CHALLENGE_BLOCK_FAILED", {
           nextPlayerTurnId: getNextPlayerTurnId(gameStateContext.playerTurnId),
