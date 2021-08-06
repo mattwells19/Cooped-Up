@@ -1,15 +1,34 @@
-import { Drawer, DrawerBody, DrawerContent, Button, HStack, ButtonGroup, CloseButton, Divider } from "@chakra-ui/react";
-import InfluenceAccordionItem from "./InfluenceAccordionItem";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  Button,
+  HStack,
+  ButtonGroup,
+  CloseButton,
+  Heading,
+  Divider,
+  HeadingProps,
+} from "@chakra-ui/react";
+import InfluenceAccordionItem from "./components/InfluenceAccordionItem";
 import * as React from "react";
-import ActionAccordionItem from "./ActionAccordionItem";
+import ActionAccordionItem from "./components/ActionAccordionItem";
 import { Actions } from "@contexts/GameStateContext";
-import { HelpDetailsAccordion } from "./HelpDetailsAccordionItem";
+import { HelpDetailsAccordion } from "./components/HelpDetailsAccordion";
 import { GameHelpSidebarContextProvider, useGameHelpSidebarContext } from "@contexts/GameHelpSidebarContext";
 
 interface IGameHelpSidebarProps {
   open: boolean;
   onClose: () => void;
 }
+
+const drawerHeaderProps: HeadingProps = {
+  as: "h2",
+  fontSize: "3xl",
+  marginBottom: "2",
+  marginLeft: "3.5",
+  marginTop: "4",
+};
 
 const GameHelpSidebar: React.FC<IGameHelpSidebarProps> = (props) => (
   <GameHelpSidebarContextProvider>
@@ -32,12 +51,16 @@ const GameHelpSidebarContent: React.FC<IGameHelpSidebarProps> = ({ open, onClose
         </HStack>
         <DrawerBody paddingX={0}>
           <HelpDetailsAccordion>
+            <Divider />
+            <Heading {...drawerHeaderProps}>Influences</Heading>
             <InfluenceAccordionItem index={0} influence="Ambassador" />
             <InfluenceAccordionItem index={1} influence="Assassin" />
             <InfluenceAccordionItem index={2} influence="Captain" />
             <InfluenceAccordionItem index={3} influence="Contessa" />
             <InfluenceAccordionItem index={4} influence="Duke" />
-            <Divider marginY="4" />
+            
+            <Divider />
+            <Heading {...drawerHeaderProps}>Other Actions</Heading>
             <ActionAccordionItem index={5} action={Actions.Coup} />
             <ActionAccordionItem index={6} action={Actions.Aid} />
             <ActionAccordionItem index={7} action={Actions.Income} />

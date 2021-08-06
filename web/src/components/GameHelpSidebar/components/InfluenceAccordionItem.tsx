@@ -10,7 +10,7 @@ import {
   HelpDetailsAccordionItem,
   HelpDetailsAccordionPanel,
   HelpDetailsAccordionPanelAction
-} from "./HelpDetailsAccordionItem";
+} from "./HelpDetailsAccordion";
 
 interface IInfluenceAccordionItemProps {
   influence: Influence;

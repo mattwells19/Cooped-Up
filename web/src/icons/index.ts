@@ -5,3 +5,4 @@ export { default as DeathIcon } from "./DeathIcon";
 export { default as Logo } from "./Logo";
 export { default as CrownIcon } from "./CrownIcon";
 export { default as AssassinIcon } from "./AssassinIcon";
+export { default as HelpIcon } from "./HelpIcon";

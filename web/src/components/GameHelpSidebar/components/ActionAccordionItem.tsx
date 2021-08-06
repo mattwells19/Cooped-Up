@@ -10,7 +10,7 @@ import {
   HelpDetailsAccordionHeader,
   HelpDetailsAccordionPanel,
   HelpDetailsAccordionPanelAction
-} from "./HelpDetailsAccordionItem";
+} from "./HelpDetailsAccordion";
 
 interface IActionAccordionItemProps {
   action: Actions;

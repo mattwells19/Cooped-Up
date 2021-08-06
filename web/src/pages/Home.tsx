@@ -20,8 +20,6 @@ import useDocTitle from "@hooks/useDocTitle";
 import get from "@utils/get";
 import { CrownIcon } from "@icons";
 
-import GameHelpSidebar from "@components/GameHelpSidebar";
-
 interface ILobbyProps {
   invalidRoomCode: boolean | undefined;
 }
@@ -75,7 +73,6 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
 
   return (
     <>
-      <GameHelpSidebar open={true} onClose={() => null} />
       <Header
         headingProps={{
           margin: "auto",
