@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Center, CloseButton, Text, useToast, useToken } from "@chakra-ui/react";
 import { ChallengeIcon } from "@icons";
-import { Actions, CounterActions, Influence } from "@contexts/GameStateContext/types";
+import { Actions, CounterActions, Influence } from "@contexts/GameStateContext";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import { ActionDetails } from "@utils/ActionUtils";
 import Bold from "@components/Bold";
@@ -24,7 +24,7 @@ const ActionToast: React.FC<IActionToastProps> = ({
   const { closeAll: closeAllToasts } = useToast();
   const iconSize = useToken("sizes", "40");
 
-  // TODO Fix icon mapping
+  // TODO Fix icon mapping - https://trello.com/c/ylZvyuRn/54-add-graphics-for-actions
   const ActionIcon = variant === "Challenge" ? ChallengeIcon : ActionDetails[Actions.Aid].icon;
 
   return (

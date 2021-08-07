@@ -1,6 +1,4 @@
-import {
-  useToken
-} from "@chakra-ui/react";
+import { useToken } from "@chakra-ui/react";
 import type { Actions, CounterActions, Influence } from "@contexts/GameStateContext";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import * as React from "react";
