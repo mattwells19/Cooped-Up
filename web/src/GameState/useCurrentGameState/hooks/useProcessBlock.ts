@@ -1,8 +1,7 @@
-import { Actions } from "@contexts/GameStateContext";
 import { usePlayers } from "@contexts/PlayersContext";
 import type { ICurrentGameState, IGameStateRoles, ISendGameStateUpdate } from "@GameState/types";
 import useActionToast from "@hooks/useActionToast";
-import { getCounterActionFromAction } from "@utils/CounterActionUtils";
+import { ActionDetails } from "@utils/ActionUtils";
 import { useEffect } from "react";
 
 export default function useProcessBlock(
@@ -24,7 +23,8 @@ export default function useProcessBlock(
         if (!performer) throw new Error("No performer found when processing successful block.");
         if (!currentPlayerTurn) throw new Error("No one's turn when processing successful block.");
 
-        const counterAction = getCounterActionFromAction(action);
+        // during a block there has to be a valid counter action to block with
+        const counterAction = ActionDetails[action].counterAction;
         if (!counterAction) throw new Error(`No counter action for ${action}.`);
 
         actionToast({

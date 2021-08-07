@@ -6,7 +6,6 @@ import { getInfluenceFromAction } from "@utils/InfluenceUtils";
 import type { ICurrentGameState, IGameStateRoles, ISendGameStateUpdate } from "../../types";
 import useActionToast from "@hooks/useActionToast";
 import { useEffect } from "react";
-import { getCounterActionFromAction } from "@utils/CounterActionUtils";
 
 export default function useProcessChallenge(
   currentGameState: ICurrentGameState,
@@ -169,7 +168,8 @@ export default function useProcessChallenge(
       });
 
       if (gameStateContext.challengeFailed) {
-        const counterAction = getCounterActionFromAction(action);
+        // during a failed challenge of a block the block must be a valid counter action
+        const counterAction = ActionDetails[action].counterAction;
         if (!counterAction) throw new Error(`No counter action for ${action}.`);
 
         actionToast({

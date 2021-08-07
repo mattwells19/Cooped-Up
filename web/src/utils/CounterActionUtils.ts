@@ -1,7 +1,7 @@
 import type { ThemeTypings } from "@chakra-ui/react";
-import { Actions, CounterActions } from "@contexts/GameStateContext";
+import { CounterActions } from "@contexts/GameStateContext";
 import { CoinIcon } from "@icons";
-import { getInfluenceFromAction, InfluenceDetails } from "./InfluenceUtils";
+import { InfluenceDetails } from "./InfluenceUtils";
 
 export interface ICounterActionDetails {
   challengable: Readonly<boolean>;
@@ -18,9 +18,3 @@ export const CounterActionDetails: Record<CounterActions, ICounterActionDetails>
   },
   [CounterActions.BlockSteal]: { challengable: true, color: "teal.300", icon: CoinIcon },
 };
-
-export function getCounterActionFromAction(action: Actions): CounterActions | null {
-  const influence = getInfluenceFromAction(action);
-  if (!influence) throw new Error("No influence for that action.");
-  return InfluenceDetails[influence].counterAction;
-}
