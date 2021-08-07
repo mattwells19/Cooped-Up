@@ -1,20 +1,51 @@
 import type { ThemeTypings } from "@chakra-ui/react";
-import { Actions, Influence } from "@contexts/GameStateContext/types";
+import { Actions, CounterActions, Influence } from "@contexts/GameStateContext/types";
 import { AmbassadorImg, AssassinImg, CaptainImg, ContessaImg, DukeImg } from "@images/InfluenceImages";
 
 export interface IInfluenceDetails {
   img: string;
   action: Actions | null;
+  counterAction: CounterActions | null;
   color: ThemeTypings["colors"];
   colorScheme: ThemeTypings["colorSchemes"];
 }
 
 export const InfluenceDetails: Record<Influence, IInfluenceDetails> = {
-  Ambassador: { action: Actions.Exchange, color: "green.300", colorScheme: "green", img: AmbassadorImg },
-  Assassin: { action: Actions.Assassinate, color: "gray.300", colorScheme: "gray", img: AssassinImg },
-  Captain: { action: Actions.Steal, color: "blue.300", colorScheme: "blue", img: CaptainImg },
-  Contessa: { action: null, color: "orange.300", colorScheme: "orange", img: ContessaImg },
-  Duke: { action: Actions.Tax, color: "purple.300", colorScheme: "purple", img: DukeImg },
+  Ambassador: {
+    action: Actions.Exchange,
+    color: "green.300",
+    colorScheme: "green",
+    counterAction: CounterActions.BlockSteal,
+    img: AmbassadorImg,
+  },
+  Assassin: {
+    action: Actions.Assassinate,
+    color: "gray.300",
+    colorScheme: "gray",
+    counterAction: null,
+    img: AssassinImg,
+  },
+  Captain: {
+    action: Actions.Steal,
+    color: "blue.300",
+    colorScheme: "blue",
+    counterAction: CounterActions.BlockSteal,
+    img: CaptainImg,
+  },
+  Contessa: {
+    action: null,
+    color: "orange.300",
+    colorScheme: "orange",
+    counterAction: CounterActions.BlockAssassination,
+    img: ContessaImg,
+  },
+  Duke: {
+    action: Actions.Tax,
+    color: "purple.300",
+    colorScheme: "purple",
+    counterAction: CounterActions.BlockAid,
+    img: DukeImg,
+  },
 };
 
 export function wasValidAction(influence: Influence, action: Actions): boolean {

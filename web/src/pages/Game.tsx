@@ -1,13 +1,16 @@
 import * as React from "react";
-import { Wrap, WrapItem, HStack, Box } from "@chakra-ui/react";
+import { Wrap, WrapItem, HStack, Box, useDisclosure, IconButton, Tooltip } from "@chakra-ui/react";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import PlayerHand from "@components/PlayerHand";
 import Actions from "@components/Actions/Actions";
 import GameModalChooser from "@components/GameModalChooser";
 import { usePlayers } from "@contexts/PlayersContext";
+import GameHelpSidebar from "@components/GameHelpSidebar";
+import { HelpIcon } from "@icons";
 
 const Game: React.FC = () => {
   const { currentPlayer } = useGameState();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const { players } = usePlayers();
   const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayer.id) !== 0);
 
@@ -26,7 +29,21 @@ const Game: React.FC = () => {
           <Actions otherPlayers={otherPlayers} />
         </HStack>
       </Box>
+      <Tooltip label="Help">
+        <IconButton
+          aria-label="Help"
+          variant="unstyled"
+          position="absolute"
+          width="20"
+          height="fit-content"
+          right="5"
+          bottom="5"
+          icon={<HelpIcon/>}
+          onClick={() => onOpen()}
+        />
+      </Tooltip>
       <GameModalChooser />
+      <GameHelpSidebar open={isOpen} onClose={onClose} />
     </>
   );
 };
