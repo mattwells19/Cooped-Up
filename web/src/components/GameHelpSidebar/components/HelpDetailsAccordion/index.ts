@@ -1,13 +1,5 @@
-import HelpDetailsAccordion from "./HelpDetailsAccordion";
-import HelpDetailsAccordionHeader from "./HelpDetailsAccordionHeader";
-import HelpDetailsAccordionPanel from "./HelpDetailsAccordionPanel";
-import HelpDetailsAccordionItem from "./HelpDetailsAccordionItem";
-import HelpDetailsAccordionPanelAction from "./HelpDetailsAccordionPanelAction";
-
-export {
-  HelpDetailsAccordion,
-  HelpDetailsAccordionHeader,
-  HelpDetailsAccordionPanel,
-  HelpDetailsAccordionItem,
-  HelpDetailsAccordionPanelAction,
-};
+export { default as HelpDetailsAccordion } from "./HelpDetailsAccordion";
+export { default as HelpDetailsAccordionHeader } from "./HelpDetailsAccordionHeader";
+export { default as HelpDetailsAccordionPanel } from "./HelpDetailsAccordionPanel";
+export { default as HelpDetailsAccordionItem } from "./HelpDetailsAccordionItem";
+export { default as HelpDetailsAccordionPanelAction } from "./HelpDetailsAccordionPanelAction";
