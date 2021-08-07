@@ -1,6 +1,6 @@
 import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react";
 import * as React from "react";
-import { Actions } from "@contexts/GameStateContext";
+import { Actions, IPlayer } from "@contexts/GameStateContext";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 
 interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
@@ -11,14 +11,22 @@ interface IActionButtonsProps extends WrapProps {
   onAction: (action: Actions) => void;
   isTurn: boolean;
   coinCount: number;
+  players: Array<IPlayer>;
 }
 
 const ActionButtons: React.FC<IActionButtonsProps> = ({
   coinCount,
   onAction,
+  players,
   isTurn,
   ...props
 }) => {
+  const canSteal = React.useMemo(() => {
+    return players.some((player) => (
+      player.influences.some((influence) => !influence.isDead) && player.coins > 0
+    ));
+  }, [players]);
+
   const WrappedButton: React.FC<IWrappedButtonProps> = ({ action, children, disabled, ...buttonProps }) => (
     <WrapItem>
       <Button
@@ -44,7 +52,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
       <WrappedButton
         action={Actions.Steal}
         colorScheme={InfluenceDetails["Captain"].colorScheme}
-        disabled={coinCount >= 10}
+        disabled={coinCount >= 10 || !canSteal}
       >
         Steal
       </WrappedButton>

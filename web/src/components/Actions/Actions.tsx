@@ -44,7 +44,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
     width: "324px",
   };
 
-  const validPlayersToStealFrom = (p: IPlayer): boolean => p.coins > 0;
+  const validPlayersToStealFrom = (p: IPlayer): boolean => p.coins > 0 && p.influences.some((i) => !i.isDead);
   const validPlayersToLoseAnInfluence = (p: IPlayer): boolean => p.influences.some((i) => !i.isDead);
 
   return (
@@ -73,6 +73,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
                 });
             }
           }}
+          players={otherPlayers}
           coinCount={currentPlayer.coins}
           isTurn={isTurn}
           {...commonStyles}
