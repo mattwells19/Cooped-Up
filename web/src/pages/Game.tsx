@@ -9,7 +9,7 @@ import GameHelpSidebar from "@components/GameHelpSidebar";
 import { HelpIcon } from "@icons";
 
 const Game: React.FC = () => {
-  const { currentPlayer } = useGameState();
+  const { currentPlayer, currentPlayerTurn } = useGameState();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { players } = usePlayers();
   const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayer.id) !== 0);
@@ -20,12 +20,12 @@ const Game: React.FC = () => {
         <Wrap justify="center" spacing="60px" maxWidth="90%" margin="auto">
           {otherPlayers.map((player) => (
             <WrapItem key={player.id}>
-              <PlayerHand player={player} />
+              <PlayerHand isTurn={currentPlayerTurn?.id === player.id} player={player} />
             </WrapItem>
           ))}
         </Wrap>
         <HStack bottom="20" position="absolute" spacing="60px" width="100%" justifyContent="center">
-          <PlayerHand player={currentPlayer} isCurrentPlayer />
+          <PlayerHand isTurn={currentPlayerTurn?.id === currentPlayer.id} player={currentPlayer} isCurrentPlayer />
           <Actions otherPlayers={otherPlayers} />
         </HStack>
       </Box>
