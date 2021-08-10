@@ -16,15 +16,22 @@ const Game: React.FC = () => {
 
   return (
     <>
-      <Box height="100vh" paddingTop="20">
-        <Wrap justify="center" spacing="60px" maxWidth="90%" margin="auto">
+      <Box height="100vh" paddingTop={["3", "20"]} maxWidth="90%" margin="auto">
+        <Wrap justify="center" spacing={["12px", "60px"]}>
           {otherPlayers.map((player) => (
             <WrapItem key={player.id}>
               <PlayerHand isTurn={currentPlayerTurn?.id === player.id} player={player} />
             </WrapItem>
           ))}
         </Wrap>
-        <HStack bottom="20" position="absolute" spacing="60px" width="100%" justifyContent="center">
+        <HStack
+          bottom={["16", "20"]}
+          position="absolute"
+          spacing={["9px", "60px"]}
+          width="100%"
+          justifyContent="center"
+          insetX="0"
+        >
           <PlayerHand isTurn={currentPlayerTurn?.id === currentPlayer.id} player={currentPlayer} isCurrentPlayer />
           <Actions otherPlayers={otherPlayers} />
         </HStack>
@@ -34,10 +41,10 @@ const Game: React.FC = () => {
           aria-label="Help"
           variant="unstyled"
           position="absolute"
-          width="20"
+          width={["14", "20"]}
           height="fit-content"
-          right="5"
-          bottom="5"
+          right={["2", "5"]}
+          bottom={["2", "5"]}
           icon={<HelpIcon/>}
           onClick={() => onOpen()}
         />

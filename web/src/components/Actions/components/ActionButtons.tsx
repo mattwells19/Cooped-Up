@@ -32,7 +32,9 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
       <Button
         disabled={!isTurn || disabled}
         onClick={() => !disabled ? onAction(action) : null}
-        width="130px"
+        width={["68px", "130px"]}
+        height={["21px", "40px"]}
+        fontSize={["xs", "inherit"]}
         {...buttonProps}
       >
         {children}
@@ -41,7 +43,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
   );
 
   return (
-    <Wrap align="center" justify="space-evenly" padding="3" {...props}>
+    <Wrap align="center" justify="space-evenly" spacing={["1", "2"]} padding={["1", "3"]} {...props}>
       <WrappedButton
         action={Actions.Tax}
         colorScheme={InfluenceDetails["Duke"].colorScheme}

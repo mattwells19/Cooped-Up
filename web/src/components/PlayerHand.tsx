@@ -31,12 +31,12 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
   } : {};
 
   return (
-    <VStack width={isCurrentPlayer ? "420px" : "325px"}>
-      <HStack justifyContent="space-between" width="100%">
-        <Text {...playerNameProps} fontSize="lg">{player.name}</Text>
-        <Text fontSize="lg" color="gray.400">{`Coins: ${player.coins}`}</Text>
+    <VStack spacing={["2px", "4px"]} width={isCurrentPlayer ? ["165px", "420px"] : ["160px", "325px"]}>
+      <HStack justifyContent="space-between" width="100%" fontSize={["md", "large"]}>
+        <Text {...playerNameProps}>{player.name}</Text>
+        <Text color="gray.400">{`Coins: ${player.coins}`}</Text>
       </HStack>
-      <HStack spacing={isCurrentPlayer ? "20px" : "10px"}>
+      <HStack spacing={isCurrentPlayer ? ["4px", "20px"] : ["4px", "10px"]}>
         {player.influences.map(({ type, isDead }) => (
           <InfluenceCard
             key={`${player.name}-${type}-${useId()}`}

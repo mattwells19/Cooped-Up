@@ -18,7 +18,7 @@ const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, isPlayerSelectabl
           key={p.id}
           onClick={() => playerIsSelectable ? onSelection(p.id) : null}
           aria-disabled={!playerIsSelectable}
-          height={280 / players.length}
+          height={[112, 270].map((num) => `${Math.round(num / players.length)}px`)}
           alignItems="center"
           display="flex"
           placeContent="center"

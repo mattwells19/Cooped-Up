@@ -1,5 +1,14 @@
 import * as React from "react";
-import { Box, BoxProps, Image, ImageProps, keyframes, useToken } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Box,
+  BoxProps,
+  Image,
+  ImageProps,
+  keyframes,
+  useBreakpointValue,
+  useToken
+} from "@chakra-ui/react";
 import type { Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import { BlankImg } from "@images/InfluenceImages";
@@ -45,18 +54,20 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
   isDead = false,
   ...props 
 }) => {
-  const [iconWidthSm, iconWidthEnlarge] = useToken("sizes", ["24", "28"]);
+  const iconWidthSmBkpt = useBreakpointValue(["12", "24"]);
+  const iconWidthEnlargeBkpt = useBreakpointValue(["12", "28"]);
+  const [iconWidthSm, iconWidthEnlarge] = useToken("sizes", [iconWidthSmBkpt ?? "24", iconWidthEnlargeBkpt ?? "28"]);
 
   return (
     <Box position="relative" {...containerProps}>
-      <Image
-        alt={faceUp || isDead ? `Dead ${influence}` : "Hidden Influence"}
-        src={faceUp || isDead ? InfluenceDetails[influence].img : BlankImg}
-        htmlWidth={enlarge ? "200px" : "157px"}
-        htmlHeight={enlarge ? "280px" : "220px"}
-        onClick={onClick}
-        {...props}
-      />
+      <AspectRatio width={enlarge ? ["80px", "200px"] : ["78px", "157px"]} ratio={157 / 220}>
+        <Image
+          alt={faceUp || isDead ? `Dead ${influence}` : "Hidden Influence"}
+          src={faceUp || isDead ? InfluenceDetails[influence].img : BlankImg}
+          onClick={onClick}
+          {...props}
+        />
+      </AspectRatio>
       {isDead && (
         <Box
           position="absolute"

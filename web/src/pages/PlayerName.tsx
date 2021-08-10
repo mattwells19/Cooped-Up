@@ -32,7 +32,7 @@ const PlayerName: React.FC<IPlayerNameProps> = ({ newRoom, roomCode }) => {
   return (
     <>
       <Header>{roomCode}</Header>
-      <Box as="form" marginX="auto" marginY="8" width="md" onSubmit={handleSubmit}>
+      <Box as="form" marginX="auto" marginY="8" width={["sm", "md"]} onSubmit={handleSubmit}>
         <FormControl isRequired isInvalid={error} id="name">
           <FormLabel>Your Name</FormLabel>
           <Box display="flex" gridGap="3">

@@ -35,21 +35,20 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers }) => {
   const commonStyles = {
     backgroundColor: useColorModeValue("gray.200", "gray.700"),
     borderRadius: "10px",
-    height: "280px",
     sx: {
       ul: {
-        height: "100%",
+        height: ["112px", "270px"],
       },
     },
-    width: "324px",
+    width: ["158px", "324px"],
   };
 
   const validPlayersToStealFrom = (p: IPlayer): boolean => p.coins > 0 && p.influences.some((i) => !i.isDead);
   const validPlayersToLoseAnInfluence = (p: IPlayer): boolean => p.influences.some((i) => !i.isDead);
 
   return (
-    <VStack>
-      <Text fontSize="lg" alignSelf="flex-start">
+    <VStack spacing={["2px", "4px"]}>
+      <Text maxWidth={commonStyles.width} fontSize={["sm", "lg"]} alignSelf="flex-start">
         {getActionsText()}
       </Text>
       {!playerSelectableAction && (
