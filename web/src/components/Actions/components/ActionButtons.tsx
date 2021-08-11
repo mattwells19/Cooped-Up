@@ -1,13 +1,13 @@
-import { Button, Wrap, WrapItem, ButtonProps, WrapProps } from "@chakra-ui/react";
+import { Button, ButtonProps, Box } from "@chakra-ui/react";
 import * as React from "react";
 import { Actions, IPlayer } from "@contexts/GameStateContext";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 
-interface IWrappedButtonProps extends Omit<ButtonProps, "width"> {
+interface IActionButtonProps extends ButtonProps {
   action: Actions;
 }
 
-interface IActionButtonsProps extends WrapProps {
+interface IActionButtonsProps {
   onAction: (action: Actions) => void;
   isTurn: boolean;
   coinCount: number;
@@ -19,7 +19,6 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
   onAction,
   players,
   isTurn,
-  ...props
 }) => {
   const canSteal = React.useMemo(() => {
     return players.some((player) => (
@@ -27,73 +26,81 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
     ));
   }, [players]);
 
-  const WrappedButton: React.FC<IWrappedButtonProps> = ({ action, children, disabled, ...buttonProps }) => (
-    <WrapItem>
-      <Button
-        disabled={!isTurn || disabled}
-        onClick={() => !disabled ? onAction(action) : null}
-        width={["68px", "130px"]}
-        height={["21px", "40px"]}
-        fontSize={["xs", "inherit"]}
-        {...buttonProps}
-      >
-        {children}
-      </Button>
-    </WrapItem>
+  const ActionButton: React.FC<IActionButtonProps> = ({ action, children, disabled, ...buttonProps }) => (
+    <Button
+      disabled={!isTurn || disabled}
+      onClick={() => !disabled ? onAction(action) : null}
+      fontSize={["xs", "sm", "inherit"]}
+      height="auto"
+      whiteSpace="normal"
+      {...buttonProps}
+    >
+      {children}
+    </Button>
   );
 
   return (
-    <Wrap align="center" justify="space-evenly" spacing={["1", "2"]} padding={["1", "3"]} {...props}>
-      <WrappedButton
+    <Box
+      display="grid"
+      gridTemplateColumns="repeat(2, 1fr)"
+      gridTemplateRows="repeat(4, 1fr)"
+      justifyItems="stretch"
+      alignItems="stretch"
+      gridGap={["1", "2", "3"]}
+      padding={["1", "2", "3"]}
+      height="100%"
+    >
+      <ActionButton
         action={Actions.Tax}
         colorScheme={InfluenceDetails["Duke"].colorScheme}
         disabled={coinCount >= 10}
       >
         Collect Tax
-      </WrappedButton>
-      <WrappedButton
+      </ActionButton>
+      <ActionButton
         action={Actions.Steal}
         colorScheme={InfluenceDetails["Captain"].colorScheme}
         disabled={coinCount >= 10 || !canSteal}
       >
         Steal
-      </WrappedButton>
-      <WrappedButton
+      </ActionButton>
+      <ActionButton
         action={Actions.Assassinate}
         colorScheme={InfluenceDetails["Assassin"].colorScheme}
         disabled={coinCount >= 10 || coinCount < 3}
       >
         Assassinate
-      </WrappedButton>
-      <WrappedButton
+      </ActionButton>
+      <ActionButton
         action={Actions.Exchange}
         colorScheme={InfluenceDetails["Ambassador"].colorScheme}
         disabled={coinCount >= 10}
       >
         Exchange
-      </WrappedButton>
-      <WrappedButton
+      </ActionButton>
+      <ActionButton
         action={Actions.Income}
         disabled={coinCount >= 10}
         variant="outline"
       >
         Income
-      </WrappedButton>
-      <WrappedButton
+      </ActionButton>
+      <ActionButton
         action={Actions.Aid}
         variant="outline"
         disabled={coinCount >= 10}
       >
         Foreign Aid
-      </WrappedButton>
-      <WrappedButton
+      </ActionButton>
+      <ActionButton
         action={Actions.Coup}
         colorScheme="red"
         disabled={coinCount < 7}
+        gridColumn="1 / 3"
       >
         Coup
-      </WrappedButton>
-    </Wrap>
+      </ActionButton>
+    </Box>
   );
 };
 

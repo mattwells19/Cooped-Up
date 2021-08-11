@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BoxProps, Button, Divider, HStack, Text, VStack } from "@chakra-ui/react";
 import type { IPlayer, IPlayerInfluence } from "@contexts/GameStateContext";
-import InfluenceCard from "../InfluenceCard";
+import InfluenceCard from "../InfluenceCard/InfluenceCard";
 import BaseModal from "./BaseModal";
 import { useDeck } from "@contexts/DeckContext";
 

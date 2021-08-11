@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Wrap, WrapItem, HStack, Box, useDisclosure, IconButton, Tooltip } from "@chakra-ui/react";
+import { useDisclosure, IconButton, Tooltip, Flex } from "@chakra-ui/react";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import PlayerHand from "@components/PlayerHand";
 import Actions from "@components/Actions/Actions";
@@ -16,26 +16,47 @@ const Game: React.FC = () => {
 
   return (
     <>
-      <Box height="100vh" paddingTop={["3", "20"]} maxWidth="90%" margin="auto">
-        <Wrap justify="center" spacing={["12px", "60px"]}>
-          {otherPlayers.map((player) => (
-            <WrapItem key={player.id}>
-              <PlayerHand isTurn={currentPlayerTurn?.id === player.id} player={player} />
-            </WrapItem>
-          ))}
-        </Wrap>
-        <HStack
-          bottom={["16", "20"]}
-          position="absolute"
-          spacing={["9px", "60px"]}
-          width="100%"
-          justifyContent="center"
-          insetX="0"
-        >
-          <PlayerHand isTurn={currentPlayerTurn?.id === currentPlayer.id} player={currentPlayer} isCurrentPlayer />
-          <Actions otherPlayers={otherPlayers} />
-        </HStack>
-      </Box>
+      <Flex
+        flexDirection="row"
+        flexWrap="wrap"
+        justifyContent="center"
+        gridGap={["3", "12"]}
+        alignItems="flex-start"
+        height={["calc(70vh - 12px)", "calc(70vh - 50px)"]}
+        paddingTop={["3", "20"]}
+        margin="auto"
+        overflow="auto"
+      >
+        {otherPlayers.map((player) => (
+          <PlayerHand
+            width="40vw"
+            maxWidth="325px"
+            isTurn={currentPlayerTurn?.id === player.id}
+            player={player}
+            key={player.id}
+          />
+        ))}
+      </Flex>
+      <Flex
+        gridGap={["3", "12"]}
+        padding={["3", "12"]}
+        margin="auto"
+        alignItems="stretch"
+        justifyContent="center"
+        flexWrap="wrap"
+      >
+        <PlayerHand
+          width={["75%", "420px"]}
+          isTurn={currentPlayerTurn?.id === currentPlayer.id}
+          player={currentPlayer}
+          isCurrentPlayer
+        />
+        <Actions
+          width={["75%", "420px"]}
+          minHeight="225px"
+          otherPlayers={otherPlayers}
+        />
+      </Flex>
       <Tooltip label="Help">
         <IconButton
           aria-label="Help"

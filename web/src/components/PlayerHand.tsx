@@ -1,9 +1,9 @@
-import { VStack, HStack, Text, useId, keyframes, TextProps } from "@chakra-ui/react";
+import { Text, useId, keyframes, TextProps, Flex, FlexProps, } from "@chakra-ui/react";
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext/types";
-import InfluenceCard from "./InfluenceCard";
+import InfluenceCard from "./InfluenceCard/InfluenceCard";
 
-interface IPlayerHandProps {
+interface IPlayerHandProps extends FlexProps {
   isCurrentPlayer?: boolean;
   player: IPlayer;
   isTurn?: boolean;
@@ -23,7 +23,7 @@ const nowYourTurnAnimation = keyframes({
   },
 });
 
-const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, player }) => {
+const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, player, ...props }) => {
   const playerNameProps: TextProps = isTurn ? {
     animation: `${nowYourTurnAnimation} 1s`,
     color: "pink.300",
@@ -31,12 +31,12 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
   } : {};
 
   return (
-    <VStack spacing={["2px", "4px"]} width={isCurrentPlayer ? ["165px", "420px"] : ["160px", "325px"]}>
-      <HStack justifyContent="space-between" width="100%" fontSize={["md", "large"]}>
+    <Flex flexDirection="column" gridGap="1" {...props}>
+      <Flex justifyContent="space-between" width="full" fontSize={["md", "large"]}>
         <Text {...playerNameProps}>{player.name}</Text>
         <Text color="gray.400">{`Coins: ${player.coins}`}</Text>
-      </HStack>
-      <HStack spacing={isCurrentPlayer ? ["4px", "20px"] : ["4px", "10px"]}>
+      </Flex>
+      <Flex gridGap="6px" width="full">
         {player.influences.map(({ type, isDead }) => (
           <InfluenceCard
             key={`${player.name}-${type}-${useId()}`}
@@ -44,10 +44,13 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
             faceUp={Boolean(isCurrentPlayer)}
             isDead={isDead}
             enlarge={isCurrentPlayer}
+            containerProps={{
+              width: "100%",
+            }}
           />
         ))}
-      </HStack>
-    </VStack>
+      </Flex>
+    </Flex>
   );
 };
 
