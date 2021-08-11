@@ -32,7 +32,7 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
 
   return (
     <Flex flexDirection="column" gridGap="1" {...props}>
-      <Flex justifyContent="space-between" width="full" fontSize={["md", "large"]}>
+      <Flex justifyContent="space-between" width="full" fontSize={["md", "lg"]}>
         <Text {...playerNameProps}>{player.name}</Text>
         <Text color="gray.400">{`Coins: ${player.coins}`}</Text>
       </Flex>

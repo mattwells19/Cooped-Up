@@ -4,7 +4,6 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Center,
   Collapse,
   Divider,
   HStack,
@@ -20,11 +19,11 @@ import useDocTitle from "@hooks/useDocTitle";
 import get from "@utils/get";
 import { CrownIcon } from "@icons";
 
-interface ILobbyProps {
+interface IHomeProps {
   invalidRoomCode: boolean | undefined;
 }
 
-const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
+const Home: React.FC<IHomeProps> = ({ invalidRoomCode }) => {
   const history = useHistory();
   const toast = useToast();
   useDocTitle();
@@ -87,16 +86,15 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
           <CrownIcon width="2rem" transform="scale(-1, 1)" />
         </Box>
       </Header>
-      <Center marginY="10" marginX="auto" maxWidth="lg">
+      <Box as="main" marginY="10" marginX="auto" maxWidth="lg">
         <VStack spacing={10}>
+          <Text paddingX="4" fontSize="large">
+            A web based version of the popular board game Coup.
+          </Text>
           <Text paddingX="4" fontSize="large">
             {"So you're all cooped up at home with nothing to do. You want to hang out with friends, but you\
             can't because the virus is still at large. What better way to connect with your friends than with a\
             little bit of deception! "}
-            <Text fontWeight="bold" as="span">
-              Cooped Up
-            </Text>
-            {" is based on the popular board game Coup."}
           </Text>
           <Text>🚧 Still in development. 🚧</Text>
           <Divider />
@@ -126,7 +124,7 @@ const Home: React.FC<ILobbyProps> = ({ invalidRoomCode }) => {
             Start a New Room
           </Button>
         </VStack>
-      </Center>
+      </Box>
     </>
   );
 };
