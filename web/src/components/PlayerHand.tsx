@@ -36,14 +36,13 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
         <Text {...playerNameProps}>{player.name}</Text>
         <Text color="gray.400">{`Coins: ${player.coins}`}</Text>
       </Flex>
-      <Flex gridGap="6px" width="full">
+      <Flex gridGap={["4px", "10px"]} width="full">
         {player.influences.map(({ type, isDead }) => (
           <InfluenceCard
             key={`${player.name}-${type}-${useId()}`}
             influence={type}
             faceUp={Boolean(isCurrentPlayer)}
             isDead={isDead}
-            enlarge={isCurrentPlayer}
             containerProps={{
               width: "100%",
             }}

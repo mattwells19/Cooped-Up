@@ -22,7 +22,6 @@ const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, hand
             .map((influence, index) => (
               <InfluenceCard
                 key={`${influence.type}-${useId()}`}
-                enlarge
                 faceUp
                 influence={influence.type}
                 onClick={() => handleClose(influence.type)}

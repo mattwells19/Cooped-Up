@@ -37,7 +37,7 @@ const Actions: React.FC<IActionsProps> = ({ otherPlayers, ...props }) => {
 
   return (
     <Flex flexDirection="column" gridGap={["2px", "4px"]} {...props}>
-      <Text maxWidth="100%" fontSize={["sm", "lg"]} alignSelf="flex-start">
+      <Text maxWidth="100%" fontSize={["md", "lg"]} alignSelf="flex-start">
         {getActionsText()}
       </Text>
       <Box backgroundColor="gray.700" borderRadius="md" height="100%" width="100%">

@@ -30,7 +30,7 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
     <Button
       disabled={!isTurn || disabled}
       onClick={() => !disabled ? onAction(action) : null}
-      fontSize={["xs", "sm", "inherit"]}
+      fontSize={["md", "lg"]}
       height="auto"
       whiteSpace="normal"
       {...buttonProps}
@@ -46,8 +46,8 @@ const ActionButtons: React.FC<IActionButtonsProps> = ({
       gridTemplateRows="repeat(4, 1fr)"
       justifyItems="stretch"
       alignItems="stretch"
-      gridGap={["1", "2", "3"]}
-      padding={["1", "2", "3"]}
+      gridGap={["1", "1", "1", "3"]}
+      padding={["1", "1", "1", "3"]}
       height="100%"
     >
       <ActionButton

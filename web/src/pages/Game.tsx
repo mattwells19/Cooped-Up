@@ -13,6 +13,13 @@ const Game: React.FC = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { players } = usePlayers();
   const otherPlayers = players.filter((player) => player.id.localeCompare(currentPlayer.id) !== 0);
+  const isTurn = Boolean(currentPlayerTurn?.id === currentPlayer.id);
+
+  React.useLayoutEffect(() => {
+    if (isTurn) {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  }, [isTurn]);
 
   return (
     <>
@@ -22,7 +29,7 @@ const Game: React.FC = () => {
         justifyContent="center"
         gridGap={["3", "12"]}
         alignItems="flex-start"
-        height={["calc(70vh - 12px)", "calc(70vh - 50px)"]}
+        height={["calc(60vh - 12px)", "calc(60vh - 50px)"]}
         paddingTop={["3", "20"]}
         margin="auto"
         overflow="auto"
@@ -47,7 +54,7 @@ const Game: React.FC = () => {
       >
         <PlayerHand
           width={["75%", "420px"]}
-          isTurn={currentPlayerTurn?.id === currentPlayer.id}
+          isTurn={isTurn}
           player={currentPlayer}
           isCurrentPlayer
         />

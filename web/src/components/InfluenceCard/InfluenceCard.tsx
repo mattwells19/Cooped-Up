@@ -10,7 +10,6 @@ export interface IInfluenceCardProps {
   imageProps?: Partial<ImageProps>;
   disableAnimation?: boolean;
   faceUp: boolean;
-  enlarge?: boolean;
   influence: Influence;
   isDead?: boolean;
   onClick?: () => void;
@@ -23,7 +22,6 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
   faceUp,
   onClick,
   disableAnimation = false,
-  enlarge = false, // FIXME
   isDead = false,
 }) => {
   return (

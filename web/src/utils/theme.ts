@@ -12,4 +12,11 @@ export default extendTheme({
     initialColorMode: "dark",
     useSystemColorMode: false,
   },
+  styles: {
+    global: {
+      body: {
+        scrollBehavior: "smooth",
+      },
+    },
+  },
 });

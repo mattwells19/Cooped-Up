@@ -43,12 +43,9 @@ const DeadInfluenceOverlay: React.FC<IDeadInfluenceOverlayProps> = ({ disableAni
         transform="scale(1)"
         marginX="auto"
         marginTop="2"
-        width="min"
+        width="60%"
       >
-        <DeathIcon
-          color="rgba(255, 255, 255, 0.6)"
-          width="25%"
-        />
+        <DeathIcon color="rgba(255, 255, 255, 0.6)" />
       </Box>
     </Box>
   );

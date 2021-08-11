@@ -106,7 +106,6 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
                   }}
                   key={exchangeInfluence.key}
                   influence={exchangeInfluence.type}
-                  enlarge
                   faceUp
                   disableAnimation
                 />
@@ -136,7 +135,6 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
                   key={exchangeInfluence.key}
                   isDead={exchangeInfluence.isDead}
                   influence={exchangeInfluence.type}
-                  enlarge
                   faceUp
                   disableAnimation
                 />
