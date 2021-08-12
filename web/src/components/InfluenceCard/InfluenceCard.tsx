@@ -1,13 +1,13 @@
 import * as React from "react";
-import { Box, BoxProps, Image, ImageProps } from "@chakra-ui/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 import type { Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
-import { BlankImg } from "@images/InfluenceImages";
+import { BlankImg } from "@icons";
 import DeadInfluenceOverlay from "./DeadInfluenceOverlay";
 
 export interface IInfluenceCardProps {
   containerProps?: Partial<BoxProps>;
-  imageProps?: Partial<ImageProps>;
+  imageProps?: Partial<React.SVGProps<SVGSVGElement>>;
   disableAnimation?: boolean;
   faceUp: boolean;
   influence: Influence;
@@ -24,15 +24,23 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
   disableAnimation = false,
   isDead = false,
 }) => {
+  const DisplayCard = faceUp || isDead ? InfluenceDetails[influence].img : BlankImg;
+  
+  const getCardLabel = () => {
+    if (faceUp) {
+      return influence;
+    } else if (isDead) {
+      return `Dead ${influence}`;
+    } else {
+      return "Hidden Influence";
+    }
+  };
+
   return (
     <Box position="relative" {...containerProps}>
-      <Image
-        alt={faceUp || isDead ? `Dead ${influence}` : "Hidden Influence"}
-        src={faceUp || isDead ? InfluenceDetails[influence].img : BlankImg}
+      <DisplayCard
         onClick={onClick}
-        sx={{
-          aspectRatio: 157 / 200
-        }}
+        aria-labelledby={getCardLabel()}
         {...imageProps}
       />
       {isDead && (

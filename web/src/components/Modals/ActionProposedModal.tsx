@@ -28,18 +28,15 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
   const { blockable, challengable } = ActionDetails[action];
   const { blocker, blockingInfluence } = blockDetails;
 
+  // Wouldn't be here if both of these were null so non-null assertion should be safe
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const InfluenceCover = InfluenceDetails[blockingInfluence ?? influence!].img;
+
   return (
     <>
       {(blockingInfluence || influence) && (
         <Box position="absolute" left="50%" top="25%" transform="translateX(-50%) rotate(10deg)" zIndex="1401">
-          <Image
-            key={influence}
-            // Wouldn't be here if both of these were null so non-null assertion should be safe
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            src={InfluenceDetails[blockingInfluence ?? influence!].img}
-            htmlWidth="200px"
-            htmlHeight="280px"
-          />
+          <InfluenceCover />
         </Box>
       )}
       <BaseModal>
