@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, ButtonGroup, Text, VStack, Tooltip, Divider, Flex, Box } from "@chakra-ui/react";
+import { Button, ButtonGroup, Text, VStack, Tooltip, Divider, Box } from "@chakra-ui/react";
 import type { Actions, IActionResponse, Influence, IPlayer } from "@contexts/GameStateContext/types";
 import { getInfluenceFromAction, InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";

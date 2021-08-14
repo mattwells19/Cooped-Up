@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Divider, useId } from "@chakra-ui/react";
 import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
-import InfluenceCard from "../InfluenceCard/InfluenceCard";
+import InfluenceCard from "@components/InfluenceCard";
 import BaseModal from "./BaseModal";
 import { CardSet, CardSetHeader, CardSetInfluences } from "@components/CardSet";
 

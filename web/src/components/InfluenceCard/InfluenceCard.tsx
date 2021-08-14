@@ -57,8 +57,6 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
       <DisplayCard
         onClick={onClick}
         aria-labelledby={getCardLabel()}
-        // width="100%"
-        // height="fit-content"
         {...imageProps}
       />
       {isDead && (

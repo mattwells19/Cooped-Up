@@ -1,7 +1,7 @@
 import { useId, keyframes, TextProps, FlexProps, } from "@chakra-ui/react";
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext/types";
-import InfluenceCard from "./InfluenceCard/InfluenceCard";
+import InfluenceCard from "@components/InfluenceCard";
 import { CardSet, CardSetHeader, CardSetInfluences } from "./CardSet";
 
 interface IPlayerHandProps extends FlexProps {
