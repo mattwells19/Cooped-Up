@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, css } from "@chakra-ui/react";
 import type { Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import { BlankImg } from "@icons";
 import DeadInfluenceOverlay from "./DeadInfluenceOverlay";
 
 export interface IInfluenceCardProps {
+  button?: boolean;
   containerProps?: Partial<BoxProps>;
   imageProps?: Partial<React.SVGProps<SVGSVGElement>>;
   disableAnimation?: boolean;
@@ -16,6 +17,7 @@ export interface IInfluenceCardProps {
 }
 
 const InfluenceCard: React.FC<IInfluenceCardProps> = ({
+  button = false,
   containerProps,
   imageProps,
   influence,
@@ -36,11 +38,27 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
     }
   };
 
+  const buttonClass = css({
+    _hover: {
+      transform: "scale(1.05)",
+    },
+    role: "button",
+    transition: "transform 500ms",
+  });
+
   return (
-    <Box position="relative" {...containerProps}>
+    <Box
+      as={button ? "button" : undefined}
+      css={button ? buttonClass : undefined}
+      position="relative"
+      width="full"
+      {...containerProps}
+    >
       <DisplayCard
         onClick={onClick}
         aria-labelledby={getCardLabel()}
+        // width="100%"
+        // height="fit-content"
         {...imageProps}
       />
       {isDead && (

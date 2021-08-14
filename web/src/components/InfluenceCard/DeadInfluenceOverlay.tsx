@@ -28,7 +28,6 @@ const growIn = keyframes({
 });
 
 const DeadInfluenceOverlay: React.FC<IDeadInfluenceOverlayProps> = ({ disableAnimation, inset }) => {
-  // TODO - check me
   return (
     <Box
       position="absolute"
@@ -42,7 +41,7 @@ const DeadInfluenceOverlay: React.FC<IDeadInfluenceOverlayProps> = ({ disableAni
         opacity={1}
         transform="scale(1)"
         marginX="auto"
-        marginTop="2"
+        marginTop="25%"
         width="60%"
       >
         <DeathIcon color="rgba(255, 255, 255, 0.6)" />

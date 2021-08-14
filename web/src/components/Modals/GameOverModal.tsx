@@ -14,11 +14,11 @@ interface IGameOverModal {
 
 const GameOverModal: React.FC<IGameOverModal> = ({ currentPlayer, winner, onPlayAgain }) => (
   <BaseModal>
-    <VStack spacing="4" margin="10" marginTop="5">
-      <Text fontFamily="Nova Flat" fontSize="5xl" textAlign="center">
+    <VStack spacing="4" margin={["5", "10"]} marginTop="5">
+      <Text fontFamily="Nova Flat" fontSize={["3xl", "5xl"]} textAlign="center">
         {currentPlayer.id === winner.id ? "Congratulations!" : `${winner.name} has won.`}
       </Text>
-      <Text fontSize="2xl" textAlign="center">
+      <Text fontSize={["large", "2xl"]} textAlign="center">
         {currentPlayer.id === winner.id ? "🎉 You've won! 🎉" : "😞 Better luck next time. 😞"}
       </Text>
       <Image src={currentPlayer.id === winner.id ? WinnerPenguin : SadPenguin} />

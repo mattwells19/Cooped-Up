@@ -29,7 +29,7 @@ const Game: React.FC = () => {
         justifyContent="center"
         gridGap={["3", "12"]}
         alignItems="flex-start"
-        height={["calc(60vh - 12px)", "calc(60vh - 50px)"]}
+        minHeight={["calc(60vh - 12px)", "calc(60vh - 50px)"]}
         paddingTop={["3", "20"]}
         margin="auto"
         overflow="auto"

@@ -3,7 +3,7 @@ import * as React from "react";
 type IInfluenceSvgProps = React.SVGProps<SVGSVGElement> & { leftColor: string, rightColor: string };
 
 const InfluenceSvg: React.FC<IInfluenceSvgProps> = ({ leftColor, rightColor, children, ...props }) => (
-  <svg width="200" height="280" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect width="200" height="280" rx="5" fill={rightColor}/>
     <path d="M0 5C0 2.23857 2.23858 0 5 0H100V280H5C2.23858 280 0 277.761 0 275V5Z" fill={leftColor}/>
     <rect x="9" y="9" width="182" height="262" rx="4" stroke="black" strokeWidth="2"/>

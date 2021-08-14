@@ -5,7 +5,7 @@ import BaseModal from "./BaseModal";
 
 const WaitingForActionModal: React.FC = ({ children }) => (
   <BaseModal>
-    <VStack margin="10" spacing="6" textAlign="center" fontSize="large">
+    <VStack margin={["5", "10"]} spacing="6" textAlign="center" fontSize="large">
       {children}
       <Center>
         <Image src={WaitingGif} />

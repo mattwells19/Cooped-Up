@@ -1,7 +1,8 @@
-import { Text, useId, keyframes, TextProps, Flex, FlexProps, } from "@chakra-ui/react";
+import { useId, keyframes, TextProps, FlexProps, } from "@chakra-ui/react";
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext/types";
 import InfluenceCard from "./InfluenceCard/InfluenceCard";
+import { CardSet, CardSetHeader, CardSetInfluences } from "./CardSet";
 
 interface IPlayerHandProps extends FlexProps {
   isCurrentPlayer?: boolean;
@@ -31,12 +32,13 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
   } : {};
 
   return (
-    <Flex flexDirection="column" gridGap="1" {...props}>
-      <Flex justifyContent="space-between" width="full" fontSize={["md", "lg"]}>
-        <Text {...playerNameProps}>{player.name}</Text>
-        <Text color="gray.400">{`Coins: ${player.coins}`}</Text>
-      </Flex>
-      <Flex gridGap={["4px", "10px"]} width="full">
+    <CardSet {...props}>
+      <CardSetHeader
+        primaryText={player.name}
+        secondaryText={`Coins: ${player.coins}`}
+        primaryTextProps={playerNameProps}
+      />
+      <CardSetInfluences>
         {player.influences.map(({ type, isDead }) => (
           <InfluenceCard
             key={`${player.name}-${type}-${useId()}`}
@@ -48,8 +50,8 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
             }}
           />
         ))}
-      </Flex>
-    </Flex>
+      </CardSetInfluences>
+    </CardSet>
   );
 };
 

@@ -9,6 +9,7 @@ const BaseModal: React.FC<Partial<ModalProps>> = ({ children, onClose = () => nu
     closeOnOverlayClick={false}
     closeOnEsc={false}
     scrollBehavior="inside"
+    size="lg"
     {...props}
   >
     <ModalOverlay />
