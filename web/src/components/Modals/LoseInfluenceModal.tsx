@@ -1,42 +1,39 @@
 import * as React from "react";
-import { Center, HStack, Text, useId, VStack } from "@chakra-ui/react";
+import { Divider, useId } from "@chakra-ui/react";
 import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
-import InfluenceCard from "../InfluenceCard";
+import InfluenceCard from "@components/InfluenceCard";
 import BaseModal from "./BaseModal";
+import { CardSet, CardSetHeader, CardSetInfluences } from "@components/CardSet";
 
 interface ILoseInfluenceModal {
   handleClose: (killInfluence: Influence) => void;
   currentPlayer: IPlayer;
 }
 
-const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, handleClose }) => (
-  <BaseModal>
-    <VStack spacing="4" margin="10">
-      <Text fontSize="large" textAlign="center">
-        Select an influence to lose.
-      </Text>
-      <Center>
-        <HStack spacing="10px">
+const LoseInfluenceModal: React.FC<ILoseInfluenceModal> = ({ currentPlayer, handleClose }) => {
+  return (
+    <BaseModal>
+      <CardSet gridGap="4" margin={["5", "10"]}>
+        <CardSetHeader primaryText="Select an influence to lose." />
+        <Divider />
+        <CardSetInfluences>
           {currentPlayer.influences
             .filter((i) => !i.isDead)
-            .map((influence, index) => (
-              <InfluenceCard
-                key={`${influence.type}-${useId()}`}
-                enlarge
-                faceUp
-                influence={influence.type}
-                onClick={() => handleClose(influence.type)}
-                _hover={{
-                  transform: `scale(1.1) translateX(${index === 0 ? "-10px" : "10px"})`,
-                }}
-                transition="transform 500ms"
-                role="button"
-              />
-            ))}
-        </HStack>
-      </Center>
-    </VStack>
-  </BaseModal>
-);
+            .map((influence) => {
+              return (
+                <InfluenceCard
+                  button
+                  key={`${influence.type}-${useId()}`}
+                  faceUp
+                  influence={influence.type}
+                  onClick={() => handleClose(influence.type)}
+                />
+              );
+            })}
+        </CardSetInfluences>
+      </CardSet>
+    </BaseModal>
+  );
+};
 
 export default LoseInfluenceModal;

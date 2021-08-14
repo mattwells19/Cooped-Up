@@ -38,6 +38,7 @@ const CustomBox: React.FC = ({ children }) => (
     width="100%"
     height="64px"
     borderRadius="2xl"
+    paddingX="2"
   >
     {children}
   </Box>
@@ -75,13 +76,19 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
     <BaseModal>
       <Center backgroundColor="#4D2527" flexDirection="column" padding="2" rounded="md" overflow="hidden">
         <ChallengeIcon width="93px" height="93px" />
-        <Text textTransform="uppercase" fontFamily="Nova Flat" fontSize="5xl" color="#E4E768" textAlign="center">
+        <Text
+          textTransform="uppercase"
+          fontFamily="Nova Flat"
+          fontSize={["4xl", "5xl"]}
+          color="#E4E768"
+          textAlign="center"
+        >
           Challenge
         </Text>
-        <VStack width="100%" spacing="2" height="138px">
+        <VStack width="100%" spacing="2" height="138px" fontSize={[ "large", "larger"]}>
           {stage >= Stages.initial && (
             <CustomBox>
-              <Text fontSize="larger">
+              <Text>
                 <Text as="span" fontWeight="bold">
                   {challenger.name}
                 </Text>
@@ -104,7 +111,7 @@ const ChallengedModal: React.FC<IChallengedModal> = ({
           )}
           {stage >= Stages.result && (
             <CustomBox>
-              <Text fontSize="larger">
+              <Text>
                 {"The challenge has "}
                 <Text
                   as="span"

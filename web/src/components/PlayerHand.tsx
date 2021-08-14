@@ -1,9 +1,10 @@
-import { VStack, HStack, Text, useId, keyframes, TextProps } from "@chakra-ui/react";
+import { useId, keyframes, TextProps, FlexProps, } from "@chakra-ui/react";
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext/types";
-import InfluenceCard from "./InfluenceCard";
+import InfluenceCard from "@components/InfluenceCard";
+import { CardSet, CardSetHeader, CardSetInfluences } from "./CardSet";
 
-interface IPlayerHandProps {
+interface IPlayerHandProps extends FlexProps {
   isCurrentPlayer?: boolean;
   player: IPlayer;
   isTurn?: boolean;
@@ -23,7 +24,7 @@ const nowYourTurnAnimation = keyframes({
   },
 });
 
-const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, player }) => {
+const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, player, ...props }) => {
   const playerNameProps: TextProps = isTurn ? {
     animation: `${nowYourTurnAnimation} 1s`,
     color: "pink.300",
@@ -31,23 +32,26 @@ const PlayerHand: React.FC<IPlayerHandProps> = ({ isCurrentPlayer, isTurn, playe
   } : {};
 
   return (
-    <VStack width={isCurrentPlayer ? "420px" : "325px"}>
-      <HStack justifyContent="space-between" width="100%">
-        <Text {...playerNameProps} fontSize="lg">{player.name}</Text>
-        <Text fontSize="lg" color="gray.400">{`Coins: ${player.coins}`}</Text>
-      </HStack>
-      <HStack spacing={isCurrentPlayer ? "20px" : "10px"}>
+    <CardSet {...props}>
+      <CardSetHeader
+        primaryText={player.name}
+        secondaryText={`Coins: ${player.coins}`}
+        primaryTextProps={playerNameProps}
+      />
+      <CardSetInfluences>
         {player.influences.map(({ type, isDead }) => (
           <InfluenceCard
             key={`${player.name}-${type}-${useId()}`}
             influence={type}
             faceUp={Boolean(isCurrentPlayer)}
             isDead={isDead}
-            enlarge={isCurrentPlayer}
+            containerProps={{
+              width: "100%",
+            }}
           />
         ))}
-      </HStack>
-    </VStack>
+      </CardSetInfluences>
+    </CardSet>
   );
 };
 

@@ -1,9 +1,10 @@
 import * as React from "react";
-import { BoxProps, Button, Divider, HStack, Text, VStack } from "@chakra-ui/react";
+import { BoxProps, Button, Divider, Text, VStack } from "@chakra-ui/react";
 import type { IPlayer, IPlayerInfluence } from "@contexts/GameStateContext";
-import InfluenceCard from "../InfluenceCard";
+import InfluenceCard from "@components/InfluenceCard";
 import BaseModal from "./BaseModal";
 import { useDeck } from "@contexts/DeckContext";
+import { CardSet, CardSetHeader, CardSetInfluences } from "@components/CardSet";
 
 interface IExchangeModal {
   handleClose: (playerHand: Array<IPlayerInfluence>, deck: Array<IPlayerInfluence>) => void;
@@ -72,6 +73,7 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
     borderRadius: "8px",
     padding: "1",
     transition: "transform 500ms",
+    width: "100%",
   };
 
   return (
@@ -84,65 +86,51 @@ const ExchangeModal: React.FC<IExchangeModal> = ({ currentPlayer, handleClose })
           Once you are happy with your hand, click <Text as="span" fontWeight="bold">Done</Text>.
         </Text>
         <Divider />
-        <VStack>
-          <HStack justifyContent="space-between" width="full">
-            <Text flex="1">Deck</Text>
-            <Text textAlign="right" color="gray.400">Cards to go back in the deck.</Text>
-          </HStack>
-          <HStack spacing="10px">
+        <CardSet width="100%">
+          <CardSetHeader primaryText="Deck" secondaryText="Cards to go back in the deck" />
+          <CardSetInfluences>
             {deckCards
-              .map((exchangeInfluence, index) => (
+              .map((exchangeInfluence) => (
                 <InfluenceCard
+                  button
                   containerProps={{
-                    _hover: {
-                      transform: `scale(1.05) translateX(${index === 0 ? "-5px" : "5px"})`,
-                    },
                     "aria-selected": exchangeInfluence.key === selectedDeckCard?.key,
                     onClick: () => setSelectedDeckCard((prevSelectedDeckCard) => (
                       prevSelectedDeckCard?.key === exchangeInfluence.key ? null : exchangeInfluence
                     )),
-                    role: "button",
                     ...commonInfluenceCardContainerProps,
                   }}
                   key={exchangeInfluence.key}
                   influence={exchangeInfluence.type}
-                  enlarge
                   faceUp
                   disableAnimation
                 />
               ))}
-          </HStack>
-        </VStack>
-        <VStack>
-          <HStack justifyContent="space-between" width="full">
-            <Text flex="1">Your Hand</Text>
-            <Text textAlign="right" color="gray.400">Cards you&apos;ll keep.</Text>
-          </HStack>
-          <HStack spacing="10px">
+          </CardSetInfluences>
+        </CardSet>
+        <CardSet width="100%">
+          <CardSetHeader primaryText="Your Hand" secondaryText="Cards you'll keep" />
+          <CardSetInfluences>
             {playerCards
-              .map((exchangeInfluence, index) => (
+              .map((exchangeInfluence) => (
                 <InfluenceCard
+                  button={!exchangeInfluence.isDead}
                   containerProps={{
-                    _hover: exchangeInfluence.isDead ? {} : {
-                      transform: `scale(1.05) translateX(${index === 0 ? "-5px" : "5px"})`,
-                    },
                     "aria-selected": exchangeInfluence.key === selectedPlayerCard?.key,
                     onClick: !exchangeInfluence.isDead ? () => setSelectedPlayerCard((prevSelectedPlayerCard) => (
                       prevSelectedPlayerCard?.key === exchangeInfluence.key ? null : exchangeInfluence
                     )) : undefined,
-                    role: exchangeInfluence.isDead ? "" : "button",
                     ...commonInfluenceCardContainerProps,
                   }}
                   key={exchangeInfluence.key}
                   isDead={exchangeInfluence.isDead}
                   influence={exchangeInfluence.type}
-                  enlarge
                   faceUp
                   disableAnimation
                 />
               ))}
-          </HStack>
-        </VStack>
+          </CardSetInfluences>
+        </CardSet>
         <Divider />
         <Button onClick={() => handleDone()} width="full" height="12">
           Done

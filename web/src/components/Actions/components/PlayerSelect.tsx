@@ -1,15 +1,15 @@
-import { Text, List, ListItem, ListProps } from "@chakra-ui/react";
+import { Text, List, ListItem } from "@chakra-ui/react";
 import * as React from "react";
 import type { IPlayer } from "@contexts/GameStateContext";
 
-interface IPlayerSelectProps extends ListProps {
+interface IPlayerSelectProps {
   players: Array<IPlayer>;
   isPlayerSelectable: (player: IPlayer) => boolean;
   onSelection: (selectedPlayerId: string) => void;
 }
 
-const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, isPlayerSelectable, onSelection, ...props }) => (
-  <List {...props}>
+const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, isPlayerSelectable, onSelection }) => (
+  <List height="100%">
     {players.map((p) => {
       const playerIsSelectable = isPlayerSelectable(p);
 
@@ -18,7 +18,7 @@ const PlayerSelect: React.FC<IPlayerSelectProps> = ({ players, isPlayerSelectabl
           key={p.id}
           onClick={() => playerIsSelectable ? onSelection(p.id) : null}
           aria-disabled={!playerIsSelectable}
-          height={280 / players.length}
+          height={`${Math.round(100 / players.length)}%`}
           alignItems="center"
           display="flex"
           placeContent="center"
