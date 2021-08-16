@@ -32,14 +32,12 @@ const Layout = (): React.ReactElement => (
         )
       )}
     />
-    <Route
-      path="/name"
-      render={() => <PlayerName />}
-    />
-    <Route
-      path="/"
-      render={() => <Home />}
-    />
+    <Route path="/name">
+      <PlayerName />
+    </Route>
+    <Route path="/">
+      <Home />
+    </Route>
     <Route path="*">
       <Redirect to="/" />
     </Route>
