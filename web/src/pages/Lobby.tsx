@@ -6,50 +6,34 @@ import {
   FormControl,
   FormHelperText,
   Heading,
-  Text,
   VStack,
   ButtonGroup,
   Center,
   useToast,
+  ListItem,
+  Text,
+  IconButton,
+  Tooltip,
+  List,
 } from "@chakra-ui/react";
 import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import type { IPlayer } from "@contexts/GameStateContext/types";
-import get from "@utils/get";
 import Game from "./Game";
 import { usePlayers } from "@contexts/PlayersContext";
+import { EditIcon } from "@icons";
+import { useRoutingContext } from "@contexts/RoutingContext";
 
-interface ILobbyProps {
-  newRoom: boolean | undefined;
-  roomCode: string;
-}
-
-const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
-  // use history module to push URLs
+const Lobby = (): React.ReactElement => {
   const history = useHistory();
   const toast = useToast();
+  const { roomCode } = useRoutingContext();
 
-  React.useEffect(() => {
-    async function doesRoomExist() {
-      const validRoom = await get<boolean>(`checkRoom?roomCode=${roomCode}`);
+  // shouldn't happen since we redirect if there's no roomCode
+  useDocTitle(roomCode ?? "");
 
-      if (!validRoom) {
-        history.push({
-          pathname: "/",
-          state: {
-            invalidRoomCode: true,
-          },
-        });
-      }
-    }
-
-    if (!newRoom) doesRoomExist();
-  }, []);
-
-  useDocTitle(roomCode);
-
-  const { gameStarted, handleStartGame } = useGameState();
+  const { gameStarted, handleStartGame, currentPlayer } = useGameState();
   const { players } = usePlayers();
   const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
 
@@ -69,6 +53,10 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
     prevPlayersRef.current = players;
   }, [players]);
 
+  const handleChangeName = (): void => {
+    history.push(`/name?roomCode=${roomCode}`);
+  };
+
   if (gameStarted) return <Game />;
   return (
     <>
@@ -77,11 +65,45 @@ const Lobby: React.FC<ILobbyProps> = ({ newRoom, roomCode }) => {
         <VStack alignItems="center">
           <Heading as="h2">Players</Heading>
           <Divider />
-          <VStack height="20rem" alignItems="center" overflowY="auto" width="100%">
+          <List
+            height="20rem"
+            overflowY="auto"
+            width="100%"
+            paddingLeft="3"
+          >
             {players.map((player) => (
-              <Text key={player.id}>{player.name}</Text>
+              <ListItem
+                key={player.id}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                height="40px"
+              >
+                {player.id === currentPlayer.id ? (
+                  <>
+                    <Text fontWeight="bold">{player.name}</Text>
+                    <Tooltip label="Edit name.">
+                      <IconButton
+                        aria-label="Edit name."
+                        onClick={() => handleChangeName()}
+                        colorScheme="gray"
+                        inset="0"
+                        left="auto"
+                        variant="ghost"
+                        borderRadius="md"
+                        minWidth="auto"
+                        width="30px"
+                        height="30px"
+                        icon={<EditIcon width="20px" />}
+                      />
+                    </Tooltip>
+                  </>
+                ) : (
+                  <Text>{player.name}</Text>
+                )}
+              </ListItem>
             ))}
-          </VStack>
+          </List>
           <FormControl display="flex" flexDirection="column">
             <ButtonGroup direction="row" spacing={4}>
               <Button to="/" as={Link} size="lg" variant="outline">

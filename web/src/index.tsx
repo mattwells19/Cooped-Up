@@ -3,11 +3,17 @@ import ReactDOM from "react-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "@utils/theme";
 import Layout from "./Layout";
+import { RoutingContextProvider } from "@contexts/RoutingContext";
+import { BrowserRouter } from "react-router-dom";
 
 const App: React.FC = () => (
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <Layout />
+      <BrowserRouter>
+        <RoutingContextProvider>
+          <Layout />
+        </RoutingContextProvider>
+      </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>
 );

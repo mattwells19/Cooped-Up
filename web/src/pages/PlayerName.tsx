@@ -2,16 +2,13 @@ import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input } from "@c
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import Header from "@components/Header";
+import { useRoutingContext } from "@contexts/RoutingContext";
 
-interface IPlayerNameProps {
-  newRoom: boolean | undefined;
-  roomCode: string;
-}
-
-const PlayerName: React.FC<IPlayerNameProps> = ({ newRoom, roomCode }) => {
-  const [playerName, setPlayerName] = React.useState<string>("");
+const PlayerName = (): React.ReactElement => {
+  const [playerName, setPlayerName] = React.useState<string>(localStorage.getItem("playerName") ?? "");
   const [error, setError] = React.useState<boolean>(false);
   const history = useHistory();
+  const { roomCode } = useRoutingContext();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,17 +18,14 @@ const PlayerName: React.FC<IPlayerNameProps> = ({ newRoom, roomCode }) => {
     else {
       localStorage.setItem("playerName", trimmedPlayerName);
       history.replace({
-        pathname: `/room/${roomCode}`,
-        state: {
-          newRoom,
-        },
+        pathname: roomCode ? `/room/${roomCode}` : "/",
       });
     }
   };
 
   return (
     <>
-      <Header>{roomCode}</Header>
+      <Header>{roomCode ?? "Player Name"}</Header>
       <Box as="form" marginX="auto" marginY="8" maxWidth="md" paddingX="3" onSubmit={handleSubmit}>
         <FormControl isRequired isInvalid={error} id="name">
           <FormLabel>Your Name</FormLabel>

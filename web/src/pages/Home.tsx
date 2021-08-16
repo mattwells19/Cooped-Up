@@ -18,12 +18,10 @@ import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
 import get from "@utils/get";
 import { CrownIcon } from "@icons";
+import { useRoutingContext } from "@contexts/RoutingContext";
 
-interface IHomeProps {
-  invalidRoomCode: boolean | undefined;
-}
-
-const Home: React.FC<IHomeProps> = ({ invalidRoomCode }) => {
+const Home = (): React.ReactElement => {
+  const { newRoom, invalidRoomCode, setIsInvalidRoom, setIsNewRoom } = useRoutingContext();
   const history = useHistory();
   const toast = useToast();
   useDocTitle();
@@ -44,12 +42,8 @@ const Home: React.FC<IHomeProps> = ({ invalidRoomCode }) => {
   async function handleNewRoom() {
     const roomCode = await get<string>("newRoom");
 
-    history.push({
-      pathname: `/room/${roomCode}`,
-      state: {
-        newRoom: true,
-      },
-    });
+    setIsNewRoom(true);
+    history.push(`/room/${roomCode}`);
   }
 
   React.useEffect(() => {
@@ -62,11 +56,10 @@ const Home: React.FC<IHomeProps> = ({ invalidRoomCode }) => {
         status: "error",
         title: "The room you tried to join doesn't exist.",
       });
-      history.push({
-        state: {
-          invalidRoomCode: undefined,
-        },
-      });
+      setIsInvalidRoom(false);
+    }
+    if (newRoom) {
+      setIsNewRoom(false);
     }
   }, []);
 
