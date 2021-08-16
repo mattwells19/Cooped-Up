@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Button,
   Divider,
@@ -20,20 +20,18 @@ import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import type { IPlayer } from "@contexts/GameStateContext/types";
-import Game from "./Game";
 import { usePlayers } from "@contexts/PlayersContext";
 import { EditIcon } from "@icons";
 import { useRoutingContext } from "@contexts/RoutingContext";
 
 const Lobby = (): React.ReactElement => {
-  const history = useHistory();
   const toast = useToast();
   const { roomCode } = useRoutingContext();
 
   // shouldn't happen since we redirect if there's no roomCode
   useDocTitle(roomCode ?? "");
 
-  const { gameStarted, handleStartGame, currentPlayer } = useGameState();
+  const { handleStartGame, currentPlayer } = useGameState();
   const { players } = usePlayers();
   const prevPlayersRef = React.useRef<Array<IPlayer>>(players);
 
@@ -53,11 +51,6 @@ const Lobby = (): React.ReactElement => {
     prevPlayersRef.current = players;
   }, [players]);
 
-  const handleChangeName = (): void => {
-    history.push(`/name?roomCode=${roomCode}`);
-  };
-
-  if (gameStarted) return <Game />;
   return (
     <>
       <Header>{roomCode}</Header>
@@ -85,7 +78,8 @@ const Lobby = (): React.ReactElement => {
                     <Tooltip label="Edit name.">
                       <IconButton
                         aria-label="Edit name."
-                        onClick={() => handleChangeName()}
+                        as={Link}
+                        to={`/name?roomCode=${roomCode}`}
                         colorScheme="gray"
                         inset="0"
                         left="auto"
