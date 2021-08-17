@@ -19,7 +19,7 @@ app.use("/api", ApiRoutes);
 
 /* Used in prod to serve files */
 app.use(staticFiles(path.join(__dirname, "/")));
-app.get(["/", "/room/*"], (_, res) => res.sendFile(path.join(__dirname, "/index.html")));
+app.get(["/", "/room/*", "/name"], (_, res) => res.sendFile(path.join(__dirname, "/index.html")));
 
 initRooms()
   .then(() => {
