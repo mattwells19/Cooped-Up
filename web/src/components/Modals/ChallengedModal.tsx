@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, Center, Text, VStack, keyframes } from "@chakra-ui/react";
 import type { Influence, IPlayer } from "@contexts/GameStateContext/types";
-import { ChallengeIcon } from "@icons";
+import ChallengeIcon from "@icons/ChallengeIcon";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
 import BaseModal from "./BaseModal";
 

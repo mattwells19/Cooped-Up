@@ -110,7 +110,7 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
             width="100%"
             gridGap="2"
             display="grid"
-            gridTemplateColumns={["1fr", `repeat(${showBlockBtns ? "3" : "2"}, 1fr)`]}
+            gridTemplateColumns={["1fr", `repeat(${(blockable?.length ?? 0) + 1}, 1fr)`]}
             gridTemplateRows="1fr"
           >
             {(challengable || blocker) && (

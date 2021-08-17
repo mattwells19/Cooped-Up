@@ -1,5 +1,5 @@
 import { Box, keyframes } from "@chakra-ui/react";
-import { DeathIcon } from "@icons";
+import DeathIcon from "@icons/DeathIcon";
 import * as React from "react";
 
 interface IDeadInfluenceOverlayProps {

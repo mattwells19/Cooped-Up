@@ -1,6 +1,6 @@
 import type { ThemeTypings } from "@chakra-ui/react";
 import { Actions, CounterActions, Influence } from "@contexts/GameStateContext";
-import { AxeIcon, CoinIcon, AssassinIcon } from "@icons";
+import { AssassinateIcon, AidIcon, CoupIcon, ExchangeIcon, IncomeIcon, StealIcon, TaxIcon } from "@icons/actions";
 import { InfluenceDetails } from "./InfluenceUtils";
 
 export interface IActionDetails {
@@ -17,36 +17,42 @@ export const ActionDetails: Record<Actions, IActionDetails> = {
     challengable: false,
     color: "teal.300",
     counterAction: CounterActions.BlockAid,
-    icon: CoinIcon,
+    icon: AidIcon,
   },
   [Actions.Assassinate]: {
     blockable: ["Contessa"],
     challengable: true,
     color: InfluenceDetails["Assassin"].color,
     counterAction: CounterActions.BlockAssassination,
-    icon: AssassinIcon,
+    icon: AssassinateIcon,
   },
-  [Actions.Coup]: { blockable: null, challengable: false, color: "red.300", counterAction: null, icon: AxeIcon },
+  [Actions.Coup]: { blockable: null, challengable: false, color: "red.300", counterAction: null, icon: CoupIcon },
   [Actions.Exchange]: {
     blockable: null,
     challengable: true,
     color: InfluenceDetails["Ambassador"].color,
     counterAction: null,
-    icon: CoinIcon,
+    icon: ExchangeIcon,
   },
-  [Actions.Income]: { blockable: null, challengable: false, color: "teal.300", counterAction: null, icon: CoinIcon },
+  [Actions.Income]: { blockable: null, challengable: false, color: "teal.300", counterAction: null, icon: IncomeIcon },
   [Actions.Steal]: {
     blockable: ["Captain", "Ambassador"],
     challengable: true,
     color: InfluenceDetails["Captain"].color,
     counterAction: CounterActions.BlockSteal,
-    icon: CoinIcon,
+    icon: StealIcon,
   },
   [Actions.Tax]: {
     blockable: null,
     challengable: true,
     color: InfluenceDetails["Duke"].color,
     counterAction: null,
-    icon: CoinIcon,
+    icon: TaxIcon,
   },
 };
+
+export function getActionFromCounterAction(counterAction: CounterActions): Actions | undefined {
+  const ActionDetailsKeys = Object.keys(ActionDetails) as Array<Actions>;
+  const foundKey = ActionDetailsKeys.find((key) => ActionDetails[key].counterAction === counterAction);
+  return foundKey;
+}

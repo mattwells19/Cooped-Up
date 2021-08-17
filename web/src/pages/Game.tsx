@@ -6,7 +6,7 @@ import Actions from "@components/Actions/Actions";
 import GameModalChooser from "@components/GameModalChooser";
 import { usePlayers } from "@contexts/PlayersContext";
 import GameHelpSidebar from "@components/GameHelpSidebar";
-import { HelpIcon } from "@icons";
+import HelpIcon from "@icons/HelpIcon";
 
 const Game: React.FC = () => {
   const { currentPlayer, currentPlayerTurn } = useGameState();

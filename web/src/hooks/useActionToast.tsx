@@ -1,18 +1,51 @@
 import React from "react";
-import { Box, Center, CloseButton, Text, useToast, useToken } from "@chakra-ui/react";
-import { ChallengeIcon } from "@icons";
+import { Box, Center, CloseButton, Text, useBreakpointValue, useToast, useToken } from "@chakra-ui/react";
+import ChallengeIcon from "@icons/ChallengeIcon";
 import { Actions, CounterActions, Influence } from "@contexts/GameStateContext";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
-import { ActionDetails } from "@utils/ActionUtils";
+import { ActionDetails, getActionFromCounterAction } from "@utils/ActionUtils";
 import Bold from "@components/Bold";
+import { CounterActionDetails } from "@utils/CounterActionUtils";
+
+type IActionToastVariant = Actions | CounterActions | "Challenge";
 
 export interface IActionToastProps {
-  variant: Actions | CounterActions | "Challenge";
+  variant: IActionToastVariant;
   performerName?: string;
   victimName?: string;
   blockerName?: string;
   lostInfluence?: Influence;
 }
+
+function getVariantIcon(variant: IActionToastVariant): React.FC<React.SVGProps<SVGSVGElement>> {
+  switch(variant) {
+    case Actions.Aid:
+    case Actions.Assassinate:
+    case Actions.Coup:
+    case Actions.Exchange:
+    case Actions.Income:
+    case Actions.Steal:
+    case Actions.Tax:
+      return ActionDetails[variant].icon;
+    case CounterActions.BlockAid:
+    case CounterActions.BlockAssassination:
+    case CounterActions.BlockSteal:
+      return CounterActionDetails[variant].icon;
+    case "Challenge":
+      return ChallengeIcon;
+  }
+}
+
+const getBlockedAction = (variant: IActionToastVariant): Actions | undefined => {
+  switch(variant) {
+    case CounterActions.BlockAid:
+    case CounterActions.BlockAssassination:
+    case CounterActions.BlockSteal:
+      return getActionFromCounterAction(variant);
+    default:
+      return undefined;
+  }
+};
 
 const ActionToast: React.FC<IActionToastProps> = ({
   performerName,
@@ -22,16 +55,19 @@ const ActionToast: React.FC<IActionToastProps> = ({
   blockerName,
 }) => {
   const { closeAll: closeAllToasts } = useToast();
-  const iconSize = useToken("sizes", "40");
 
-  // TODO Fix icon mapping - https://trello.com/c/ylZvyuRn/54-add-graphics-for-actions
-  const ActionIcon = variant === "Challenge" ? ChallengeIcon : ActionDetails[Actions.Aid].icon;
+  const iconSizeBig = useToken("sizes", "40");
+  const iconSizeSmall = useToken("sizes", "32");
+  const iconSize = useBreakpointValue([iconSizeSmall, iconSizeBig]);
+
+  const ActionIcon = getVariantIcon(variant);
+  const blockedAction = getBlockedAction(variant);
 
   return (
     <Box
       bg="gray.600"
       maxW="sm"
-      padding={5}
+      padding="5"
       rounded="md"
       boxShadow="2xl"
       role="alert"
@@ -61,26 +97,23 @@ const ActionToast: React.FC<IActionToastProps> = ({
             {" has gotten away with foreign aid! A very generous group of Dukes indeed."}
           </>
         )}
-        {(
-          variant === CounterActions.BlockSteal
-          || variant === CounterActions.BlockAssassination
-          || variant === CounterActions.BlockAid
-        ) && (
+        {blockedAction && (
           <>
             <Bold>{blockerName}</Bold>
             {" successfully blocked "}
             <Bold>{performerName}</Bold>
+            {" from performing "}
+            <Bold color={ActionDetails[blockedAction].color}>{blockedAction}</Bold>
             .
           </>
         )}
-        {variant === Actions.Coup && (
+        {variant === Actions.Coup && lostInfluence && (
           <>
             <Bold>{performerName}</Bold>
             {" coup'd "}
             <Bold>{victimName}</Bold>
             {" who lost their "}
-            {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-            <Bold color={InfluenceDetails[lostInfluence!].color}>
+            <Bold color={InfluenceDetails[lostInfluence].color}>
               {lostInfluence}
             </Bold>
             !
@@ -116,12 +149,11 @@ const ActionToast: React.FC<IActionToastProps> = ({
             {" exchanged their cards. No one likes double Contessas."}
           </>
         )}
-        {variant === "Challenge" && (
+        {variant === "Challenge" && lostInfluence && (
           <>
             <Bold display="inline-block" marginTop="3">{victimName}</Bold>
             {" lost their "}
-            {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-            <Bold color={InfluenceDetails[lostInfluence!].color}>
+            <Bold color={InfluenceDetails[lostInfluence].color}>
               {lostInfluence}
             </Bold>
             .

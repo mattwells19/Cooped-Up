@@ -1,6 +1,6 @@
 import type { ThemeTypings } from "@chakra-ui/react";
 import { Actions, CounterActions, Influence } from "@contexts/GameStateContext/types";
-import { AmbassadorImg, AssassinImg, CaptainImg, ContessaImg, DukeImg } from "@icons";
+import { AmbassadorImg, AssassinImg, CaptainImg, ContessaImg, DukeImg } from "@icons/influences";
 import type { FC, SVGProps } from "react";
 
 export interface IInfluenceDetails {
