@@ -28,6 +28,7 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
   const { blockable, challengable } = ActionDetails[action];
   const { blocker, blockingInfluence } = blockDetails;
   const showBlockBtns = Boolean((!blocker && (!victim || currentPlayer.id === victim.id)) && blockable);
+  const showChallengeBtn = Boolean(challengable || blocker);
 
   return (
     <BaseModal>
@@ -110,10 +111,13 @@ const ActionProposedModal: React.FC<IActionProposedModal> = ({
             width="100%"
             gridGap="2"
             display="grid"
-            gridTemplateColumns={["1fr", `repeat(${showBlockBtns ? "3" : "2"}, 1fr)`]}
+            gridTemplateColumns={[
+              "1fr",
+              `repeat(${(showChallengeBtn ? 1 : 0) + (showBlockBtns ? 1 : 0) + 1}, 1fr)`
+            ]}
             gridTemplateRows="1fr"
           >
-            {(challengable || blocker) && (
+            {showChallengeBtn && (
               <Button onClick={() => handleClose({ type: "CHALLENGE" })}>
                 Challenge
               </Button>

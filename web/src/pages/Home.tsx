@@ -17,7 +17,7 @@ import {
 import Header from "@components/Header";
 import useDocTitle from "@hooks/useDocTitle";
 import get from "@utils/get";
-import { CrownIcon } from "@icons";
+import CrownIcon from "@icons/CrownIcon";
 import { useRoutingContext } from "@contexts/RoutingContext";
 
 const Home = (): React.ReactElement => {

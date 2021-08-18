@@ -21,7 +21,7 @@ import useDocTitle from "@hooks/useDocTitle";
 import { useGameState } from "@contexts/GameStateContext/GameStateContext";
 import type { IPlayer } from "@contexts/GameStateContext/types";
 import { usePlayers } from "@contexts/PlayersContext";
-import { EditIcon } from "@icons";
+import EditIcon from "@icons/EditIcon";
 import { useRoutingContext } from "@contexts/RoutingContext";
 
 const Lobby = (): React.ReactElement => {

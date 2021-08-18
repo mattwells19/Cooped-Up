@@ -17,7 +17,7 @@ module.exports = {
   },
   alias: {
     "@components": "./src/components",
-    "@icons": "./src/icons/index",
+    "@icons": "./src/icons",
     "@utils": "./src/utils",
     "@hooks": "./src/hooks",
     "@contexts": "./src/contexts",

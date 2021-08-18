@@ -10,7 +10,7 @@
     "paths": {
       // need to update snowpack.config.js -> aliases if something changes
       "@components/*": ["components/*"],
-      "@icons": ["icons/index"],
+      "@icons/*": ["icons/*"],
       "@utils/*": ["utils/*"],
       "@hooks/*": ["hooks/*"],
       "@contexts/*": ["contexts/*"],

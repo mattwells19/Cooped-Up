@@ -1,6 +1,6 @@
 import type { ThemeTypings } from "@chakra-ui/react";
 import { CounterActions } from "@contexts/GameStateContext";
-import { CoinIcon } from "@icons";
+import { BlockIcon } from "@icons/actions";
 import { InfluenceDetails } from "./InfluenceUtils";
 
 export interface ICounterActionDetails {
@@ -10,11 +10,11 @@ export interface ICounterActionDetails {
 }
 
 export const CounterActionDetails: Record<CounterActions, ICounterActionDetails> = {
-  [CounterActions.BlockAid]: { challengable: true, color: InfluenceDetails["Duke"].color, icon: CoinIcon },
+  [CounterActions.BlockAid]: { challengable: true, color: InfluenceDetails["Duke"].color, icon: BlockIcon },
   [CounterActions.BlockAssassination]: {
     challengable: true,
     color: InfluenceDetails["Contessa"].color,
-    icon: CoinIcon,
+    icon: BlockIcon,
   },
-  [CounterActions.BlockSteal]: { challengable: true, color: "teal.300", icon: CoinIcon },
+  [CounterActions.BlockSteal]: { challengable: true, color: "teal.300", icon: BlockIcon },
 };

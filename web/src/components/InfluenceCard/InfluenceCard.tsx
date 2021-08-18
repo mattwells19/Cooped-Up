@@ -2,7 +2,7 @@ import * as React from "react";
 import { Box, BoxProps, css } from "@chakra-ui/react";
 import type { Influence } from "@contexts/GameStateContext/types";
 import { InfluenceDetails } from "@utils/InfluenceUtils";
-import { BlankImg } from "@icons";
+import { BackImg } from "@icons/influences";
 import DeadInfluenceOverlay from "./DeadInfluenceOverlay";
 
 export interface IInfluenceCardProps {
@@ -26,7 +26,7 @@ const InfluenceCard: React.FC<IInfluenceCardProps> = ({
   disableAnimation = false,
   isDead = false,
 }) => {
-  const DisplayCard = faceUp || isDead ? InfluenceDetails[influence].img : BlankImg;
+  const DisplayCard = faceUp || isDead ? InfluenceDetails[influence].img : BackImg;
   
   const getCardLabel = () => {
     if (faceUp) {
