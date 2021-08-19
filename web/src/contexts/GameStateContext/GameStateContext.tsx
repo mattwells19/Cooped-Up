@@ -7,15 +7,15 @@ import {
   IGameState,
   IGameStateContext,
   IncomingSocketActions,
-  Influence,
   IPlayer,
   OutgoingSocketActions,
+  startingDeck,
 } from "./types";
 import { usePlayers } from "@contexts/PlayersContext";
 import { useDeck } from "@contexts/DeckContext";
 import PlayerNotFoundError from "@utils/PlayerNotFoundError";
-import get from "@utils/get";
 import { Box, Spinner } from "@chakra-ui/react";
+import { shuffle } from "lodash";
 
 const GameStateContext = React.createContext<IGameStateContext | null | undefined>(undefined);
 GameStateContext.displayName = "GameStateContext";
@@ -56,7 +56,7 @@ export const GameStateContextProvider: React.FC = ({ children }) => {
   }, [socket]);
 
   const handleStartGame = React.useCallback(async () => {
-    const deck = await get<Array<Influence>>(`deck?roomCode=${roomCode}`);
+    const deck = shuffle(startingDeck);
 
     const playerHands: Array<IPlayer> = players.map((player) => ({
       ...player,

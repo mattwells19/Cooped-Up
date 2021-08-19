@@ -29,9 +29,4 @@ export interface ISocketAuth {
   playerName: string;
 }
 
-export interface IRoomValue {
-  players: Array<IPlayer>;
-  deck: Array<Influence>;
-}
-
 export type IActionResponse = { type: "PASS" } | { type: "CHALLENGE" } | { type: "BLOCK"; influence: Influence };

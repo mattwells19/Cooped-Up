@@ -1,35 +1,30 @@
 import { Router, Request } from "express";
 import { sample as _sample } from "lodash";
 import { alphabet } from "./constants";
-import * as Rooms from "./rooms";
+import Rooms from "./rooms";
 
 const router = Router();
 
-router.get("/checkRoom", (req: Request<unknown, unknown, unknown, { roomCode: string }>, res) => {
-  const { roomCode } = req.query;
-  const { rooms } = req;
-
-  const roomExists = rooms.has(roomCode.toUpperCase());
+router.get("/checkRoom", async (req: Request<unknown, unknown, unknown, { roomCode: string }>, res) => {
+  const roomExists = await Rooms.roomExists(req.query.roomCode.toUpperCase());
   res.send(JSON.stringify(roomExists));
 });
 
-router.get("/newRoom", (req, res) => {
-  const { rooms } = req;
+router.get("/newRoom", async (req, res) => {
   let roomCode = "";
-  do {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    roomCode = _sample(alphabet)! + _sample(alphabet) + _sample(alphabet) + _sample(alphabet);
-  } while (rooms.has(roomCode));
+  let roomAlreadyExists = false;
+
+  try {
+    do {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      roomCode = _sample(alphabet)! + _sample(alphabet) + _sample(alphabet) + _sample(alphabet);
+      roomAlreadyExists = await Rooms.roomExists(roomCode);
+    } while (roomAlreadyExists);
+  } catch (e) {
+    throw new Error(`Could not create new room: ${e}`);
+  }
 
   res.send(JSON.stringify(roomCode));
-});
-
-router.get("/deck", async (req: Request<unknown, unknown, unknown, { roomCode: string }>, res, next) => {
-  const { roomCode } = req.query;
-
-  await Rooms.getRoomDeck(roomCode)
-    .then((deck) => res.send(JSON.stringify(deck)))
-    .catch((err) => next(err));
 });
 
 export default router;

@@ -1,4 +1,5 @@
 .snowpack
+.env
 build
 node_modules
 data.json

@@ -65,3 +65,11 @@ export const enum OutgoingSocketActions {
   UpdateGameState = "updateGameState",
   ProposeActionResponse = "proposeActionResponse",
 }
+
+export const startingDeck: Influence[] = [
+  ...Array(3).fill("Duke"),
+  ...Array(3).fill("Captain"),
+  ...Array(3).fill("Ambassador"),
+  ...Array(3).fill("Assassin"),
+  ...Array(3).fill("Contessa"),
+];
