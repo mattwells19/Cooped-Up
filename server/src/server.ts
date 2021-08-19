@@ -2,9 +2,9 @@ import { Application, static as staticFiles } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
-import { init as initRooms } from "./rooms";
 import ApiRoutes from "./routes";
 import initializeSocketEvents from "./socket";
+import Rooms from "./rooms";
 
 /* Server Setup */
 const app: Application = require("express")();
@@ -17,9 +17,9 @@ app.use("/api", ApiRoutes);
 app.use(staticFiles(path.join(__dirname, "/")));
 app.get(["/", "/room/*", "/name"], (_, res) => res.sendFile(path.join(__dirname, "/index.html")));
 
-initRooms()
-  .then(() => {
-    initializeSocketEvents(io);
-    httpServer.listen(process.env.PORT ?? 4000, () => console.info(`Listening on port ${process.env.PORT ?? 4000}`));
-  })
-  .catch((err) => console.error(err));
+initializeSocketEvents(io);
+httpServer.listen(process.env.PORT ?? 4000, () => console.info(`Listening on port ${process.env.PORT ?? 4000}`));
+
+httpServer.on("close", () => {
+  Rooms.disconnect();
+});
