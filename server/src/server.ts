@@ -11,10 +11,6 @@ const app: Application = require("express")();
 const httpServer = createServer(app);
 const io: Server = require("socket.io")(httpServer);
 
-app.use((req, res, next) => {
-  req.rooms = io.sockets.adapter.rooms;
-  next();
-});
 app.use("/api", ApiRoutes);
 
 /* Used in prod to serve files */

@@ -1,5 +1,3 @@
-import { Influence } from "./types";
-
 const alphabet: Array<string> = [
   "A",
   "B",
@@ -29,12 +27,4 @@ const alphabet: Array<string> = [
   "Z",
 ];
 
-const startingDeck: Influence[] = [
-  ...Array(3).fill(Influence.Duke),
-  ...Array(3).fill(Influence.Captain),
-  ...Array(3).fill(Influence.Ambassador),
-  ...Array(3).fill(Influence.Assassin),
-  ...Array(3).fill(Influence.Contessa),
-];
-
-export { alphabet, startingDeck };
+export { alphabet };

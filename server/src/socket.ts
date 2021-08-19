@@ -17,7 +17,7 @@ export default function initializeSocketEvents(io: Server): void {
       const playersInRoom = await Rooms.addPlayerToRoom(roomCode, playerToAdd);
       io.to(roomCode).emit(OutgoingSocketActions.PlayersChanged, playersInRoom);
     } catch (e) {
-      throw Error(`Cannot join room with code ${roomCode}`);
+      throw Error(`Cannot join room with code ${roomCode}. ${e}`);
     }
 
     socket.on(IncomingSocketActions.UpdateGameState, async (newGameState: unknown) => {
@@ -32,7 +32,7 @@ export default function initializeSocketEvents(io: Server): void {
     });
 
     socket.on(IncomingSocketActions.Disconnect, async () => {
-      const players = await Rooms.removePlayer(socket.id);
+      const players = await Rooms.removePlayer(roomCode, socket.id);
       if (players) io.to(roomCode).emit(OutgoingSocketActions.PlayersChanged, players);
     });
   });

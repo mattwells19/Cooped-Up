@@ -1,50 +1,13 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as fs from "fs";
-import { shuffle as _shuffle } from "lodash";
-import { startingDeck } from "./constants";
-import { Influence, IPlayer, IRoomValue } from "./types";
+import { IPlayer } from "./types";
+import Redis from "ioredis";
 
-type RoomsData = Map<string, IRoomValue>;
+let redis: Redis.Redis;
 
 /**
  * Creates the data.json file if it does not exist.
  */
 export async function init(): Promise<void> {
-  try {
-    await fs.promises.access("data.json");
-  } catch {
-    await fs.promises.writeFile("data.json", JSON.stringify(new Map<string, Array<IPlayer>>()));
-  }
-}
-
-/**
- * Reads the data.json file and returns it as a Map
- * @returns data as a Map
- */
-async function readData(): Promise<RoomsData> {
-  const dataString = await fs.promises.readFile("data.json", "utf-8");
-  const parsedData = JSON.parse(dataString);
-
-  const data = new Map<string, IRoomValue>();
-  for (const roomCode in parsedData) {
-    const value = parsedData[roomCode] as IRoomValue;
-    data.set(roomCode, value);
-  }
-
-  return data;
-}
-
-/**
- * Overwrites the data.json file with the new data
- * @param data The new Map to write to data.json
- */
-async function saveData(data: RoomsData): Promise<void> {
-  // eslint-disable-next-line object-curly-newline
-  const dataToWrite: Record<string, IRoomValue> = {};
-  data.forEach((value, key) => {
-    dataToWrite[key] = value;
-  });
-  await fs.promises.writeFile("data.json", JSON.stringify(dataToWrite));
+  redis = new Redis(process.env.REDIS_URL, { tls: { rejectUnauthorized: false } });
 }
 
 /**
@@ -52,10 +15,19 @@ async function saveData(data: RoomsData): Promise<void> {
  * @param roomCode The roomCode to get the players for
  * @returns The list of players in the room or undefined if the room does not exist
  */
-export async function getRoom(roomCode: string): Promise<IRoomValue | undefined> {
-  const data = await readData();
-  const value = data.get(roomCode);
-  return value;
+export async function getRoom(roomCode: string): Promise<Array<IPlayer> | undefined> {
+  const data = await redis.get(roomCode);
+  return data ? JSON.parse(data) : undefined;
+}
+
+/**
+ * Updates the player list for the specified room
+ * @param roomCode The room to update
+ * @param data The updates list of players
+ */
+async function updateRoom(roomCode: string, data: Array<IPlayer>): Promise<void> {
+  // automatically expire key after 12 hours
+  redis.set(roomCode, JSON.stringify(data), "EX 43200");
 }
 
 /**
@@ -63,21 +35,17 @@ export async function getRoom(roomCode: string): Promise<IRoomValue | undefined>
  * @param playerId The player to remove's ID
  * @returns The updated player list or null if that player was not found in a room
  */
-export async function removePlayer(playerId: string): Promise<Array<IPlayer> | null> {
-  const data = await readData();
+export async function removePlayer(roomCode: string, playerId: string): Promise<Array<IPlayer> | null> {
+  const players = await getRoom(roomCode);
 
-  const dataKeys = Array.from(data.keys());
-  const foundKey = dataKeys.find((key) => data.get(key)!.players.some((p) => p.id === playerId));
-  if (!foundKey) return null;
+  if (!players) throw new Error(`Room with code: ${roomCode} not found.`);
 
-  const { players, deck } = data.get(foundKey)!;
-  const newPlayerList = [...players].filter((p) => p.id !== playerId);
+  const newPlayers = [...players].filter((p) => p.id !== playerId);
 
-  if (newPlayerList.length === 0) data.delete(foundKey);
-  else data.set(foundKey, { deck, players: newPlayerList });
+  if (newPlayers.length === 0) redis.del(roomCode);
+  else await updateRoom(roomCode, newPlayers);
 
-  await saveData(data);
-  return newPlayerList;
+  return newPlayers;
 }
 
 /**
@@ -87,39 +55,20 @@ export async function removePlayer(playerId: string): Promise<Array<IPlayer> | n
  * @returns The updated list of players
  */
 export async function addPlayerToRoom(roomCode: string, player: IPlayer): Promise<Array<IPlayer>> {
-  const data = await readData();
+  const players = (await getRoom(roomCode)) ?? [];
+  const newPlayers = [...players, player];
 
-  const { players, deck } = data.has(roomCode) ? data.get(roomCode)! : { deck: [], players: [] };
+  // automatically expire key after 12 hours
+  await updateRoom(roomCode, newPlayers);
 
-  const newValue: IRoomValue = {
-    deck,
-    players: [...players, player],
-  };
-
-  data.set(roomCode, newValue);
-  await saveData(data);
-
-  return newValue.players;
+  return newPlayers;
 }
 
 /**
- * Returns a shuffled deck for the room
- * @param roomCode The room to get the deck for
- * @returns The shuffled deck
+ * Returns whether the room exists with the given room code.
+ * @param roomCode The room code to check
+ * @returns boolean - whether or not the room exists
  */
-export async function getRoomDeck(roomCode: string): Promise<Array<Influence>> {
-  const data = await readData();
-
-  const roomData = data.get(roomCode);
-  if (!roomData) throw new Error(`No room with room code ${roomCode} was found.`);
-
-  const newValue: IRoomValue = {
-    ...roomData,
-    deck: _shuffle(startingDeck),
-  };
-
-  data.set(roomCode, newValue);
-  await saveData(data);
-
-  return newValue.deck;
+export async function roomExists(roomCode: string): Promise<boolean> {
+  return redis.exists(roomCode).then((res) => (res > 0 ? true : false));
 }
