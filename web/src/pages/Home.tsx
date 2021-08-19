@@ -19,6 +19,7 @@ import useDocTitle from "@hooks/useDocTitle";
 import get from "@utils/get";
 import CrownIcon from "@icons/CrownIcon";
 import { useRoutingContext } from "@contexts/RoutingContext";
+import SupportedPlayerCountBadge from "@components/SupportedPlayerCountBadge";
 
 const Home = (): React.ReactElement => {
   const { newRoom, invalidRoomCode, setIsInvalidRoom, setIsNewRoom } = useRoutingContext();
@@ -80,7 +81,7 @@ const Home = (): React.ReactElement => {
         </Box>
       </Header>
       <Box as="main" marginY="10" marginX="auto" maxWidth="lg">
-        <VStack spacing={10}>
+        <VStack spacing="8">
           <Text paddingX="4" fontSize="large">
             A web based version of the popular board game Coup.
           </Text>
@@ -89,6 +90,7 @@ const Home = (): React.ReactElement => {
             can't because the virus is still at large. What better way to connect with your friends than with a\
             little bit of deception! "}
           </Text>
+          <SupportedPlayerCountBadge alignSelf="start" paddingLeft="4" />
           <Text>🚧 Still in development. 🚧</Text>
           <Divider />
           <VStack spacing={4}>
