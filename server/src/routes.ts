@@ -5,10 +5,9 @@ import Rooms from "./rooms";
 
 const router = Router();
 
-router.get("/checkRoom", (req: Request<unknown, unknown, unknown, { roomCode: string }>, res) => {
-  Rooms.roomExists(req.query.roomCode.toUpperCase()).then((roomExists) => {
-    res.send(JSON.stringify(roomExists));
-  });
+router.get("/checkRoom", async (req: Request<unknown, unknown, unknown, { roomCode: string }>, res) => {
+  const roomExists = await Rooms.roomExists(req.query.roomCode.toUpperCase());
+  res.send(JSON.stringify(roomExists));
 });
 
 router.get("/newRoom", async (req, res) => {

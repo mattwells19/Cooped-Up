@@ -60,7 +60,6 @@ class Rooms {
     const players = (await this.getRoom(roomCode)) ?? [];
     const newPlayers = [...players, player];
 
-    // automatically expire key after 12 hours
     await this.updateRoom(roomCode, newPlayers);
 
     return newPlayers;
