@@ -20,7 +20,7 @@ const SupportedPlayerCountBadge = (props: BoxProps): React.ReactElement => {
         backgroundColor={`${teal}10`}
       >
         <GroupIcon width="24px" />
-        <Text>2 - 6 players</Text>
+        <Text>3 - 6 players</Text>
       </Box>
     </Box>
   );
