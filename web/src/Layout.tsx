@@ -7,10 +7,19 @@ import Lobby from "@pages/Lobby";
 import Home from "@pages/Home";
 import PlayerName from "@pages/PlayerName";
 import Game from "@pages/Game";
+import ErrorBoundary from "@components/ErrorBoundary";
 
 const LobbySwitcher = (): React.ReactElement => {
   const { gameStarted } = useGameState();
-  return gameStarted ? <Game /> : <Lobby />;
+  return gameStarted ? (
+    <ErrorBoundary>
+      <Game /> 
+    </ErrorBoundary>
+  ) : (
+    <ErrorBoundary>
+      <Lobby />
+    </ErrorBoundary>
+  );
 };
 
 const Layout = (): React.ReactElement => (
@@ -20,13 +29,15 @@ const Layout = (): React.ReactElement => (
       render={({ match }) => (
         // if the player joining doesn't have a name set, redirect to playerName page first
         localStorage.getItem("playerName") ? (
-          <DeckContextProvider>
-            <PlayersContextProvider>
-              <GameStateContextProvider>
-                <LobbySwitcher />
-              </GameStateContextProvider>
-            </PlayersContextProvider>
-          </DeckContextProvider>
+          <ErrorBoundary>
+            <DeckContextProvider>
+              <PlayersContextProvider>
+                <GameStateContextProvider>
+                  <LobbySwitcher />
+                </GameStateContextProvider>
+              </PlayersContextProvider>
+            </DeckContextProvider>
+          </ErrorBoundary>
         ) : (
           <Redirect to={`/name?roomCode=${match.params.roomCode}`} />
         )
