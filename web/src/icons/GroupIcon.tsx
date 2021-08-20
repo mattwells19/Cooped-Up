@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React from "react";
 
-const EditIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => (
+const GroupIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => (
   <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path d="M24.9668 39.3064C24.5921 41.0891 23.44 42.6109 21.8258 43.4552C20.0557 44.381 17.9443 44.381 16.1742 43.4552C14.56 42.611 13.4079 41.0891 13.0332 39.3064L12.9033 38.6883C12.5177 36.8535 12.9315 34.9414 14.0412 33.4301L14.2516 33.1436C15.3615 31.6321 17.1247 30.7392 19 30.7392C20.8753 30.7392 22.6385 31.6321 23.7484 33.1436L23.9588 33.4301C25.0685 34.9414 25.4823 36.8535 25.0967 38.6883L24.9668 39.3064Z" fill="currentColor" />
     <path d="M8 56.1331C8 57.1641 8.83574 57.9998 9.86667 57.9998H18.594C19.0315 54.3082 20.973 50.9894 23.899 48.7952C20.0068 47.7791 15.8755 47.9944 12.0846 49.4411C9.625 50.3797 8 52.7391 8 55.3717V56.1331Z" fill="currentColor" />
@@ -12,4 +12,4 @@ const EditIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => (
   </svg>
 );
 
-export default EditIcon;
+export default GroupIcon;
