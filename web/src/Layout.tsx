@@ -11,13 +11,9 @@ import ErrorBoundary from "@components/ErrorBoundary";
 
 const LobbySwitcher = (): React.ReactElement => {
   const { gameStarted } = useGameState();
-  return gameStarted ? (
+  return (
     <ErrorBoundary>
-      <Game /> 
-    </ErrorBoundary>
-  ) : (
-    <ErrorBoundary>
-      <Lobby />
+      {gameStarted ? <Game /> : <Lobby />}
     </ErrorBoundary>
   );
 };
