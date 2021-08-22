@@ -1,11 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   Divider,
   FormControl,
   FormHelperText,
   Heading,
-  Link,
+  Link as Anchor,
   ButtonGroup,
   Center,
   useToast,
@@ -130,7 +131,7 @@ const Lobby = (): React.ReactElement => {
             <Text as="span">
               {"If you'd like a more detailed, typed out explanation of the rules you can check them out at "}
             </Text>
-            <Link
+            <Anchor
               href="https://www.ultraboardgames.com/coup/game-rules.php"
               referrerPolicy="no-referrer"
               target="_blank"
@@ -138,7 +139,7 @@ const Lobby = (): React.ReactElement => {
               textDecoration="underline"
             >
               Ultra Board Games
-            </Link>.
+            </Anchor>.
           </Text>
         </Box>
       </Box>
