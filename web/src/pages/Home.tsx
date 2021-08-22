@@ -91,7 +91,6 @@ const Home = (): React.ReactElement => {
             little bit of deception! "}
           </Text>
           <SupportedPlayerCountBadge alignSelf="start" paddingLeft="4" />
-          <Text>🚧 Still in development. 🚧</Text>
           <Divider />
           <VStack spacing={4}>
             <Text>Already have a room code? Type/paste it here.</Text>
