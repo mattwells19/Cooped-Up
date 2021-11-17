@@ -16,6 +16,6 @@
     "lint": "concurrently --kill-others-on-fail \"yarn server:lint\"  \"yarn web:lint\""
   },
   "dependencies": {
-    "concurrently": "^6.1.0"
+    "concurrently": "^6.4.0"
   }
 }
