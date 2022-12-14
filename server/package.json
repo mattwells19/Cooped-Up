@@ -10,7 +10,7 @@
     "start": "ts-node-dev -r dotenv/config src/server.ts"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "ioredis": "^4.27.8",
     "lodash": "^4.17.21",
     "socket.io": "^4.1.2"
