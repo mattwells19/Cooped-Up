@@ -5,7 +5,7 @@ class Rooms {
   private redis: Redis.Redis;
 
   constructor() {
-    this.redis = new Redis(process.env.REDIS_TLS_URL, { tls: { rejectUnauthorized: false } });
+    this.redis = new Redis(process.env.REDIS_TLS_URL);
   }
 
   disconnect(): void {
