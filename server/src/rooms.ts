@@ -2,10 +2,14 @@ import { IPlayer } from "./types";
 import Redis from "ioredis";
 
 class Rooms {
-  private redis: Redis.Redis;
+  private redis: Redis;
 
   constructor() {
-    this.redis = new Redis(process.env.REDIS_TLS_URL);
+    const REDIS_URL = process.env.REDIS_URL;
+    if (!REDIS_URL) {
+      throw new Error("No redis connection string found");
+    }
+    this.redis = new Redis(REDIS_URL, { family: 6 });
   }
 
   disconnect(): void {

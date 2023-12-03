@@ -24,7 +24,7 @@ COPY --from=build /usr/app/build /usr/app
 
 # Install needed dependecies for prod
 WORKDIR /usr/app/build
-RUN npm install --only=prod
+RUN npm install --omit=dev
 
 # Run prod command when running container
 CMD npm run prod
