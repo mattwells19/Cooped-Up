@@ -2,7 +2,7 @@
   "name": "Cooped Up",
   "dir": "ltr",
   "lang": "en-US",
-  "orientation": "landscape",
+  "orientation": "portrait",
   "start_url": "/",
   "background_color": "#1A202C",
   "theme_color": "#4FD1C5",

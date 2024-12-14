@@ -4,7 +4,6 @@ import { Server } from "socket.io";
 import path from "path";
 import ApiRoutes from "./routes";
 import initializeSocketEvents from "./socket";
-import Rooms from "./rooms";
 
 /* Server Setup */
 const app: Application = require("express")();
@@ -19,7 +18,3 @@ app.get(["/", "/room/*", "/name"], (_, res) => res.sendFile(path.join(__dirname,
 
 initializeSocketEvents(io);
 httpServer.listen(process.env.PORT ?? 4000, () => console.info(`Listening on port ${process.env.PORT ?? 4000}`));
-
-httpServer.on("close", () => {
-  Rooms.disconnect();
-});

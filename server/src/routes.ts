@@ -6,11 +6,11 @@ import Rooms from "./rooms";
 const router = Router();
 
 router.get("/checkRoom", async (req: Request<unknown, unknown, unknown, { roomCode: string }>, res) => {
-  const roomExists = await Rooms.roomExists(req.query.roomCode.toUpperCase());
+  const roomExists = Rooms.roomExists(req.query.roomCode.toUpperCase());
   res.send(JSON.stringify(roomExists));
 });
 
-router.get("/newRoom", async (req, res) => {
+router.get("/newRoom", (req, res) => {
   let roomCode = "";
   let roomAlreadyExists = false;
 
@@ -18,7 +18,7 @@ router.get("/newRoom", async (req, res) => {
     do {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       roomCode = _sample(alphabet)! + _sample(alphabet) + _sample(alphabet) + _sample(alphabet);
-      roomAlreadyExists = await Rooms.roomExists(roomCode);
+      roomAlreadyExists = Rooms.roomExists(roomCode);
     } while (roomAlreadyExists);
   } catch (e) {
     throw new Error(`Could not create new room: ${e}`);
